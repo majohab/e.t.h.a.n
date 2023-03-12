@@ -1,4 +1,4 @@
-package com.example.ethan.ui.theme
+package com.example.ethan.ui.gui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

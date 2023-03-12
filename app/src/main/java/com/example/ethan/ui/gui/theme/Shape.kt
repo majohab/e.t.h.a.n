@@ -1,4 +1,4 @@
-package com.example.ethan.ui.theme
+package com.example.ethan.ui.gui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
