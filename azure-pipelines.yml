@@ -15,6 +15,8 @@ steps:
     workingDirectory: '$(system.defaultWorkingDirectory)/app'
     gradleWrapperFile: 'gradlew'
     gradleOptions: '-Xmx3072m'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.11'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'assembleDebug'
