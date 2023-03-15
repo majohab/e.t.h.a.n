@@ -8,7 +8,7 @@ internal class MyClassTest {
 
     @org.junit.Test
     fun foo() {
-        var obj = MyClass()
+        var obj = MyClassFoo()
         var res = obj.foo(1)
         assertEquals(res, 43)
     }
