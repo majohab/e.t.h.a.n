@@ -17,9 +17,9 @@ steps:
     gradleOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.11'
-    codeCoverageToolOption: 'JaCoCo'
+    codeCoverageToolOption: 'Cobertura'
     codeCoverageClassFilesDirectories: 'build/classes/main/'
-    codeCoverageGradle5xOrHigher: true
+    codeCoverageGradle5xOrHigher: false
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'build'
