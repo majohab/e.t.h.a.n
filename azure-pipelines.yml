@@ -18,7 +18,8 @@ steps:
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.11'
     codeCoverageToolOption: 'JaCoCo'
-    codeCoverageClassFilesDirectories: 'build/classes/main/' # string. Alias: classFilesDirectories. Required when codeCoverageTool != None. Class files directories. Default: build/classes/main/.
+    codeCoverageClassFilesDirectories: 'build/classes/main/'
+    codeCoverageGradle5xOrHigher: true
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'build'
