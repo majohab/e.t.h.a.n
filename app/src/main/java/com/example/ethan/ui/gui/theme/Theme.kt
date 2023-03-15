@@ -42,3 +42,50 @@ fun ETHANTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable 
             content = content
     )
 }
+class MyClass{
+    fun foo(a: Int): Int {
+        var b = a + 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        b += 1
+        return b
+    }
+}
