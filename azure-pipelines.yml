@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/android
 
 trigger:
-- main
+- release
 
 pool:
   vmImage: 'macos-latest'
@@ -17,9 +17,6 @@ steps:
     gradleOptions: '-Xmx3072m'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.11'
-    codeCoverageToolOption: 'Cobertura'
-    codeCoverageClassFilesDirectories: 'build/classes/main/'
-    codeCoverageGradle5xOrHigher: false
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     tasks: 'build'
