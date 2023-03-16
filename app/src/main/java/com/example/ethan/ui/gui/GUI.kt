@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import com.example.ethan.ui.speech.Speech2Text
+import com.example.ethan.usecases.GoodMorningDialogue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -53,6 +54,10 @@ object GUI : ComponentActivity() {
                 floatingActionButton = {
                     FloatingActionButton(
                         onClick = {
+
+                            val gm = GoodMorningDialogue()
+                            gm.start()
+
                             voicePermissionState.launchPermissionRequest()
                             println(voicePermissionState.status.isGranted)
                             if (voicePermissionState.status.isGranted) {
