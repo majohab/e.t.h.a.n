@@ -26,7 +26,9 @@ object Speech2Text {
         // https://stackoverflow.com/questions/70688965/jetpack-compose-speech-recognition
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
             override fun onReadyForSpeech(bundle: Bundle?) { }
-            override fun onBeginningOfSpeech() { }
+            override fun onBeginningOfSpeech() {
+                println("onBeginningOfSpeech")
+            }
             override fun onRmsChanged(v: Float) { }
             override fun onBufferReceived(bytes: ByteArray?) { }
             override fun onEndOfSpeech() {
@@ -47,7 +49,9 @@ object Speech2Text {
                 }
             }
 
-            override fun onPartialResults(bundle: Bundle) {}
+            override fun onPartialResults(bundle: Bundle) {
+                println("onPartialResults")
+            }
             override fun onEvent(i: Int, bundle: Bundle?) {}
 
         })
