@@ -2,6 +2,7 @@ package com.example.ethan.ui.gui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.hardware.lights.Light
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -22,8 +23,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.center
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,19 +43,11 @@ import com.google.accompanist.permissions.rememberPermissionState
 object GUI : ComponentActivity() {
 
     private var textInput by mutableStateOf ("Top on the microphone and say something")
+    private var micRms by mutableStateOf(0.1f)
 
-    @Composable
-    fun Greeting(name: String) {
-        Text(text = "Hello $name!")
-    }
 
-    @OptIn(ExperimentalPermissionsApi::class)
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     fun MainScreen() {
-
-        val voicePermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
-        val context = LocalContext.current
 
         ETHANTheme {
             Box(
@@ -61,25 +55,16 @@ object GUI : ComponentActivity() {
                     .background(DeepBlue)
                     .fillMaxSize()
             ) {
-                Column {
-                    FloatingActionButton(
-                        onClick = {
-                            voicePermissionState.launchPermissionRequest()
-                            println(voicePermissionState.status.isGranted)
-                            if (voicePermissionState.status.isGranted) {
-                                Speech2Text.recordInput(context)
-                                { input: String ->
-                                    textInput = input
-                                }
-                            }
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Mic,
-                            contentDescription = "Start Talking",
-                            tint = Color.White,
-                        )
-                    }
+
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 25.dp),
+                    verticalArrangement = Arrangement.spacedBy(15.dp) // Space between
+                )
+                {
+
+
                     FeatureSection(
                         features = listOf(
                             Feature(
@@ -108,18 +93,84 @@ object GUI : ComponentActivity() {
                             )
                         )
                     )
+
+                    BottomBar()
                 }
             }
         }
     }
 
     @Composable
-    fun FeatureSection(features: List<Feature>) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+    fun ColumnScope.BottomBar() {
+
+        val backgroundColor = BlueViolet3
+
+        BoxWithConstraints(
+            modifier = Modifier
+                .padding(horizontal = 15.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(LightRed, backgroundColor),
+                        radius = maxOf(100 * micRms, 0.1f),
+                    )
+                )
+        )
+        {
+            MicButton()
+        }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun BoxScope.MicButton() {
+        val voicePermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
+        val context = LocalContext.current
+        val defaultBackgroundColor = ButtonBlue
+        val activeBackgroundColor = LightRed
+        var backgroundColor by remember { mutableStateOf(defaultBackgroundColor) }
+
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(vertical = 7.5.dp),
+            backgroundColor = backgroundColor,
+            onClick = {
+                voicePermissionState.launchPermissionRequest()
+                println(voicePermissionState.status.isGranted)
+                if (voicePermissionState.status.isGranted) {
+                    Speech2Text.recordInput(
+                        context = context,
+                        onStart = { backgroundColor = activeBackgroundColor },
+                        onRmsChanged = { value: Float ->
+                            micRms = value
+                                       println("h")},
+                        onFinished = { input: String ->
+                            textInput = input
+                            backgroundColor = defaultBackgroundColor
+                        }
+                    )
+                }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Mic,
+                contentDescription = "Start Talking",
+                tint = Color.White,
+            )
+        }
+    }
+
+    @Composable
+    fun ColumnScope.FeatureSection(features: List<Feature>) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp),
-                modifier = Modifier.fillMaxHeight()
+                contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp)
             ) {
                 items(features.size) {
                     FeatureItem(feature = features[it])

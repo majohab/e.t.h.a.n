@@ -13,8 +13,11 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 object Speech2Text {
 
-    public fun recordInput(context: Context, onFinished: (input: String) -> Unit) {
-
+    public fun recordInput(context: Context,
+                           onStart: () -> Unit,
+                           onRmsChanged: (value: Float) -> Unit,
+                           onFinished: (input: String) -> Unit
+    ) {
         val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
 
         val intent = Intent (RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
@@ -25,12 +28,16 @@ object Speech2Text {
 
         // https://stackoverflow.com/questions/70688965/jetpack-compose-speech-recognition
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(bundle: Bundle?) { }
-            override fun onBeginningOfSpeech() {
-                println("onBeginningOfSpeech")
+            override fun onReadyForSpeech(bundle: Bundle?) {
+                onStart()
             }
-            override fun onRmsChanged(v: Float) { }
-            override fun onBufferReceived(bytes: ByteArray?) { }
+            override fun onBeginningOfSpeech() { }
+            override fun onRmsChanged(v: Float) {
+                onRmsChanged(v)
+            }
+            override fun onBufferReceived(bytes: ByteArray?) {
+                println("onBufferReceived")
+            }
             override fun onEndOfSpeech() {
                 println("onEndOfSpeech")
                 // changing the color of your mic icon to
