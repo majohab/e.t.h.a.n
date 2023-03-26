@@ -8,8 +8,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ethan.R
+import com.example.ethan.ui.gui.GUI.Chat
 import com.example.ethan.ui.gui.theme.*
 import com.example.ethan.ui.speech.Speech2Text
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -44,6 +47,7 @@ object GUI : ComponentActivity() {
 
     private var textInput by mutableStateOf ("Top on the microphone and say something")
     private var micRms by mutableStateOf(0.1f)
+    private val username = "John"
 
 
     @Composable
@@ -58,13 +62,44 @@ object GUI : ComponentActivity() {
 
                 Column(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 25.dp),
+                        .align(Alignment.TopCenter)
+                        .padding(horizontal = 15.dp, vertical = 0.dp), // Can't add vertical spacing, because we need the mic animation to go to the bottom
                     verticalArrangement = Arrangement.spacedBy(15.dp) // Space between
                 )
                 {
+                    Spacer(
+                        modifier = Modifier.height(15.dp)
+                    )
+                    WelcomeText()
 
-
+                    Chat( // We have this outside the box for now, as we need to give the text field a fixed size, disregarding its content
+                        messages = listOf(
+                            Message(
+                                sender = Sender.ETHAN,
+                                text = "Hello World!"
+                            ),
+                            Message(
+                                sender = Sender.USER,
+                                text = "Lorem Ipsum und so... Ich muss bisschen Text füllen um den Zeilenumbruch zu testen. Hoffe das passt."
+                            ),
+                            Message(
+                                sender = Sender.USER,
+                                text = "Zweite Nachricht des Benutzers"
+                            ),
+                            Message(
+                                sender = Sender.ETHAN,
+                                text = "Dann antwortet ETHAN nochmal ach keine Ahnung ich muss Text füllen"
+                            ),
+                            Message(
+                                sender = Sender.USER,
+                                text = "Ja hallo erzähl mir einen Klopf-Klopf-Witz bitte danke"
+                            ),
+                            Message(
+                                sender = Sender.ETHAN,
+                                text = "Sie schreiben ohne Punkt und Komma."
+                            )
+                        )
+                    )
                     FeatureSection(
                         features = listOf(
                             Feature(
@@ -101,76 +136,121 @@ object GUI : ComponentActivity() {
     }
 
     @Composable
-    fun ColumnScope.BottomBar() {
-
-        val backgroundColor = BlueViolet3
-
-        BoxWithConstraints(
-            modifier = Modifier
-                .padding(horizontal = 15.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10.dp))
-                .background(
-                    brush = Brush.radialGradient(
-                        colors = listOf(LightRed, backgroundColor),
-                        radius = maxOf(100 * micRms, 0.1f),
-                    )
-                )
-        )
+    fun WelcomeText() {
+        val time = "Morning"
+        Column()
         {
-            MicButton()
-        }
-    }
-
-    @OptIn(ExperimentalPermissionsApi::class)
-    @Composable
-    fun BoxScope.MicButton() {
-        val voicePermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
-        val context = LocalContext.current
-        val defaultBackgroundColor = ButtonBlue
-        val activeBackgroundColor = LightRed
-        var backgroundColor by remember { mutableStateOf(defaultBackgroundColor) }
-
-        FloatingActionButton(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(vertical = 7.5.dp),
-            backgroundColor = backgroundColor,
-            onClick = {
-                voicePermissionState.launchPermissionRequest()
-                println(voicePermissionState.status.isGranted)
-                if (voicePermissionState.status.isGranted) {
-                    Speech2Text.recordInput(
-                        context = context,
-                        onStart = { backgroundColor = activeBackgroundColor },
-                        onRmsChanged = { value: Float ->
-                            micRms = value
-                                       println("h")},
-                        onFinished = { input: String ->
-                            textInput = input
-                            backgroundColor = defaultBackgroundColor
-                        }
-                    )
-                }
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Mic,
-                contentDescription = "Start Talking",
-                tint = Color.White,
+            Text(
+                text = "Good $time, $username",
+                style = Typography.h1
+            )
+            Text(
+                text = "I wish you a good day!",
+                style = Typography.h2,
+                color = DarkerButtonBlue
             )
         }
     }
 
     @Composable
-    fun ColumnScope.FeatureSection(features: List<Feature>) {
+    fun ColumnScope.Chat(messages: List<Message>) {
+
+        val backgroundColor = Color.Transparent
+
+        Box(
+            modifier = Modifier
+                .weight(1f) // To fill remaining height of Column
+                //.padding(bottom = 330.dp, start = 15.dp, end = 15.dp, top = 25.dp)
+                //.clip(RoundedCornerShape(10.dp))
+                .background(backgroundColor)
+        )
+        {
+            Divider(
+                color = ButtonBlue,
+                thickness = 1.dp,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+            )
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 15.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp)
+            )
+            {
+                items(messages.size) {
+                    MessageCard(messages[it])
+                }
+            }
+
+            Divider(
+                color = ButtonBlue,
+                thickness = 1.dp,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+            )
+        }
+    }
+
+    @Composable
+    fun MessageCard(message: Message) {
+
+        val meColor = BlueViolet3
+        val ethanColor = LightRed
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = when (message.sender) {
+                Sender.ETHAN -> Alignment.Start
+                else -> Alignment.End
+            }
+        ) {
+            Card(
+                modifier = Modifier.widthIn(max = 300.dp),
+                shape = CardShapeFor(message),
+                backgroundColor = when (message.sender) {
+                    Sender.USER -> meColor
+                    else -> ethanColor
+                },
+            ) {
+                Text(
+                    modifier = Modifier.padding(7.5.dp),
+                    text = message.text,
+                    style = Typography.h3
+                )
+            }
+            Text (
+                text = when (message.sender) {
+                    Sender.USER -> username
+                    else -> "E.T.H.A.N"
+                },
+                style = Typography.h2
+            )
+        }
+    }
+
+    @Composable
+    fun CardShapeFor(message: Message): Shape {
+        val roundedCorners = RoundedCornerShape(10.dp)
+        return when {
+            message.sender == Sender.USER -> roundedCorners.copy(bottomEnd = CornerSize(0))
+            else -> roundedCorners.copy(bottomStart = CornerSize((0)))
+        }
+    }
+
+    @Composable
+    fun FeatureSection(features: List<Feature>) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp)
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
+                //contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp)
             ) {
                 items(features.size) {
                     FeatureItem(feature = features[it])
@@ -185,7 +265,7 @@ object GUI : ComponentActivity() {
     ) {
         BoxWithConstraints(
             modifier = Modifier
-                .padding(7.5.dp)
+                //.padding(7.5.dp)
                 .aspectRatio(2f)
                 .clip(RoundedCornerShape(10.dp))
                 .background(feature.darkColor)
@@ -248,7 +328,7 @@ object GUI : ComponentActivity() {
             ) {
                 Text(
                     text = feature.title,
-                    style = MaterialTheme.typography.h2,
+                    style = Typography.h2,
                     lineHeight = 22.sp,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
@@ -256,9 +336,7 @@ object GUI : ComponentActivity() {
                 )
                 Text(
                     text = "45 min",
-                    color = TextWhite,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = Typography.h3,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clip(RoundedCornerShape(10.dp))
@@ -267,9 +345,7 @@ object GUI : ComponentActivity() {
                 )
                 Text(
                     text = "Start",
-                    color = TextWhite,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
+                    style = Typography.h3,
                     modifier = Modifier
                         .clickable {
                             // On click...
@@ -280,6 +356,75 @@ object GUI : ComponentActivity() {
                         .padding(vertical = 4.dp, horizontal = 12.dp)
                 )
             }
+        }
+    }
+
+    @Composable
+    fun BottomBar() {
+
+        val backgroundColor = Color.Transparent
+        val soundWaveColor = LightRed
+        val soundWaveMultiplier = 50
+
+        Box(
+            modifier = Modifier
+                //.padding(horizontal = 15.dp)
+                .fillMaxWidth()
+                //.clip(RoundedCornerShape(10.dp))
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(soundWaveColor, backgroundColor),
+                        radius = maxOf(soundWaveMultiplier * micRms, 0.1f),
+                    )
+                )
+        )
+        {
+            Divider(
+                color = ButtonBlue,
+                thickness = 1.dp
+            )
+
+            MicButton()
+        }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun BoxScope.MicButton() {
+        val voicePermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
+        val context = LocalContext.current
+        val defaultBackgroundColor = ButtonBlue
+        val activeBackgroundColor = LightRed
+        var backgroundColor by remember { mutableStateOf(defaultBackgroundColor) }
+
+        FloatingActionButton(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(bottom = 25.dp, top = 15.dp),
+            backgroundColor = backgroundColor,
+            onClick = {
+                voicePermissionState.launchPermissionRequest()
+                println(voicePermissionState.status.isGranted)
+                if (voicePermissionState.status.isGranted) {
+                    Speech2Text.recordInput(
+                        context = context,
+                        onStart = { backgroundColor = activeBackgroundColor },
+                        onRmsChanged = { value: Float ->
+                            micRms = value
+                        },
+                        onFinished = { input: String ->
+                            textInput = input
+                            backgroundColor = defaultBackgroundColor
+                        }
+                    )
+                }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Mic,
+                contentDescription = "Start Talking",
+                tint = Color.White,
+            )
         }
     }
 }
