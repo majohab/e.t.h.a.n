@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import com.example.ethan.ui.gui.theme.ETHANTheme
@@ -20,6 +21,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +33,8 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -141,11 +145,11 @@ object GUI : ComponentActivity() {
         Column()
         {
             Text(
-                text = "Good $time, $username",
+                text = "Good $time, $username.",
                 style = Typography.h1
             )
             Text(
-                text = "I wish you a good day!",
+                text = "I wish you have a good day!",
                 style = Typography.h2,
                 color = DarkerButtonBlue
             )
@@ -156,6 +160,7 @@ object GUI : ComponentActivity() {
     fun ColumnScope.Chat(messages: List<Message>) {
 
         val backgroundColor = Color.Transparent
+        //var inputText by remember { mutableStateOf("aa") }
 
         Box(
             modifier = Modifier
@@ -183,6 +188,32 @@ object GUI : ComponentActivity() {
                     MessageCard(messages[it])
                 }
             }
+
+            /*
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp)
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 15.dp),
+                value = inputText,
+                onValueChange = { inputText = it },
+                placeholder = { Text(text = "Type in a message...") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, ),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = DarkerButtonBlue,
+                    focusedBorderColor = ButtonBlue
+                ),
+                textStyle = Typography.h3,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.QuestionAnswer,
+                        contentDescription = "Start typing",
+                        tint = Color.White
+                    )
+                }
+            )
+             */
 
             Divider(
                 color = ButtonBlue,
