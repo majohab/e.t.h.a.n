@@ -42,6 +42,7 @@ import com.example.ethan.R
 import com.example.ethan.ui.gui.GUI.Chat
 import com.example.ethan.ui.gui.theme.*
 import com.example.ethan.ui.speech.Speech2Text
+import com.example.ethan.usecases.NavigationAssistance
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -154,6 +155,8 @@ object GUI : ComponentActivity() {
                 color = DarkerButtonBlue
             )
         }
+        val nav = NavigationAssistance()
+        nav.start()
     }
 
     @Composable
