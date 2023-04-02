@@ -10,6 +10,7 @@ import com.example.ethan.ui.gui.GUI.MainScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AgentHandler.start()
         setContent {
             MainScreen()
         }

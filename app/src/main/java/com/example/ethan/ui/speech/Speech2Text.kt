@@ -6,17 +6,20 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberPermissionState
 
 object Speech2Text {
 
-    public fun recordInput(context: Context,
+    private lateinit var onFinished_backend: (input: String) -> Unit
+
+    fun setCallback(onFinished_backend: (input: String) -> Unit)
+    {
+        this.onFinished_backend = onFinished_backend
+    }
+
+    fun recordInput(context: Context,
                            onStart: () -> Unit,
                            onRmsChanged: (value: Float) -> Unit,
-                           onFinished: (input: String) -> Unit
+                            onFinished_Frontend: (input: String) -> Unit
     ) {
         val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
 
@@ -52,7 +55,8 @@ object Speech2Text {
                 println("onResults")
                 val result = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (result != null) {
-                    onFinished(result[0])
+                    onFinished_backend(result[0])
+                    onFinished_Frontend(result[0])
                 }
             }
 

@@ -1,8 +1,6 @@
 package com.example.ethan.ui.gui
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.hardware.lights.Light
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -13,33 +11,22 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import com.example.ethan.ui.gui.theme.ETHANTheme
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ethan.R
-import com.example.ethan.ui.gui.GUI.Chat
+import com.example.ethan.AgentHandler
+import com.example.ethan.UseCase
 import com.example.ethan.ui.gui.theme.*
 import com.example.ethan.ui.speech.Speech2Text
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -53,9 +40,9 @@ object GUI : ComponentActivity() {
     private var micRms by mutableStateOf(0.1f)
     private val username = "John"
 
-
     @Composable
     fun MainScreen() {
+
 
         ETHANTheme {
             Box(
@@ -111,25 +98,33 @@ object GUI : ComponentActivity() {
                                 BlueViolet1,
                                 BlueViolet2,
                                 BlueViolet3
-                            ),
+                            ) {
+                                AgentHandler.startUseCase(UseCase.GoodMorningDialogue)
+                            },
                             Feature(
                                 title = "Navigation Assistance",
                                 LightGreen1,
                                 LightGreen2,
                                 LightGreen3
-                            ),
+                            ) {
+                                AgentHandler.startUseCase(UseCase.NavigationAssistance)
+                            },
                             Feature(
                                 title = "Lunch Break",
                                 OrangeYellow1,
                                 OrangeYellow2,
                                 OrangeYellow3
-                            ),
+                            ) {
+                                AgentHandler.startUseCase(UseCase.LunchBreakConsultant)
+                            },
                             Feature(
                                 title = "Social Assistance",
                                 Beige1,
                                 Beige2,
                                 Beige3
-                            )
+                            ) {
+                                AgentHandler.startUseCase(UseCase.SocialAssistance)
+                            }
                         )
                     )
 
@@ -379,7 +374,7 @@ object GUI : ComponentActivity() {
                     style = Typography.h3,
                     modifier = Modifier
                         .clickable {
-                            // On click...
+                            feature.onClicked?.invoke()
                         }
                         .align(Alignment.BottomEnd)
                         .clip(RoundedCornerShape(10.dp))
@@ -442,8 +437,8 @@ object GUI : ComponentActivity() {
                         onStart = { backgroundColor = activeBackgroundColor },
                         onRmsChanged = { value: Float ->
                             micRms = value
-                        },
-                        onFinished = { input: String ->
+                                       },
+                        onFinished_Frontend = { input: String ->
                             textInput = input
                             backgroundColor = defaultBackgroundColor
                         }
