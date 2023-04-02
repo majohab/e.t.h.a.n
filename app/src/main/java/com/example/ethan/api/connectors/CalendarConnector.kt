@@ -46,7 +46,7 @@ class CalendarConnector : AbstractConnector() {
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
     private val SCOPES: List<String> = Collections.singletonList(CalendarScopes.CALENDAR_READONLY)
-    private val CREDENTIALS_FILE_PATH = "com/example/ethan/api/connectors/calendarAPICredentials.json"
+    private val CREDENTIALS_FILE_PATH = "/calendarAPICredentials.json"
 
     /**
      * Creates an authorized Credential object.
@@ -58,7 +58,6 @@ class CalendarConnector : AbstractConnector() {
     @Throws(IOException::class)
     private fun getCredentials(HTTP_TRANSPORT: NetHttpTransport): Credential? {
         val path = System.getProperty("user.dir")
-        println("Working Directory = $path" + CREDENTIALS_FILE_PATH)
         // Load client secrets.
         val `in`: InputStream =
             CalendarConnector::class.java.getResourceAsStream(CREDENTIALS_FILE_PATH)
@@ -85,7 +84,6 @@ class CalendarConnector : AbstractConnector() {
         val service = Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
             .setApplicationName(APPLICATION_NAME)
             .build()
-
         // List the next 10 events from the primary calendar.
         val now = DateTime(System.currentTimeMillis())
         val events: Events = service.events().list("primary")
