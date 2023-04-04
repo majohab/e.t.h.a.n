@@ -9,11 +9,13 @@ import android.speech.SpeechRecognizer
 
 object Speech2Text {
 
-    private lateinit var onFinished_backend: (input: String) -> Unit
+    lateinit var onFinished_backend: (input: String) -> Unit
+    var onFinished_backend_initialized = false
 
     fun setCallback(onFinished_backend: (input: String) -> Unit)
     {
         this.onFinished_backend = onFinished_backend
+        this.onFinished_backend_initialized = true
     }
 
     fun recordInput(context: Context,
@@ -55,7 +57,7 @@ object Speech2Text {
                 println("onResults")
                 val result = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (result != null) {
-                    onFinished_backend(result[0])
+                    if (onFinished_backend_initialized) onFinished_backend(result[0])
                     onFinished_Frontend(result[0])
                 }
             }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CornerSize
@@ -38,7 +39,8 @@ object GUI : ComponentActivity() {
 
     private var textInput by mutableStateOf ("Top on the microphone and say something")
     private var micRms by mutableStateOf(0.1f)
-    private val username = "John"
+    private const val username = "John"
+
 
     @Composable
     fun MainScreen() {
@@ -63,34 +65,7 @@ object GUI : ComponentActivity() {
                     )
                     WelcomeText()
 
-                    Chat( // We have this outside the box for now, as we need to give the text field a fixed size, disregarding its content
-                        messages = listOf(
-                            Message(
-                                sender = Sender.ETHAN,
-                                text = "Hello World!"
-                            ),
-                            Message(
-                                sender = Sender.USER,
-                                text = "Lorem Ipsum und so... Ich muss bisschen Text füllen um den Zeilenumbruch zu testen. Hoffe das passt."
-                            ),
-                            Message(
-                                sender = Sender.USER,
-                                text = "Zweite Nachricht des Benutzers"
-                            ),
-                            Message(
-                                sender = Sender.ETHAN,
-                                text = "Dann antwortet ETHAN nochmal ach keine Ahnung ich muss Text füllen"
-                            ),
-                            Message(
-                                sender = Sender.USER,
-                                text = "Ja hallo erzähl mir einen Klopf-Klopf-Witz bitte danke"
-                            ),
-                            Message(
-                                sender = Sender.ETHAN,
-                                text = "Sie schreiben ohne Punkt und Komma."
-                            )
-                        )
-                    )
+                    Chat()
                     FeatureSection(
                         features = listOf(
                             Feature(
@@ -152,10 +127,12 @@ object GUI : ComponentActivity() {
     }
 
     @Composable
-    fun ColumnScope.Chat(messages: List<Message>) {
+    fun ColumnScope.Chat() {
 
         val backgroundColor = Color.Transparent
-        //var inputText by remember { mutableStateOf("aa") }
+        var messages = Messaging.getMessages()
+        var listState = LazyListState(messages.size - 1,
+                                        100)
 
         Box(
             modifier = Modifier
@@ -176,7 +153,8 @@ object GUI : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(vertical = 15.dp),
-                verticalArrangement = Arrangement.spacedBy(15.dp)
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                state = listState
             )
             {
                 items(messages.size) {
@@ -252,7 +230,7 @@ object GUI : ComponentActivity() {
                     Sender.USER -> username
                     else -> "E.T.H.A.N"
                 },
-                style = Typography.h2
+                style = Typography.h3
             )
         }
     }
@@ -362,7 +340,7 @@ object GUI : ComponentActivity() {
                 )
                 Text(
                     text = "45 min",
-                    style = Typography.h3,
+                    style = Typography.h4,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clip(RoundedCornerShape(10.dp))
@@ -371,7 +349,7 @@ object GUI : ComponentActivity() {
                 )
                 Text(
                     text = "Start",
-                    style = Typography.h3,
+                    style = Typography.h4,
                     modifier = Modifier
                         .clickable {
                             feature.onClicked?.invoke()
@@ -441,6 +419,10 @@ object GUI : ComponentActivity() {
                         onFinished_Frontend = { input: String ->
                             textInput = input
                             backgroundColor = defaultBackgroundColor
+                            Messaging.addMessage(Message(
+                                sender = Sender.USER,
+                                text = input
+                            ))
                         }
                     )
                 }
