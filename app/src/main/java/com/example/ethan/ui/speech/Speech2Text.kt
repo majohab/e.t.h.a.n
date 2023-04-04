@@ -6,16 +6,38 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import com.example.ethan.ui.gui.Message
+import com.example.ethan.ui.gui.Messaging
+import com.example.ethan.ui.gui.Sender
 
 object Speech2Text {
 
     lateinit var onFinished_backend: (input: String) -> Unit
+    lateinit var onError_backend: (error: Int) -> Unit
+
     var onFinished_backend_initialized = false
+    var onError_backend_initialized = false
 
     fun setCallback(onFinished_backend: (input: String) -> Unit)
     {
         this.onFinished_backend = onFinished_backend
         this.onFinished_backend_initialized = true
+    }
+    fun removeCallback()
+    {
+        this.onFinished_backend = {  }
+        this.onFinished_backend_initialized = false
+    }
+
+    fun setErrorCallback(onError_backend: (error: Int) -> Unit)
+    {
+        this.onError_backend = onError_backend
+        this.onError_backend_initialized = true
+    }
+    fun removeErrorCallback()
+    {
+        this.onError_backend = {  }
+        this.onError_backend_initialized = false
     }
 
     fun recordInput(
@@ -51,6 +73,7 @@ object Speech2Text {
             }
 
             override fun onError(i: Int) {
+                if (onError_backend_initialized) onError_backend(i)
                 println("Error: $i")
             }
 
@@ -58,8 +81,16 @@ object Speech2Text {
                 println("onResults")
                 val result = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (result != null) {
-                    if (onFinished_backend_initialized) onFinished_backend(result[0])
                     onFinished_Frontend(result[0])
+                    if (onFinished_backend_initialized) {
+                        onFinished_backend(result[0])
+                    }else {
+                        Messaging.addMessage(
+                            Message(
+                                sender = Sender.ETHAN,
+                                text = "Currently no UseCase is active. Please start an UseCase and try again."
+                            ))
+                    }
                 }
             }
 

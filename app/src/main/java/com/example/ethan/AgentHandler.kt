@@ -17,22 +17,41 @@ object AgentHandler : Thread() {
         super.run()
     }
 
+    fun useCaseFinished(){
+        Speech2Text.removeCallback()
+        Speech2Text.removeErrorCallback()
+        semaphore.release()
+    }
+
     fun startUseCase(useCase: UseCase)
     {
-        semaphore.acquire()
-        println("Switched to use case: $useCase")
-
-
-        var goodMorningDialogue = GoodMorningDialogue()
-
-        Speech2Text.setCallback()
-        { input ->
-            goodMorningDialogue.onSpeechReceived(input)
+        if(!semaphore.tryAcquire()) return
+        when (useCase) {
+            UseCase.GoodMorningDialogue -> {
+                var goodMorningDialogue = GoodMorningDialogue(){
+                     -> useCaseFinished()
+                }
+                Speech2Text.setCallback()
+                { input ->
+                    goodMorningDialogue.onSpeechReceived(input)
+                }
+                Speech2Text.setErrorCallback()
+                { error: Int ->
+                    goodMorningDialogue.onSpeachError(error)
+                }
+                goodMorningDialogue.start()
+            }
+            UseCase.NavigationAssistance -> {
+                // TODO
+            }
+            UseCase.LunchBreakConsultant -> {
+                // TODO
+            }
+            UseCase.SocialAssistance -> {
+                // TODO
+            }
         }
-        goodMorningDialogue.start()
-
-
-        semaphore.release()
+        // Release
     }
 }
 
