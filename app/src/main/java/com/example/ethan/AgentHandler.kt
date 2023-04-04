@@ -20,18 +20,25 @@ object AgentHandler : Thread() {
     fun startUseCase(useCase: UseCase)
     {
         semaphore.acquire()
-        println("Switched to use case: $useCase")
-
-
-        var goodMorningDialogue = GoodMorningDialogue()
-
-        Speech2Text.setCallback()
-        { input ->
-            goodMorningDialogue.onSpeechReceived(input)
+        when (useCase) {
+            UseCase.GoodMorningDialogue -> {
+                var goodMorningDialogue = GoodMorningDialogue()
+                Speech2Text.setCallback()
+                { input ->
+                    goodMorningDialogue.onSpeechReceived(input)
+                }
+                goodMorningDialogue.start()
+            }
+            UseCase.NavigationAssistance -> {
+                // TODO
+            }
+            UseCase.LunchBreakConsultant -> {
+                // TODO
+            }
+            UseCase.SocialAssistance -> {
+                // TODO
+            }
         }
-        goodMorningDialogue.start()
-
-
         semaphore.release()
     }
 }
