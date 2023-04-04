@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import com.example.ethan.ui.gui.Message
+import com.example.ethan.ui.gui.Messaging
+import com.example.ethan.ui.gui.Sender
 
 object Speech2Text {
 
@@ -68,7 +71,15 @@ object Speech2Text {
                 val result = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (result != null) {
                     onFinished_Frontend(result[0])
-                    if (onFinished_backend_initialized) onFinished_backend(result[0])
+                    if (onFinished_backend_initialized) {
+                        onFinished_backend(result[0])
+                    }else {
+                        Messaging.addMessage(
+                            Message(
+                                sender = Sender.ETHAN,
+                                text = "Currently no UseCase is active. Please start an UseCase and try again."
+                            ))
+                    }
                 }
             }
 
