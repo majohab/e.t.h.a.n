@@ -1,10 +1,11 @@
 package com.example.ethan.usecases
 
+import android.content.IntentSender.OnFinished
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 
-abstract class AbstractUseCase : Thread(){
+abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) : Thread(){
     // Volatile disables caching for those variables CPU-internally -> faster execution
     @Volatile
     private var waitingForSpeech: Boolean = false

@@ -17,12 +17,20 @@ object AgentHandler : Thread() {
         super.run()
     }
 
+    fun useCaseFinished(){
+        Speech2Text.removeCallback()
+        Speech2Text.removeErrorCallback()
+        semaphore.release()
+    }
+
     fun startUseCase(useCase: UseCase)
     {
-        semaphore.acquire()
+        if(!semaphore.tryAcquire()) return
         when (useCase) {
             UseCase.GoodMorningDialogue -> {
-                var goodMorningDialogue = GoodMorningDialogue()
+                var goodMorningDialogue = GoodMorningDialogue(){
+                     -> useCaseFinished()
+                }
                 Speech2Text.setCallback()
                 { input ->
                     goodMorningDialogue.onSpeechReceived(input)
@@ -43,7 +51,7 @@ object AgentHandler : Thread() {
                 // TODO
             }
         }
-        semaphore.release()
+        // Release
     }
 }
 

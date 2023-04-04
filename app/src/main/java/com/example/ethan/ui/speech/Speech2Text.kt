@@ -24,10 +24,22 @@ object Speech2Text {
         this.onFinished_backend_initialized = true
     }
 
+    fun removeCallback()
+    {
+        this.onFinished_backend = {  }
+        this.onFinished_backend_initialized = false
+    }
+
     fun setErrorCallback(onError_backend: (error: Int) -> Unit)
     {
         this.onError_backend = onError_backend
         this.onError_backend_initialized = true
+    }
+
+    fun removeErrorCallback()
+    {
+        this.onError_backend = {  }
+        this.onError_backend_initialized = false
     }
 
     fun recordInput(context: Context,

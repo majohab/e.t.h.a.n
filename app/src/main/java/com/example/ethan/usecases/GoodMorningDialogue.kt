@@ -6,7 +6,7 @@ import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 import java.time.LocalDateTime
 
-class GoodMorningDialogue : AbstractUseCase() {
+class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
     private var horoscopeConnector = HoroscopeConnector()
 
     override fun run() {
@@ -32,5 +32,6 @@ class GoodMorningDialogue : AbstractUseCase() {
         // Say how long it'll take the user to its destination
 
         println("GoodMorningDialogue Thread is about to end!")
+        onFinishedCallback()
     }
 }
