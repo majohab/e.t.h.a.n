@@ -30,6 +30,7 @@ import com.example.ethan.AgentHandler
 import com.example.ethan.UseCase
 import com.example.ethan.ui.gui.theme.*
 import com.example.ethan.ui.speech.Speech2Text
+import com.example.ethan.ui.speech.Text2Speech
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -44,7 +45,6 @@ object GUI : ComponentActivity() {
 
     @Composable
     fun MainScreen() {
-
 
         ETHANTheme {
             Box(
@@ -130,9 +130,17 @@ object GUI : ComponentActivity() {
     fun ColumnScope.Chat() {
 
         val backgroundColor = Color.Transparent
-        var messages = Messaging.getMessages()
-        var listState = LazyListState(messages.size - 1,
+        var messages: MutableState<List<Message>> = remember { mutableStateOf(Messaging.getMessages()) }
+        var listState = LazyListState(messages.value.size - 1,
                                         100)
+
+        if (messages.value.isNotEmpty()) {
+
+            val lastMsg = messages.value[messages.value.size - 1]
+            if (lastMsg.sender == Sender.ETHAN) {
+                Text2Speech.speakText(lastMsg.text, LocalContext.current)
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -157,8 +165,8 @@ object GUI : ComponentActivity() {
                 state = listState
             )
             {
-                items(messages.size) {
-                    MessageCard(messages[it])
+                items(messages.value.size) {
+                    MessageCard(messages.value[it])
                 }
             }
 
@@ -267,6 +275,7 @@ object GUI : ComponentActivity() {
     fun FeatureItem(
         feature: Feature
     ) {
+        val context = LocalContext.current
         BoxWithConstraints(
             modifier = Modifier
                 //.padding(7.5.dp)
