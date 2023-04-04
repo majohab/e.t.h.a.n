@@ -6,13 +6,8 @@ import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 import java.time.LocalDateTime
 
-class GoodMorningDialogue : Thread() {
+class GoodMorningDialogue : AbstractUseCase() {
     private var horoscopeConnector = HoroscopeConnector()
-    // Volatile disables caching for those variables CPU-internally -> faster execution
-    @Volatile
-    private var waitingForSpeech: Boolean = false
-    @Volatile
-    private var lastSpeechInput: String = ""
 
     override fun run() {
         println("GoodMorningDialogue Thread has been started!")
@@ -39,28 +34,5 @@ class GoodMorningDialogue : Thread() {
         println("GoodMorningDialogue Thread is about to end!")
     }
 
-    private fun speak(text: String){
-        Messaging.addMessage(Message(
-            sender = Sender.ETHAN,
-            text = text
-        ))
-    }
 
-    private fun askForVoiceInput(question: String){
-        waitingForSpeech = true
-        speak(question)
-
-        while(waitingForSpeech){}
-    }
-
-    fun onSpeechReceived(input: String)
-    {
-        // Displaying is handled in GUI
-        lastSpeechInput = input
-        waitingForSpeech = false
-    }
-
-    fun onSpeachError(error: Int){
-        speak("Something wrent wrong. Please try again.")
-    }
 }
