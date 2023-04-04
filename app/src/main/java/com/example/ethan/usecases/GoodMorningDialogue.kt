@@ -33,6 +33,4 @@ class GoodMorningDialogue : AbstractUseCase() {
 
         println("GoodMorningDialogue Thread is about to end!")
     }
-
-
 }
