@@ -1,5 +1,7 @@
 package com.example.ethan
 
+import com.example.ethan.ui.gui.theme.MyClassFoo
+import com.example.ethan.ui.gui.theme.MyClassFoo2
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.usecases.GoodMorningDialogue
 import java.util.concurrent.Semaphore
@@ -25,6 +27,10 @@ object AgentHandler : Thread() {
 
     fun startUseCase(useCase: UseCase)
     {
+        val foo: MyClassFoo = MyClassFoo()
+        val number: Int = foo.foo(1)
+
+
         if(!semaphore.tryAcquire()) return
         when (useCase) {
             UseCase.GoodMorningDialogue -> {
