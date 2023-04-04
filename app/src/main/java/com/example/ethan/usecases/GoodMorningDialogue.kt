@@ -59,4 +59,8 @@ class GoodMorningDialogue : Thread() {
         lastSpeechInput = input
         waitingForSpeech = false
     }
+
+    fun onSpeachError(error: Int){
+        speak("Something wrent wrong. Please try again.")
+    }
 }

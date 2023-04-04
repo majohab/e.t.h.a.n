@@ -27,6 +27,10 @@ object AgentHandler : Thread() {
                 { input ->
                     goodMorningDialogue.onSpeechReceived(input)
                 }
+                Speech2Text.setErrorCallback()
+                { error: Int ->
+                    goodMorningDialogue.onSpeachError(error)
+                }
                 goodMorningDialogue.start()
             }
             UseCase.NavigationAssistance -> {

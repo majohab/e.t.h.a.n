@@ -10,12 +10,21 @@ import android.speech.SpeechRecognizer
 object Speech2Text {
 
     lateinit var onFinished_backend: (input: String) -> Unit
+    lateinit var onError_backend: (error: Int) -> Unit
+
     var onFinished_backend_initialized = false
+    var onError_backend_initialized = false
 
     fun setCallback(onFinished_backend: (input: String) -> Unit)
     {
         this.onFinished_backend = onFinished_backend
         this.onFinished_backend_initialized = true
+    }
+
+    fun setErrorCallback(onError_backend: (error: Int) -> Unit)
+    {
+        this.onError_backend = onError_backend
+        this.onError_backend_initialized = true
     }
 
     fun recordInput(context: Context,
@@ -50,6 +59,7 @@ object Speech2Text {
             }
 
             override fun onError(i: Int) {
+                if (onError_backend_initialized) onError_backend(i)
                 println("Error: $i")
             }
 
