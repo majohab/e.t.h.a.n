@@ -18,10 +18,11 @@ object Speech2Text {
         this.onFinished_backend_initialized = true
     }
 
-    fun recordInput(context: Context,
-                           onStart: () -> Unit,
-                           onRmsChanged: (value: Float) -> Unit,
-                            onFinished_Frontend: (input: String) -> Unit
+    fun recordInput(
+        context: Context,
+        onStart: () -> Unit,
+        onRmsChanged: (value: Float) -> Unit,
+        onFinished_Frontend: (input: String) -> Unit
     ) {
         val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
 
