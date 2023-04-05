@@ -24,6 +24,7 @@ android {
 
         buildConfigField "String", "API_KEY_ALPHAVANTAGE", "\"${properties.getProperty("API_KEY_ALPHAVANTAGE")}\""
         buildConfigField "String", "API_KEY_NEWS", "\"${properties.getProperty("API_KEY_NEWS")}\""
+        buildConfigField "String", "API_KEY_Routes", "\"${properties.getProperty("API_KEY_Routes")}\""
     }
 
     buildTypes {

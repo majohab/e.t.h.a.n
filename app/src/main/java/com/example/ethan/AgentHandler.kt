@@ -2,6 +2,7 @@ package com.example.ethan
 
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.usecases.GoodMorningDialogue
+import com.example.ethan.usecases.NavigationAssistance
 import java.util.concurrent.Semaphore
 
 object AgentHandler : Thread() {
@@ -12,7 +13,6 @@ object AgentHandler : Thread() {
     override fun run() {
 
         println("hallo")
-
 
         super.run()
     }
