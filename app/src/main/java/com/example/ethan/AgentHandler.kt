@@ -1,5 +1,6 @@
 package com.example.ethan
 
+import com.example.ethan.api.GoogleCalendar
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.usecases.GoodMorningDialogue
 import java.util.concurrent.Semaphore
@@ -12,7 +13,8 @@ object AgentHandler : Thread() {
     override fun run() {
 
         println("hallo")
-
+        val calendar = GoogleCalendar()
+        calendar.getEvents()
 
         super.run()
     }
