@@ -31,9 +31,9 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
 
         // Greet user with all gather information
         speak(
-    "Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes."
-        + "You have 5 events for today"
-        + "The stocks are..."
+    "Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. "
+        + "You have 5 events for today. "
+        + "The stocks are... "
         + "This are your daily news: "
         )
 
