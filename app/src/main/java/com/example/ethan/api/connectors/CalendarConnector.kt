@@ -41,7 +41,7 @@ class CalendarConnector : AbstractConnector(){
             val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneId.systemDefault())
             var times = element.split("/")
 
-            val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneId.systemDefault())
+            val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
             //val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneId.systemDefault())
 
             if(index == 0){
