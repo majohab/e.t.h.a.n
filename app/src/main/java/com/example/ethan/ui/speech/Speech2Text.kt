@@ -44,7 +44,8 @@ object Speech2Text {
         context: Context,
         onStart: () -> Unit,
         onRmsChanged: (value: Float) -> Unit,
-        onFinished_Frontend: (input: String) -> Unit
+        onFinished_Frontend: (input: String) -> Unit,
+        onError_Frontend: (input: Int) -> Unit
     ) {
         val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
 
@@ -73,8 +74,9 @@ object Speech2Text {
             }
 
             override fun onError(i: Int) {
-                if (onError_backend_initialized) onError_backend(i)
                 println("Error: $i")
+                if (onError_backend_initialized) onError_backend(i)
+                onError_Frontend(i)
             }
 
             override fun onResults(bundle: Bundle) {

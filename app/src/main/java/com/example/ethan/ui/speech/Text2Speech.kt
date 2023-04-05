@@ -3,7 +3,6 @@ package com.example.ethan.ui.speech
 import android.content.Context
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import androidx.compose.material.Text
 import java.time.Instant
 import java.util.*
 

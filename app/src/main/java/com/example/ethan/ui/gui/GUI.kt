@@ -432,6 +432,9 @@ object GUI : ComponentActivity() {
                                 sender = Sender.USER,
                                 text = input
                             ))
+                        },
+                        onError_Frontend = {
+                            backgroundColor = defaultBackgroundColor
                         }
                     )
                 }
