@@ -9,10 +9,10 @@ abstract class AbstractConnector {
     private val restInterface = RestInterface()
     abstract val url: String
 
-    public fun get(): JSONObject{
+    public fun get(): String{
         val response = restInterface.get(url)
         return parseData(response!!)
     }
 
-    abstract fun parseData(data: String): JSONObject
+    abstract fun parseData(data: String): String
 }
