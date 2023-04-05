@@ -28,13 +28,14 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         }
         println(news_string)
         // Request API 3
-        val stocknews_json = stocksConnector.get()
-        val stocknews_feed = stocknews_json.getJSONArray("feed")
+        val stockslist = listOf("IBM", "AAPL")
         var stocknews_string = ""
-        for (i in 0..0) {
-            val article = stocknews_feed.getJSONObject(i)
-            val title = article.getString("title")
-            stocknews_string += ("Headline $i: $title. ")
+        for (s in stockslist)
+        {
+            val stocknews_json = stocksConnector.get(s)
+            val stocknews_quote = stocknews_json.getJSONObject("Global Quote")
+            val price = stocknews_quote.optString("05. price")
+            stocknews_string += "Last price of $s was $price. "
         }
         println(stocknews_string)
 
