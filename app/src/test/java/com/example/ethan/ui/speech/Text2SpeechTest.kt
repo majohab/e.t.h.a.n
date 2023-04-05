@@ -15,6 +15,7 @@ class Text2SpeechTest {
     @Before
     fun setup() {
         //context = ApplicationProvider.getApplicationContext()
+        assertEquals(1,1)
     }
 
     @Test

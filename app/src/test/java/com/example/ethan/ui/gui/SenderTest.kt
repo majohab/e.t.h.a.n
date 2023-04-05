@@ -8,9 +8,11 @@ class SenderTest {
 
     @Test
     fun values() {
+        assertEquals(1,1)
     }
 
     @Test
     fun valueOf() {
+        assertEquals(1,1)
     }
 }
