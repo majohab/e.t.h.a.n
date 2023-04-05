@@ -9,7 +9,7 @@ class GUITest {
 
     @Test
     fun mainScreen() {
-        var value = GUI
+
 
         assertEquals(1,1)
     }

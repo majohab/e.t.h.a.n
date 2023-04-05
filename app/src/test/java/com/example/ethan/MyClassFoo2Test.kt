@@ -1,14 +1,14 @@
 package com.example.ethan
 
-
 import com.example.ethan.ui.gui.theme.MyClassFoo
+import com.example.ethan.ui.gui.theme.MyClassFoo2
 import org.junit.Assert.*
 
 import org.junit.Test
 
-class MyClassFooTest {
+class MyClassFoo2Test {
 
-    private val sample = MyClassFoo()
+    private val sample = MyClassFoo2()
 
     @Test
     fun foo() {
