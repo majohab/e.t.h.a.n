@@ -131,8 +131,7 @@ object GUI : ComponentActivity() {
 
         val backgroundColor = Color.Transparent
         var messages: MutableState<List<Message>> = remember { mutableStateOf(Messaging.getMessages()) }
-        var listState = LazyListState(messages.value.size - 1,
-                                        100)
+        var listState = LazyListState(messages.value.size - 1)
 
         if (messages.value.isNotEmpty()) {
 
@@ -432,6 +431,9 @@ object GUI : ComponentActivity() {
                                 sender = Sender.USER,
                                 text = input
                             ))
+                        },
+                        onError_Frontend = {
+                            backgroundColor = defaultBackgroundColor
                         }
                     )
                 }
