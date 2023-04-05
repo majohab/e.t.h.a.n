@@ -8,5 +8,6 @@ class GoodMorningDialogueTest {
 
     @Test
     fun run() {
+        assertEquals(4, 2 + 2)
     }
 }

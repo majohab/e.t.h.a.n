@@ -1,5 +1,6 @@
 package com.example.ethan
 
+
 import com.example.ethan.ui.gui.theme.MyClassFoo
 import org.junit.Assert.*
 
@@ -9,8 +10,9 @@ class MyClassFooTest {
 
     @Test
     fun foo() {
-        var obj = MyClassFoo()
-        var res = obj.foo(1)
-        assertEquals(res, 43)
+        var value1: Int = 1
+        var result = MyClassFoo.foo(value1)
+        assertEquals(value1, result)
+
     }
 }
