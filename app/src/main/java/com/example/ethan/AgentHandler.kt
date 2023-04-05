@@ -1,6 +1,7 @@
 package com.example.ethan
 
 import com.example.ethan.ui.speech.Speech2Text
+import com.example.ethan.ui.speech.Text2Speech
 import com.example.ethan.usecases.GoodMorningDialogue
 import com.example.ethan.usecases.NavigationAssistance
 import java.util.concurrent.Semaphore
@@ -20,6 +21,7 @@ object AgentHandler : Thread() {
     fun useCaseFinished(){
         Speech2Text.removeCallback()
         Speech2Text.removeErrorCallback()
+        Text2Speech.removeCallback()
         semaphore.release()
     }
 
@@ -28,16 +30,21 @@ object AgentHandler : Thread() {
         if(!semaphore.tryAcquire()) return
         when (useCase) {
             UseCase.GoodMorningDialogue -> {
-                var goodMorningDialogue = GoodMorningDialogue(){
+                var goodMorningDialogue = GoodMorningDialogue()
+                {
                      -> useCaseFinished()
                 }
                 Speech2Text.setCallback()
                 { input ->
-                    goodMorningDialogue.onSpeechReceived(input)
+                    goodMorningDialogue.onUserVoiceInputReceived(input)
                 }
                 Speech2Text.setErrorCallback()
                 { error: Int ->
-                    goodMorningDialogue.onSpeachError(error)
+                    goodMorningDialogue.onUserVoiceInputError(error)
+                }
+                Text2Speech.setCallback()
+                {
+                    -> goodMorningDialogue.onEthanVoiceOutputFinished()
                 }
                 goodMorningDialogue.start()
             }
