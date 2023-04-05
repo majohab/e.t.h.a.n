@@ -1,6 +1,5 @@
 package com.example.ethan.usecases
 
-import android.content.IntentSender.OnFinished
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
@@ -8,33 +7,41 @@ import com.example.ethan.ui.gui.Sender
 abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) : Thread(){
     // Volatile disables caching for those variables CPU-internally -> faster execution
     @Volatile
-    private var waitingForSpeech: Boolean = false
+    private var awaitEthanVoiceOutput: Boolean = false
     @Volatile
-    private var lastSpeechInput: String = ""
+    private var awaitUserVoiceInput: Boolean = false
+    @Volatile
+    private var lastUserVoiceInput: String = ""
 
-    fun askForVoiceInput(question: String){
-        waitingForSpeech = true
+    fun askForUserVoiceInput(question: String){
+        awaitUserVoiceInput = true
         speak(question)
 
-        while(waitingForSpeech){}
+        while(awaitUserVoiceInput){}
     }
 
-    fun onSpeechReceived(input: String)
+    fun onUserVoiceInputReceived(input: String)
     {
         // Displaying of USER is handled in GUI
-        lastSpeechInput = input
-        waitingForSpeech = false
+        lastUserVoiceInput = input
+        awaitUserVoiceInput = false
     }
 
-    fun onSpeachError(error: Int){
+    fun onUserVoiceInputError(error: Int){
         speak("Something wrent wrong. Please try again.")
     }
 
+    fun onEthanVoiceOutputFinished(){
+        awaitEthanVoiceOutput = false
+    }
+
     fun speak(text: String){
+        awaitEthanVoiceOutput = true
         Messaging.addMessage(
             Message(
             sender = Sender.ETHAN,
             text = text
         ))
+        while (awaitEthanVoiceOutput){}
     }
 }

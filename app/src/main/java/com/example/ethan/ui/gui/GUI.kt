@@ -38,7 +38,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 
 object GUI : ComponentActivity() {
 
-    private var textInput by mutableStateOf ("Top on the microphone and say something")
+    private var textInput by mutableStateOf ("Tap on the microphone and say something")
     private var micRms by mutableStateOf(0.1f)
     private const val username = "John"
 
@@ -130,13 +130,13 @@ object GUI : ComponentActivity() {
     fun ColumnScope.Chat() {
 
         val backgroundColor = Color.Transparent
-        var messages: MutableState<List<Message>> = remember { mutableStateOf(Messaging.getMessages()) }
-        var listState = LazyListState(messages.value.size - 1,
+        var messages = Messaging.messages
+        var listState = LazyListState(messages.size - 1,
                                         100)
 
-        if (messages.value.isNotEmpty()) {
 
-            val lastMsg = messages.value[messages.value.size - 1]
+        if (messages.isNotEmpty()) {
+            val lastMsg = messages[messages.size - 1]
             if (lastMsg.sender == Sender.ETHAN) {
                 Text2Speech.speakText(lastMsg.text, LocalContext.current)
             }
@@ -165,8 +165,8 @@ object GUI : ComponentActivity() {
                 state = listState
             )
             {
-                items(messages.value.size) {
-                    MessageCard(messages.value[it])
+                items(messages.size) {
+                    MessageCard(messages[it])
                 }
             }
 

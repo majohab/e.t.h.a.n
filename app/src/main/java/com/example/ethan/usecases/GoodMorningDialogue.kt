@@ -1,9 +1,6 @@
 package com.example.ethan.usecases
 
 import com.example.ethan.api.connectors.HoroscopeConnector
-import com.example.ethan.ui.gui.Message
-import com.example.ethan.ui.gui.Messaging
-import com.example.ethan.ui.gui.Sender
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
@@ -28,7 +25,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         )
 
         // Ask for his preferred transportation method
-        askForVoiceInput("What is your favorite type of transportation for this day?")
+        askForUserVoiceInput("What is your favorite type of transportation for this day?")
         // Say how long it'll take the user to its destination
 
         println("GoodMorningDialogue Thread is about to end!")
