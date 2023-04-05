@@ -43,12 +43,10 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         val now = LocalDateTime.now()
 
         // Greet user with all gather information
-        speak(
-    "Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. "
-        + "You have 5 events for today. "
-        + "The stocks are... "
-        + "This are your daily news: "
-        )
+        speak("Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")
+        speak("You have 5 events for today. ")
+        speak("Here is your daily update for your preferred stocks: $stocknews_string. ")
+        speak("This are your daily news: $news_string.")
 
         // Ask for his preferred transportation method
         askForUserVoiceInput("What is your favorite type of transportation for this day?")
