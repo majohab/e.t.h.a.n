@@ -3,14 +3,14 @@ package com.example.ethan.usecases
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ethan.api.connectors.CalendarConnector
-import com.example.ethan.api.connectors.HoroscopeConnector
+import com.example.ethan.api.connectors.FortuneConnector
 import com.example.ethan.api.connectors.NewsConnector
 import com.example.ethan.api.connectors.StocksConnector
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
-    private var horoscopeConnector = HoroscopeConnector()
+    private var fortuneConnector = FortuneConnector()
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
@@ -20,7 +20,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println("GoodMorningDialogue Thread has been started!")
 
         // Request API 1
-        val horoscopes = horoscopeConnector.get()
+        val fortune_json = fortuneConnector.get()
+        val fortune_string = fortune_json.getString("fortune")
 
         // Reqeuest API 0
         val eventsFreeBusy = calendarConnector.get()["answer"]
@@ -50,7 +51,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             val price = stocknews_quote.optString("05. price").toFloat().toString()
             stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
         }
-        println(stocknews_string)
+        //println(stocknews_string)
 
 
         val now = LocalDateTime.now()
@@ -64,16 +65,29 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         // Ask for his preferred transportation method
         runBlocking { askForUserVoiceInput("What is your favorite type of transportation for this day?") }
 
-        if (lastUserVoiceInput.lowercase().contains("bus")) {
+        if (checkIfContainsWord("bus")) {
             runBlocking { speak("You successfully set bus as your favourite transportation method for today.") }
-        }else if(lastUserVoiceInput.lowercase().contains("train")){
+        }else if(checkIfContainsWord("train")){
             runBlocking { speak("You successfully set train as your favourite transportation method for today.") }
-        }else if(lastUserVoiceInput.lowercase().contains("bike")){
+        }else if(checkIfContainsWord("bike")){
                 runBlocking { speak("You successfully set bike as your favourite transportation method for today.") }
-        }else if(lastUserVoiceInput.lowercase().contains("foot")){
+        }else if(checkIfContainsWord("foot")){
                 runBlocking { speak("You successfully set walking as your favourite transportation method for today.") }
         }
-                runBlocking { speak("Have a great day!") }
+
+        var yesOrNo = false
+        runBlocking { askForUserVoiceInput("Okay cool. Do you want to hear your horoscope for today?") }
+        while (!(checkIfPositive(lastUserVoiceInput) || checkIfNegative(lastUserVoiceInput)))
+            runBlocking { askForUserVoiceInput("I didn't understand you. Please repeat. ") }
+
+        if (checkIfPositive(lastUserVoiceInput)) {
+            runBlocking { speak(fortune_string) }
+        } else if (checkIfNegative(lastUserVoiceInput)) {
+            runBlocking { speak("...") }
+            runBlocking { speak("My personal guess is that you won't have any luck today.") }
+        }
+
+        runBlocking { speak("Have a great day!") }
         // Say how long it'll take the user to its destination
 
         println("GoodMorningDialogue Thread is about to end!")

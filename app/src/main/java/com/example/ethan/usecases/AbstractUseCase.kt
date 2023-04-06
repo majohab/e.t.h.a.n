@@ -61,4 +61,21 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) : Thread(){
             //println("still waiting for output to finish")
         }
     }
+
+    fun checkIfContainsWord(input: String, vararg tokens: String) : Boolean {
+        var input = input.lowercase()
+        for (token in tokens) {
+            if (input.contains(token.lowercase()))
+                return true
+        }
+        return false
+    }
+
+    fun checkIfPositive(input: String) : Boolean {
+        return checkIfContainsWord(input, "yes", "yeah", "yep", "yup", "sure")
+    }
+
+    fun checkIfNegative(input: String) : Boolean {
+        return checkIfContainsWord(input, "no", "nah", "no way", "never", "save nicht")
+    }
 }
