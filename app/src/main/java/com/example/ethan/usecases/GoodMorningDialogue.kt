@@ -114,7 +114,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         }
 
         var yesOrNo = false
-        runBlocking { askForUserVoiceInput("Okay cool. Do you want to hear your horoscope for today?") }
+        runBlocking { askForUserVoiceInput("Okay cool. Do you want to hear your fortune for today?") }
         while (!(checkIfPositive(lastUserVoiceInput) || checkIfNegative(lastUserVoiceInput)))
             runBlocking { askForUserVoiceInput("I didn't understand you. Please repeat. ") }
 

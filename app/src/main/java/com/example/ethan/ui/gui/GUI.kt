@@ -360,7 +360,7 @@ object GUI : ComponentActivity() {
                         .clip(RoundedCornerShape(10.dp))
                         .background(DarkerButtonBlue)
                         .padding(vertical = 4.dp, horizontal = 8.dp)
-                        .width(36.dp)
+                        .width(38.dp)
                 )
                 Text(
                     text = "Start",
