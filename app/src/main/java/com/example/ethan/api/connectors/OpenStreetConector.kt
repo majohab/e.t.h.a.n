@@ -1,14 +1,16 @@
 package com.example.ethan.api.connectors
 
-
+import org.json.JSONArray
 import org.json.JSONObject
 
-class RouteConnector() : AbstractConnector() {
+class OpenStreetConector() : AbstractConnector() {
     override val url: String
         get() = "url"
 
     override fun parseData(data: String): JSONObject {
-        var json = JSONObject(data)
+
+        var data1 = JSONArray(data)
+        var json = data1.getJSONObject(0)
         return json
     }
 }

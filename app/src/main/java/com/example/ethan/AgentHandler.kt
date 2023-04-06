@@ -49,7 +49,21 @@ object AgentHandler : Thread() {
                 goodMorningDialogue.start()
             }
             UseCase.NavigationAssistance -> {
-                // TODO
+                var navigationAssistance = NavigationAssistance(){
+                    -> useCaseFinished()
+                }
+                Speech2Text.setCallback(){ input ->
+                    navigationAssistance.onUserVoiceInputReceived(input)
+                }
+                Speech2Text.setErrorCallback()
+                { error: Int ->
+                    navigationAssistance.onUserVoiceInputError(error)
+                }
+                Text2Speech.setCallback()
+                {
+                    -> navigationAssistance.onEthanVoiceOutputFinished()
+                }
+                navigationAssistance.start()
             }
             UseCase.LunchBreakConsultant -> {
                 // TODO

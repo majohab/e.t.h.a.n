@@ -74,5 +74,5 @@ dependencies {
     implementation 'backport-util-concurrent:backport-util-concurrent:3.1'
     implementation 'commons-codec:commons-codec:1.8'
     implementation 'commons-lang:commons-lang:2.6'
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.9'
 }
