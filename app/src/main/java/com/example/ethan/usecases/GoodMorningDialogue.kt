@@ -2,11 +2,11 @@ package com.example.ethan.usecases
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.ui.text.toLowerCase
 import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.HoroscopeConnector
 import com.example.ethan.api.connectors.NewsConnector
 import com.example.ethan.api.connectors.StocksConnector
+import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
@@ -27,25 +27,28 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
 
         // Request API 2
         val news_json = newsConnector.get()
+        println(news_json)
         val news_articles = news_json.getJSONArray("articles")
         var news_string = ""
         for (i in 0..0) {
             val article = news_articles.getJSONObject(i)
             val title = article.getString("title")
             val description = article.getString("description")
-            news_string += ("Article $i: $title. "
-                            + "$description. ")
+            news_string += ("Article " + (i + 1) + ": $title. "
+                            + "$description ")
         }
         println(news_string)
         // Request API 3
-        val stockslist = listOf("IBM", "AAPL")
+        val stockslist_tickers = listOf("AAPL", "MSFT", "GOOG")
+        val stockslist_names = listOf("Apple", "Microsoft", "Alphabet")
         var stocknews_string = ""
-        for (s in stockslist)
+        for (i in stockslist_tickers.indices)
         {
-            val stocknews_json = stocksConnector.get(s)
+            val stocknews_json = stocksConnector.get(stockslist_tickers[i])
+            println(stocknews_json)
             val stocknews_quote = stocknews_json.getJSONObject("Global Quote")
-            val price = stocknews_quote.optString("05. price")
-            stocknews_string += "Last price of $s was $price. "
+            val price = stocknews_quote.optString("05. price").toFloat().toString()
+            stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
         }
         println(stocknews_string)
 
@@ -53,24 +56,24 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         val now = LocalDateTime.now()
 
         // Greet user with all gather information
-        speak("Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")
-        speak("$eventsFreeBusy")
-        speak("Here is your daily update for your preferred stocks: $stocknews_string. ")
-        speak("This are your daily news: $news_string.")
+        runBlocking { speak("Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")}
+        runBlocking { speak("$eventsFreeBusy")}
+        runBlocking { speak("Here is your daily update for your preferred stocks: $stocknews_string")}
+        runBlocking { speak("Now your daily news: $news_string")}
 
         // Ask for his preferred transportation method
-        askForUserVoiceInput("What is your favorite type of transportation for this day?")
+        runBlocking { askForUserVoiceInput("What is your favorite type of transportation for this day?") }
 
         if (lastUserVoiceInput.lowercase().contains("bus")) {
-            speak("You successfully set bus as your favourite transportation method for today.")
+            runBlocking { speak("You successfully set bus as your favourite transportation method for today.") }
         }else if(lastUserVoiceInput.lowercase().contains("train")){
-            speak("You successfully set train as your favourite transportation method for today.")
+            runBlocking { speak("You successfully set train as your favourite transportation method for today.") }
         }else if(lastUserVoiceInput.lowercase().contains("bike")){
-            speak("You successfully set bike as your favourite transportation method for today.")
+                runBlocking { speak("You successfully set bike as your favourite transportation method for today.") }
         }else if(lastUserVoiceInput.lowercase().contains("foot")){
-            speak("You successfully set walking as your favourite transportation method for today.")
+                runBlocking { speak("You successfully set walking as your favourite transportation method for today.") }
         }
-        speak("Have a great day!")
+                runBlocking { speak("Have a great day!") }
         // Say how long it'll take the user to its destination
 
         println("GoodMorningDialogue Thread is about to end!")
