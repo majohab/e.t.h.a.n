@@ -11,7 +11,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) : Thread(){
     @Volatile
     private var awaitUserVoiceInput: Boolean = false
     @Volatile
-    private var lastUserVoiceInput: String = ""
+    var lastUserVoiceInput: String = ""
 
     fun askForUserVoiceInput(question: String){
         awaitUserVoiceInput = true
