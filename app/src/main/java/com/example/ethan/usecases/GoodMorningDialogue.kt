@@ -2,10 +2,7 @@ package com.example.ethan.usecases
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.ethan.api.connectors.CalendarConnector
-import com.example.ethan.api.connectors.FortuneConnector
-import com.example.ethan.api.connectors.NewsConnector
-import com.example.ethan.api.connectors.StocksConnector
+import com.example.ethan.api.connectors.*
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
@@ -14,10 +11,16 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
+    private var recipeConnector = RecipeConnector()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun run() {
         println("GoodMorningDialogue Thread has been started!")
+
+        // Request Recipe
+        val recipe_json = recipeConnector.search("pasta")
+        val recipe_one = recipe_json.getString("results")
+        println(recipe_one)
 
         // Request API 1
         val fortune_json = fortuneConnector.get()
