@@ -19,8 +19,11 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
 
         // Request Recipe
         val recipe_json = recipeConnector.search("pasta")
-        val recipe_one = recipe_json.getString("results")
-        println(recipe_one)
+        val recipe_one = recipe_json.getJSONArray("results").getJSONObject(0)
+        val recipe_one_id = recipe_one.getInt("id")
+        val recipe_recipe = recipeConnector.get(recipe_one_id)
+        val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
+        println(recipe_sourceUrl)
 
         // Request API 1
         val fortune_json = fortuneConnector.get()
