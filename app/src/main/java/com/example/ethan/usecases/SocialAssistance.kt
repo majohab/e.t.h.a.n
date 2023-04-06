@@ -19,10 +19,6 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         }
     }
 
-    override fun initUseCase() {
-        TODO("Not yet implemented")
-    }
-
     override fun executeUseCase() {
         TODO("Not yet implemented")
     }
