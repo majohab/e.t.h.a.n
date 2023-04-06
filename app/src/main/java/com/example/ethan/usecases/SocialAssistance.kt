@@ -6,7 +6,14 @@ import java.time.LocalDateTime
 class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
     override fun getExecutionTime(): LocalDateTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime.now()
+            LocalDateTime.of(
+                /* year = */ 2023,
+                /* month = */ 4,
+                /* dayOfMonth = */ 6,
+                /* hour = */ 19,
+                /* minute = */ 0,
+                /* second = */ 0,
+                /* nanoOfSecond = */ 0)
         } else {
             TODO("VERSION.SDK_INT < O")
         }
