@@ -20,8 +20,6 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
     abstract fun getExecutionTime() : LocalDateTime
 
-    abstract fun initUseCase()
-
     abstract fun executeUseCase()
 
     suspend fun askForUserVoiceInput(question: String){

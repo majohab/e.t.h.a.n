@@ -31,21 +31,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         }
     }
 
-    override fun initUseCase() {
-        Speech2Text.setCallback()
-        { input ->
-            AgentHandler.goodMorningDialogue.onUserVoiceInputReceived(input)
-        }
-        Speech2Text.setErrorCallback()
-        { error: Int ->
-            AgentHandler.goodMorningDialogue.onUserVoiceInputError(error)
-        }
-        Text2Speech.setCallback()
-        {
-            -> AgentHandler.goodMorningDialogue.onEthanVoiceOutputFinished()
-        }
-    }
-
     override fun executeUseCase() {
 
         println("GoodMorningDialogue Thread has been started!")
@@ -59,7 +44,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println(recipe_sourceUrl)
 
         // Request API 1
-        println("a")
         val fortune_json = fortuneConnector.get()
         val fortune_string = fortune_json.getString("fortune")
 
@@ -71,14 +55,15 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println(news_json)
         val news_articles = news_json.getJSONArray("articles")
         var news_string = ""
-        for (i in 0..0) {
+        for (i in 0..1) {
             val article = news_articles.getJSONObject(i)
             val title = article.getString("title")
-            val description = article.getString("description")
-            news_string += ("Article " + (i + 1) + ": $title. "
-                            + "$description ")
+            //val description = article.getString("description")
+            news_string += ("Article " + (i + 1) + ": $title. ")
+                            //+ "$description ")
         }
         println(news_string)
+
         // Request API 3
         val stockslist_tickers = listOf("AAPL", "MSFT", "GOOG")
         val stockslist_names = listOf("Apple", "Microsoft", "Alphabet")

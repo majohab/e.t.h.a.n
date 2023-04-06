@@ -19,10 +19,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
     }
 
-    override fun initUseCase() {
-        TODO("Not yet implemented")
-    }
-
     override fun executeUseCase() {
         TODO("Not yet implemented")
     }

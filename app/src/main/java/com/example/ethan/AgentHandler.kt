@@ -51,25 +51,25 @@ object AgentHandler : Thread() {
     fun startUseCase(useCase: UseCase)
     {
         if(useCaseRunning) return
-        when (useCase) {
-            UseCase.GoodMorningDialogue -> {
-                goodMorningDialogue.initUseCase()
-                thread { goodMorningDialogue.executeUseCase() }
-            }
-            UseCase.NavigationAssistance -> {
-                navigationAssistance.initUseCase()
-                thread { navigationAssistance.executeUseCase() }
-            }
-            UseCase.LunchBreakConsultant -> {
-                lunchBreakConsultant.initUseCase()
-                thread { lunchBreakConsultant.executeUseCase() }
-            }
-            UseCase.SocialAssistance -> {
-                socialAssistance.initUseCase()
-                thread { socialAssistance.executeUseCase() }
-            }
+
+        val useCaseClass = when (useCase) {
+            UseCase.GoodMorningDialogue -> goodMorningDialogue
+            UseCase.NavigationAssistance -> navigationAssistance
+            UseCase.LunchBreakConsultant -> lunchBreakConsultant
+            UseCase.SocialAssistance -> socialAssistance
         }
-        useCaseRunning = true
+
+
+        Speech2Text.setCallback { input ->
+            useCaseClass.onUserVoiceInputReceived(input)
+        }
+        Speech2Text.setErrorCallback { error: Int ->
+            useCaseClass.onUserVoiceInputError(error)
+        }
+        Text2Speech.setCallback { useCaseClass.onEthanVoiceOutputFinished() }
+
+        thread { useCaseClass.executeUseCase() }
+
     }
 
 
