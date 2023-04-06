@@ -3,6 +3,9 @@ package com.example.ethan.usecases
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ethan.api.connectors.*
+import com.example.ethan.AgentHandler
+import com.example.ethan.ui.speech.Speech2Text
+import com.example.ethan.ui.speech.Text2Speech
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
@@ -13,8 +16,38 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var calendarConnector = CalendarConnector()
     private var recipeConnector = RecipeConnector()
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun run() {
+    override fun getExecutionTime(): LocalDateTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime.of(
+                /* year = */ 2023,
+                /* month = */ 4,
+                /* dayOfMonth = */ 6,
+                /* hour = */ 12,
+                /* minute = */ 0,
+                /* second = */ 0,
+                /* nanoOfSecond = */ 0)
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
+    }
+
+    override fun initUseCase() {
+        Speech2Text.setCallback()
+        { input ->
+            AgentHandler.goodMorningDialogue.onUserVoiceInputReceived(input)
+        }
+        Speech2Text.setErrorCallback()
+        { error: Int ->
+            AgentHandler.goodMorningDialogue.onUserVoiceInputError(error)
+        }
+        Text2Speech.setCallback()
+        {
+            -> AgentHandler.goodMorningDialogue.onEthanVoiceOutputFinished()
+        }
+    }
+
+    override fun executeUseCase() {
+
         println("GoodMorningDialogue Thread has been started!")
 
         // Request Recipe
@@ -26,6 +59,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println(recipe_sourceUrl)
 
         // Request API 1
+        println("a")
         val fortune_json = fortuneConnector.get()
         val fortune_string = fortune_json.getString("fortune")
 
@@ -60,7 +94,11 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         //println(stocknews_string)
 
 
-        val now = LocalDateTime.now()
+        val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime.now()
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
 
         // Greet user with all gather information
         runBlocking { speak("Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")}
@@ -82,7 +120,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         }
 
         var yesOrNo = false
-        runBlocking { askForUserVoiceInput("Okay cool. Do you want to hear your horoscope for today?") }
+        runBlocking { askForUserVoiceInput("Okay cool. Do you want to hear your fortune for today?") }
         while (!(checkIfPositive(lastUserVoiceInput) || checkIfNegative(lastUserVoiceInput)))
             runBlocking { askForUserVoiceInput("I didn't understand you. Please repeat. ") }
 

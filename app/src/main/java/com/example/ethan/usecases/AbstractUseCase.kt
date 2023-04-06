@@ -5,8 +5,9 @@ import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
 
-abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) : Thread(){
+abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     // Volatile disables caching for those variables CPU-internally -> faster execution
     @Volatile
     private var awaitEthanVoiceOutput: Boolean = false
@@ -16,6 +17,12 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) : Thread(){
     private var userInputWasWrong: Boolean = false
     @Volatile
     var lastUserVoiceInput: String = ""
+
+    abstract fun getExecutionTime() : LocalDateTime
+
+    abstract fun initUseCase()
+
+    abstract fun executeUseCase()
 
     suspend fun askForUserVoiceInput(question: String){
         userInputWasWrong = false

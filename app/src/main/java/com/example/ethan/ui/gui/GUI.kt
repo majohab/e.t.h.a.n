@@ -69,6 +69,7 @@ object GUI : ComponentActivity() {
                     FeatureSection(
                         features = listOf(
                             Feature(
+                                UseCase.GoodMorningDialogue,
                                 title = "Good Morning",
                                 BlueViolet1,
                                 BlueViolet2,
@@ -77,6 +78,7 @@ object GUI : ComponentActivity() {
                                 AgentHandler.startUseCase(UseCase.GoodMorningDialogue)
                             },
                             Feature(
+                                UseCase.NavigationAssistance,
                                 title = "Navigation Assistance",
                                 LightGreen1,
                                 LightGreen2,
@@ -85,6 +87,7 @@ object GUI : ComponentActivity() {
                                 AgentHandler.startUseCase(UseCase.NavigationAssistance)
                             },
                             Feature(
+                                UseCase.LunchBreakConsultant,
                                 title = "Lunch Break",
                                 OrangeYellow1,
                                 OrangeYellow2,
@@ -93,6 +96,7 @@ object GUI : ComponentActivity() {
                                 AgentHandler.startUseCase(UseCase.LunchBreakConsultant)
                             },
                             Feature(
+                                UseCase.SocialAssistance,
                                 title = "Social Assistance",
                                 Beige1,
                                 Beige2,
@@ -275,7 +279,8 @@ object GUI : ComponentActivity() {
     fun FeatureItem(
         feature: Feature
     ) {
-        val context = LocalContext.current
+        var remainingMinutes = AgentHandler.remainingTimes[feature.useCase]
+
         BoxWithConstraints(
             modifier = Modifier
                 //.padding(7.5.dp)
@@ -348,13 +353,14 @@ object GUI : ComponentActivity() {
                         .padding(end = 60.dp)
                 )
                 Text(
-                    text = "45 min",
+                    text = AgentHandler.remainingTimes[feature.useCase].toString(),
                     style = Typography.h4,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .clip(RoundedCornerShape(10.dp))
                         .background(DarkerButtonBlue)
                         .padding(vertical = 4.dp, horizontal = 8.dp)
+                        .width(38.dp)
                 )
                 Text(
                     text = "Start",
