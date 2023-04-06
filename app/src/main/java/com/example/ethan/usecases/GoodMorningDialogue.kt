@@ -2,11 +2,8 @@ package com.example.ethan.usecases
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.ethan.api.connectors.*
 import com.example.ethan.AgentHandler
-import com.example.ethan.api.connectors.CalendarConnector
-import com.example.ethan.api.connectors.FortuneConnector
-import com.example.ethan.api.connectors.NewsConnector
-import com.example.ethan.api.connectors.StocksConnector
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.ui.speech.Text2Speech
 import kotlinx.coroutines.runBlocking
@@ -17,6 +14,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
+    private var recipeConnector = RecipeConnector()
 
     override fun getExecutionTime(): LocalDateTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -51,6 +49,14 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     override fun executeUseCase() {
 
         println("GoodMorningDialogue Thread has been started!")
+
+        // Request Recipe
+        val recipe_json = recipeConnector.search("pasta")
+        val recipe_one = recipe_json.getJSONArray("results").getJSONObject(0)
+        val recipe_one_id = recipe_one.getInt("id")
+        val recipe_recipe = recipeConnector.get(recipe_one_id)
+        val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
+        println(recipe_sourceUrl)
 
         // Request API 1
         println("a")
