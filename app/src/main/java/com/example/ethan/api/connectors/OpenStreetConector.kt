@@ -10,7 +10,6 @@ class OpenStreetConector() : AbstractConnector() {
     override fun parseData(data: String): JSONObject {
 
         var data1 = JSONArray(data)
-        var json = data1.getJSONObject(0)
-        return json
+        return data1.getJSONObject(0)
     }
 }
