@@ -85,9 +85,7 @@ object Speech2Text {
                 val result = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                 if (result != null) {
                     onFinished_Frontend(result[0])
-                    if (onFinished_backend_initialized) {
-                        onFinished_backend(result[0])
-                    }else {
+                    if (onFinished_backend_initialized) { onFinished_backend(result[0]) }else {
                         Messaging.addMessage(
                             Message(
                                 sender = Sender.ETHAN,
