@@ -16,56 +16,42 @@ class Speech2TextTest {
     }
 
     @Test
-    fun getOnFinished_backend() {
-
+    fun initialization_onFinsihed_backend_initialized(){
+        assertEquals(true, speech2text.onError_backend_initialized)
     }
 
     @Test
-    fun setOnFinished_backend() {
-    }
-
-    @Test
-    fun getOnError_backend() {
-    }
-
-    @Test
-    fun setOnError_backend() {
-    }
-
-    @Test
-    fun getOnFinished_backend_initialized() {
-    }
-
-    @Test
-    fun setOnFinished_backend_initialized() {
-    }
-
-    @Test
-    fun getOnError_backend_initialized() {
-    }
-
-    @Test
-    fun setOnError_backend_initialized() {
+    fun initialization_onError_backend_initialized(){
+        assertEquals(false, speech2text.onFinished_backend_initialized )
     }
 
     @Test
     fun setCallback() {
+        speech2text.onFinished_backend_initialized = true
+        speech2text.setCallback {  }
+        var returnValue = speech2text.onFinished_backend_initialized
+        assertEquals(true, returnValue)
     }
 
     @Test
     fun removeCallback() {
         speech2text.onFinished_backend_initialized = true
         speech2text.removeCallback()
-        var return_value = speech2text.onFinished_backend_initialized
-        assertEquals(false,return_value)
+        assertEquals(false,speech2text.onFinished_backend_initialized)
     }
 
     @Test
     fun setErrorCallback() {
+        speech2text.onError_backend_initialized = false
+        speech2text.setErrorCallback {  }
+        assertEquals(true, speech2text.onError_backend_initialized)
     }
 
     @Test
     fun removeErrorCallback() {
+        speech2text.onError_backend_initialized = true
+        speech2text.removeErrorCallback()
+        assertEquals(false,speech2text.onError_backend_initialized)
     }
 
     @Test

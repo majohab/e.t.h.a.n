@@ -20,6 +20,7 @@ object Speech2Text {
 
     fun setCallback(onFinished_backend: (input: String) -> Unit)
     {
+        // set the onFinshed_backend var to onFinished_backend
         this.onFinished_backend = onFinished_backend
         this.onFinished_backend_initialized = true
     }
@@ -50,25 +51,16 @@ object Speech2Text {
         val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
 
         val intent = Intent (RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(
-            RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH
-        )
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH)
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Say Something")
 
         // https://stackoverflow.com/questions/70688965/jetpack-compose-speech-recognition
         speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(bundle: Bundle?) {
-                onStart()
-            }
+            override fun onReadyForSpeech(bundle: Bundle?) { onStart() }
             override fun onBeginningOfSpeech() { }
-            override fun onRmsChanged(v: Float) {
-                onRmsChanged(v)
-            }
-            override fun onBufferReceived(bytes: ByteArray?) {
-                println("onBufferReceived")
-            }
-            override fun onEndOfSpeech() {
-                println("onEndOfSpeech")
+            override fun onRmsChanged(v: Float) { onRmsChanged(v) }
+            override fun onBufferReceived(bytes: ByteArray?) { println("onBufferReceived") }
+            override fun onEndOfSpeech() { println("onEndOfSpeech")
                 // changing the color of your mic icon to
                 // gray to indicate it is not listening or do something you want
             }
