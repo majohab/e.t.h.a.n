@@ -16,6 +16,18 @@ class Speech2TextTest {
     }
 
     @Test
+    fun get_onFinished_backend_initialized() {
+        speech2text.onFinished_backend_initialized = false
+        assertEquals(false, speech2text.onFinished_backend_initialized)
+    }
+
+    @Test
+    fun get_onError_backend_initialized() {
+        speech2text.onError_backend_initialized = false
+        assertEquals(false, speech2text.onFinished_backend_initialized)
+    }
+
+    @Test
     fun initialization_onFinsihed_backend_initialized(){
         assertEquals(true, speech2text.onError_backend_initialized)
     }

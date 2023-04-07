@@ -16,7 +16,16 @@ object Speech2Text {
     lateinit var onError_backend: (error: Int) -> Unit
 
     var onFinished_backend_initialized = false
+        get() = field
+        set(value) {
+            field = value
+        }
+
     var onError_backend_initialized = false
+        get() = field
+        set(value) {
+            field = value
+        }
 
     fun setCallback(onFinished_backend: (input: String) -> Unit)
     {
