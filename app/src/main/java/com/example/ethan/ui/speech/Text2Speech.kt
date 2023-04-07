@@ -11,7 +11,12 @@ object Text2Speech {
     private var  textToSpeech:TextToSpeech? = null
 
     lateinit var onFinished: () -> Unit
+
     var onFinished_initialized = false
+        get() = field
+        set(value) {
+            field = value
+        }
 
     var utteranceProgressListener = object: UtteranceProgressListener() {
         override fun onStart(p0: String?) {}
