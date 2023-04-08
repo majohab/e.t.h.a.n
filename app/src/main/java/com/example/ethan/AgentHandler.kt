@@ -37,7 +37,7 @@ object AgentHandler : Thread() {
             for (entry in remainingTimes) {
                 remainingTimes[entry.key] = getRemainingTimeString(entry.key)
             }
-            sleep(500)
+            sleep(5000)
         }
     }
 
