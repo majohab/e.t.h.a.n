@@ -7,6 +7,7 @@ import java.net.URL
 
 abstract class AbstractConnector {
     private val restInterface = RestInterface()
+        get() = field
     abstract val url: String
 
     public fun get(): JSONObject{
