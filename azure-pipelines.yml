@@ -14,14 +14,11 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      $gradlePropertiesFilePath = "$(System.DefaultWorkingDirectory)/gradle.properties"
-      $apiKeyAlphavantage = "$(API_KEY_ALPHAVANTAGE)"
-      $apiKeyNews = "$(API_KEY_NEWS)"
-      $apiKeyRecipe = "$(API_KEY_RECIPE)"
-      
-      Add-Content -Path $gradlePropertiesFilePath -Value "API_KEY_ALPHAVANTAGE=$apiKeyAlphavantage"
-      Add-Content -Path $gradlePropertiesFilePath -Value "API_KEY_NEWS=$apiKeyNews"
-      Add-Content -Path $gradlePropertiesFilePath -Value "API_KEY_RECIPE=$apiKeyRecipe"
+      $content = 'API_KEY_ALPHAVANTAGE=$env:API_KEY_ALPHAVANTAGE' + "`n" +
+                 'API_KEY_NEWS=$env:API_KEY_NEWS' + "`n" +
+                 'API_KEY_RECIPE=$env:API_KEY_RECIPE' + "`n"
+
+      Set-Content -Path "$(System.DefaultWorkingDirectory)/local.properties" -Value $content
 
 - task: Gradle@2
   inputs:
