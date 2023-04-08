@@ -10,6 +10,19 @@ pool:
   vmImage: 'macos-latest'
 
 steps:
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $gradlePropertiesFilePath = "$(System.DefaultWorkingDirectory)/gradle.properties"
+      $apiKeyAlphavantage = "$(API_KEY_ALPHAVANTAGE)"
+      $apiKeyNews = "$(API_KEY_NEWS)"
+      $apiKeyRecipe = "$(API_KEY_RECIPE)"
+      
+      Add-Content -Path $gradlePropertiesFilePath -Value "API_KEY_ALPHAVANTAGE=$apiKeyAlphavantage"
+      Add-Content -Path $gradlePropertiesFilePath -Value "API_KEY_NEWS=$apiKeyNews"
+      Add-Content -Path $gradlePropertiesFilePath -Value "API_KEY_RECIPE=$apiKeyRecipe"
+
 - task: Gradle@2
   inputs:
     workingDirectory: '$(system.defaultWorkingDirectory)/app'
