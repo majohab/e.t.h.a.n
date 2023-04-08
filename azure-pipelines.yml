@@ -14,7 +14,7 @@ steps:
   inputs:
     workingDirectory: '$(system.defaultWorkingDirectory)/app'
     gradleWrapperFile: 'gradlew'
-    gradleOptions: '-Xmx3072m'
+    gradleOptions: '-Xmx3072m -PAPI_KEY_ALPHAVANTAGE=$(API_KEY_ALPHAVANTAGE) -PAPI_KEY_NEWS=$(API_KEY_NEWS) -PAPI_KEY_RECIPE=$(API_KEY_RECIPE)'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: '1.11'
     publishJUnitResults: true
