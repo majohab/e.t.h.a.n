@@ -4,35 +4,23 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ethan.api.connectors.*
 import com.example.ethan.AgentHandler
+import com.example.ethan.Preferences
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.ui.speech.Text2Speech
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
+
+    override var resTimeID = "time_GMD"
+    
     private var fortuneConnector = FortuneConnector()
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
     private var recipeConnector = RecipeConnector()
 
-    override fun getExecutionTime(): LocalDateTime {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime.of(
-                /* year = */ 2023,
-                /* month = */ 4,
-                /* dayOfMonth = */ 6,
-                /* hour = */ 12,
-                /* minute = */ 0,
-                /* second = */ 0,
-                /* nanoOfSecond = */ 0)
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-    }
-
     override fun executeUseCase() {
-
         println("GoodMorningDialogue Thread has been started!")
 
         // Request Recipe
