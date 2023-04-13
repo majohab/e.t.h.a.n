@@ -25,7 +25,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                     5 -> "looking to trade"
                     6 -> "looking to play"
                     else -> {}
-                }
+                } + ". "
             }
         }
 
@@ -43,6 +43,17 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
             UserInputOption(
                 tokens = listOf("good", "fine", "okay", "decent", "medium", "mediocre", "eher so mittel"),
                 response = "I'm glad your day was okay. I think tomorrow will be even better!"
+            )
+        ))
+
+        speakAndHearSelectiveInput(question = "Do you want to know what your Steam-friends are up to?", options = listOf(
+            UserInputOption(
+                tokens = positiveTokens,
+                response = steamfriends_string
+            ),
+            UserInputOption(
+                tokens = negativeTokens,
+                response = "Okay. They are probably having fun without you nerd."
             )
         ))
     }
