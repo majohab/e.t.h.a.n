@@ -93,7 +93,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
             }
 
             if (response == null)
-                runBlocking { speak("I didn't quite catch that, please repeat your response.") }
+                runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
         }
 
         runBlocking { speak(response) }
