@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.ethan.api.connectors.*
 import com.example.ethan.AgentHandler
+import com.example.ethan.Preferences
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.ui.speech.Text2Speech
 import kotlinx.coroutines.runBlocking
@@ -32,7 +33,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     }
 
     override fun executeUseCase() {
-
         println("GoodMorningDialogue Thread has been started!")
 
         // Request Recipe
