@@ -1,16 +1,13 @@
 package com.example.ethan.usecases
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.ethan.Preferences
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     // Volatile disables caching for those variables CPU-internally -> faster execution
@@ -24,6 +21,9 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     var lastUserVoiceInput: String = ""
 
     abstract var resTimeID: String
+
+    var positiveTokens = listOf("yes", "yeah", "yep", "yup", "sure")
+    var negativeTokens = listOf("no", "nah", "no way", "never", "save nicht")
 
     fun getExecutionTime() : LocalTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -80,8 +80,31 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
         }
     }
 
-    fun checkIfContainsWord(input: String, vararg tokens: String) : Boolean {
-        var input = input.lowercase()
+    fun speakAndHearSelectiveInput(question: String, options: List<UserInputOption>) {
+
+        runBlocking { askForUserVoiceInput(question) }
+
+        var response: String? = null
+        while (response == null) {
+            for (option in options) {
+                if (checkIfContainsWord(option.tokens)) {
+                    response = option.response
+                }
+            }
+
+            if (response == null)
+                runBlocking { speak("I didn't quite catch that, please repeat your response.") }
+        }
+
+        runBlocking { speak(response) }
+    }
+
+    fun checkIfContainsWord(vararg tokens: String) : Boolean {
+        return checkIfContainsWord(tokens.asList())
+    }
+
+    private fun checkIfContainsWord(tokens: List<String>) : Boolean {
+        var input = lastUserVoiceInput.lowercase()
         for (token in tokens) {
             if (input.contains(token.lowercase()))
                 return true
@@ -89,11 +112,13 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
         return false
     }
 
-    fun checkIfPositive(input: String) : Boolean {
-        return checkIfContainsWord(input, "yes", "yeah", "yep", "yup", "sure")
+    fun checkIfPositive() : Boolean {
+        return checkIfContainsWord(positiveTokens)
     }
 
-    fun checkIfNegative(input: String) : Boolean {
-        return checkIfContainsWord(input, "no", "nah", "no way", "never", "save nicht")
+    fun checkIfNegative() : Boolean {
+        return checkIfContainsWord(negativeTokens)
     }
 }
+
+class UserInputOption(var tokens: List<String>, var response: String)

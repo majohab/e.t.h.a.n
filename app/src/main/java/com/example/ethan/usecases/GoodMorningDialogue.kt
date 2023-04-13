@@ -1,12 +1,7 @@
 package com.example.ethan.usecases
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.ethan.api.connectors.*
-import com.example.ethan.AgentHandler
-import com.example.ethan.Preferences
-import com.example.ethan.ui.speech.Speech2Text
-import com.example.ethan.ui.speech.Text2Speech
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 
@@ -74,35 +69,41 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         }
 
         // Greet user with all gather information
-        runBlocking { speak("Good Morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")}
+        runBlocking { speak("Good morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")}
         runBlocking { speak("$eventsFreeBusy")}
         runBlocking { speak("Here is your daily update for your preferred stocks: $stocknews_string")}
         runBlocking { speak("Now your daily news: $news_string")}
 
         // Ask for his preferred transportation method
-        runBlocking { askForUserVoiceInput("What is your favorite type of transportation for this day?") }
+        speakAndHearSelectiveInput(question = "What is your favorite type of transportation for this day?", options = listOf(
+            UserInputOption(
+                tokens = listOf("bus"),
+                response = "You successfully set bus as your favourite transportation method for today."
+            ),
+            UserInputOption(
+                tokens = listOf("train"),
+                response = "You successfully set train as your favourite transportation method for today."
+            ),
+            UserInputOption(
+                tokens = listOf("bike", "drahtesel"),
+                response = "You successfully set bike as your favourite transportation method for today."
+            ),
+            UserInputOption(
+                tokens = listOf("foot", "walk"),
+                response = "You successfully set walking as your favourite transportation method for today."
+            )
+        ))
 
-        if (checkIfContainsWord("bus")) {
-            runBlocking { speak("You successfully set bus as your favourite transportation method for today.") }
-        }else if(checkIfContainsWord("train")){
-            runBlocking { speak("You successfully set train as your favourite transportation method for today.") }
-        }else if(checkIfContainsWord("bike")){
-                runBlocking { speak("You successfully set bike as your favourite transportation method for today.") }
-        }else if(checkIfContainsWord("foot")){
-                runBlocking { speak("You successfully set walking as your favourite transportation method for today.") }
-        }
-
-        var yesOrNo = false
-        runBlocking { askForUserVoiceInput("Okay cool. Do you want to hear your fortune for today?") }
-        while (!(checkIfPositive(lastUserVoiceInput) || checkIfNegative(lastUserVoiceInput)))
-            runBlocking { askForUserVoiceInput("I didn't understand you. Please repeat. ") }
-
-        if (checkIfPositive(lastUserVoiceInput)) {
-            runBlocking { speak(fortune_string) }
-        } else if (checkIfNegative(lastUserVoiceInput)) {
-            runBlocking { speak("...") }
-            runBlocking { speak("My personal guess is that you won't have any luck today.") }
-        }
+        speakAndHearSelectiveInput(question = "Okay cool. Do you want to hear your fortune for today?", options = listOf(
+            UserInputOption(
+                tokens = positiveTokens,
+                response = fortune_string
+            ),
+            UserInputOption(
+                tokens = negativeTokens,
+                response = "...My personal guess is that you won't have any luck today."
+            )
+        ))
 
         runBlocking { speak("Have a great day!") }
         // Say how long it'll take the user to its destination
