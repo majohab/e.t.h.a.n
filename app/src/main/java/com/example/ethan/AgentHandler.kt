@@ -9,6 +9,7 @@ import com.example.ethan.usecases.LunchBreakConsultant
 import com.example.ethan.usecases.NavigationAssistance
 import com.example.ethan.usecases.SocialAssistance
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.concurrent.thread
 
@@ -37,7 +38,7 @@ object AgentHandler : Thread() {
             for (entry in remainingTimes) {
                 remainingTimes[entry.key] = getRemainingTimeString(entry.key)
             }
-            sleep(500)
+            sleep(5000)
         }
     }
 
@@ -75,13 +76,15 @@ object AgentHandler : Thread() {
 
     private fun getRemainingTimeString (useCase: UseCase) : String {
 
-        val nextExecTime = if (useCase == UseCase.GoodMorningDialogue) goodMorningDialogue.getExecutionTime()
-                            else if (useCase == UseCase.NavigationAssistance) navigationAssistance.getExecutionTime()
-                            else if (useCase == UseCase.LunchBreakConsultant) lunchBreakConsultant.getExecutionTime()
-                            else socialAssistance.getExecutionTime()
+        val nextExecTime : LocalTime = when (useCase) {
+            UseCase.GoodMorningDialogue -> goodMorningDialogue.getExecutionTime()
+            UseCase.NavigationAssistance -> navigationAssistance.getExecutionTime()
+            UseCase.LunchBreakConsultant -> lunchBreakConsultant.getExecutionTime()
+            else -> socialAssistance.getExecutionTime()
+        }
 
         val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime.now()
+            LocalTime.now()
         } else {
             TODO("VERSION.SDK_INT < O")
         }

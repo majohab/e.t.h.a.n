@@ -1,4 +1,6 @@
 {
-  "time1": "a",
-  "time2": "b"
+  "time_GMD": "08:00",
+  "time_LBC": "12:00",
+  "time_NA": "15:00",
+  "time_SA": "18:00"
 }

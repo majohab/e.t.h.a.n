@@ -5,14 +5,14 @@ import com.google.gson.reflect.TypeToken
 object Preferences {
 
     var initialized = false
-    lateinit var stringList: List<String>
+    lateinit var map: Map<String, String>
 
     private fun initialize() {
 
         var file = Preferences::class.java.getResource("/preferences.json")?.readText()
         val listString = object : TypeToken<Map<String, String>>() {}.type
-        var a: Map<String, String> = Gson().fromJson(file, listString)
-        println(a)
+        map = Gson().fromJson(file, listString)
+        println(map)
 
         initialized = true
     }
@@ -21,6 +21,6 @@ object Preferences {
         if (!initialized)
             initialize()
 
-        return ""
+        return map[key] ?: return "NO KEY '$key' SPECIFIED"
     }
 }

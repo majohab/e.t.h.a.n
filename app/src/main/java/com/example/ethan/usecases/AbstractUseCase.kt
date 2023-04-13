@@ -1,11 +1,16 @@
 package com.example.ethan.usecases
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.example.ethan.Preferences
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     // Volatile disables caching for those variables CPU-internally -> faster execution
@@ -18,7 +23,15 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     @Volatile
     var lastUserVoiceInput: String = ""
 
-    abstract fun getExecutionTime() : LocalDateTime
+    abstract var resTimeID: String
+
+    fun getExecutionTime() : LocalTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalTime.parse(Preferences.get(resTimeID))
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
+    }
 
     abstract fun executeUseCase()
 
