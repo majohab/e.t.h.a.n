@@ -1,13 +1,13 @@
 package com.example.ethan.usecases
 
-import android.os.Build
-import java.time.LocalDateTime
+import com.example.ethan.api.connectors.OpenStreetMapApi
 
 class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
     override var resTimeID = "time_LBC"
-
+    private var openStreetMapRestaurant = OpenStreetMapApi()
     override fun executeUseCase() {
-        TODO("Not yet implemented")
+        val restaurants = openStreetMapRestaurant.findNearestRestaurants(37.7749, -122.4194, 1000 , "italian")
+        println(restaurants)
     }
 }

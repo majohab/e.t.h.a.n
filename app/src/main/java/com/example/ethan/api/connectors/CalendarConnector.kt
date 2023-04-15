@@ -36,6 +36,7 @@ class CalendarConnector : AbstractConnector(){
         val response = VFreeBusy(request, calendar.components)
 
         val startTimes = response.getProperties("FREEBUSY").toString().removePrefix("FREEBUSY:").removeSuffix("\n").split(",")
+
         var result = ""
         startTimes.forEachIndexed { index, element ->
             val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneId.systemDefault())
