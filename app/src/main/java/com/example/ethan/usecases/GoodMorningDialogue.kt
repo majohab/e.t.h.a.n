@@ -29,10 +29,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         // Request API 1
         val fortune_json = fortuneConnector.get()
         val fortune_string = fortune_json.getString("fortune")
-
         // Reqeuest API 0
         val eventsFreeBusy = calendarConnector.get()["answer"]
-
         // Request API 2
         val news_json = newsConnector.get()
         println(news_json)

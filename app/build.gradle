@@ -28,6 +28,7 @@ android {
         buildConfigField "String", "API_KEY_STEAM", "\"${properties.getProperty("API_KEY_STEAM")}\""
         buildConfigField "String", "API_KEY_OPENROUTE", "\"${properties.getProperty("API_KEY_OPENROUTE")}\""
         buildConfigField "String", "API_KEY_WEATHER", "\"${properties.getProperty("API_KEY_WEATHER")}\""
+        buildConfigField "String", "API_KEY_Routes", "\"${properties.getProperty("API_KEY_Routes")}\""
     }
 
     buildTypes {
