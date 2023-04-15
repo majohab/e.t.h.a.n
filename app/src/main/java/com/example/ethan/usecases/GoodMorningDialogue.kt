@@ -3,6 +3,7 @@ package com.example.ethan.usecases
 import android.os.Build
 import com.example.ethan.api.connectors.*
 import kotlinx.coroutines.runBlocking
+import org.json.JSONObject
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
@@ -19,19 +20,30 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println("GoodMorningDialogue Thread has been started!")
 
         // Request Recipe
-        val recipe_json = recipeConnector.search("pasta")
-        val recipe_one = recipe_json.getJSONArray("results").getJSONObject(0)
-        val recipe_one_id = recipe_one.getInt("id")
-        val recipe_recipe = recipeConnector.get(recipe_one_id)
-        val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
-        println(recipe_sourceUrl)
+        //val recipe_json = recipeConnector.search("pasta")
+        //val recipe_one = recipe_json.getJSONArray("results").getJSONObject(0)
+        //val recipe_one_id = recipe_one.getInt("id")
+        //val recipe_recipe = recipeConnector.get(recipe_one_id)
+        //val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
+        //println(recipe_sourceUrl)
 
         // Request API 1
         val fortune_json = fortuneConnector.get()
         val fortune_string = fortune_json.getString("fortune")
 
         // Reqeuest API 0
-        val eventsFreeBusy = calendarConnector.get()["answer"]
+        val eventsFreeBusy_json = calendarConnector.get()
+        val eventsTotal = eventsFreeBusy_json.getInt("total")
+        eventsFreeBusy_json.remove("total")
+        var eventsResponseString = ""
+        if (eventsTotal == 0){
+            eventsResponseString += "Enjoy your free time."
+        }else {
+            eventsFreeBusy_json.keys().forEach { key ->
+                val event: JSONObject = eventsFreeBusy_json.getJSONObject(key)
+                eventsResponseString += "Your $key. event is about to start at ${event.get("startHour")}:${event.get("startMinute")}. "
+            }
+        }
 
         // Request API 2
         val news_json = newsConnector.get()
@@ -68,9 +80,9 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             TODO("VERSION.SDK_INT < O")
         }
 
-        // Greet user with all gather information
+        // Greet user with all gathered information
         runBlocking { speak("Good morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")}
-        runBlocking { speak("$eventsFreeBusy")}
+        runBlocking { speak("You have a total of $eventsTotal events for today. $eventsResponseString")}
         runBlocking { speak("Here is your daily update for your preferred stocks: $stocknews_string")}
         runBlocking { speak("Now your daily news: $news_string")}
 
