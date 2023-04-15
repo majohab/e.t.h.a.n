@@ -10,6 +10,18 @@ pool:
   vmImage: 'macos-latest'
 
 steps:
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      $content = 'API_KEY_ALPHAVANTAGE=$env:API_KEY_ALPHAVANTAGE' + "`n" +
+                 'API_KEY_NEWS=$env:API_KEY_NEWS' + "`n" +
+                 'API_KEY_RECIPE=$env:API_KEY_RECIPE' + "`n"
+                 'API_KEY_OPENROUTE=$env:API_KEY_OPENROUTE' + "`n"
+                 'API_KEY_WEATHER=$env:API_KEY_WEATHER' + "`n"
+
+      Set-Content -Path "$(System.DefaultWorkingDirectory)/local.properties" -Value $content
+
 - task: Gradle@2
   inputs:
     workingDirectory: '$(system.defaultWorkingDirectory)/app'

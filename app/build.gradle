@@ -24,7 +24,10 @@ android {
 
         buildConfigField "String", "API_KEY_ALPHAVANTAGE", "\"${properties.getProperty("API_KEY_ALPHAVANTAGE")}\""
         buildConfigField "String", "API_KEY_NEWS", "\"${properties.getProperty("API_KEY_NEWS")}\""
-        buildConfigField "String", "API_KEY_Routes", "\"${properties.getProperty("API_KEY_Routes")}\""
+        buildConfigField "String", "API_KEY_RECIPE", "\"${properties.getProperty("API_KEY_RECIPE")}\""
+        buildConfigField "String", "API_KEY_STEAM", "\"${properties.getProperty("API_KEY_STEAM")}\""
+        buildConfigField "String", "API_KEY_OPENROUTE", "\"${properties.getProperty("API_KEY_OPENROUTE")}\""
+        buildConfigField "String", "API_KEY_WEATHER", "\"${properties.getProperty("API_KEY_WEATHER")}\""
     }
 
     buildTypes {
@@ -62,17 +65,23 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.compose.material:material:1.2.0'
     implementation "androidx.compose.material:material-icons-extended:1.1.1"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4"
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation group: 'com.google.accompanist', name: 'accompanist-permissions', version: '0.29.2-rc'
-    implementation 'com.squareup.okhttp3:okhttp:3.8.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'org.mnode.ical4j:ical4j:1.0.5'
     implementation 'backport-util-concurrent:backport-util-concurrent:3.1'
     implementation 'commons-codec:commons-codec:1.8'
     implementation 'commons-lang:commons-lang:2.6'
-    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

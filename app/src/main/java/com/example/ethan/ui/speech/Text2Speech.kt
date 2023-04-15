@@ -11,7 +11,12 @@ object Text2Speech {
     private var  textToSpeech:TextToSpeech? = null
 
     lateinit var onFinished: () -> Unit
+
     var onFinished_initialized = false
+        get() = field
+        set(value) {
+            field = value
+        }
 
     var utteranceProgressListener = object: UtteranceProgressListener() {
         override fun onStart(p0: String?) {}
@@ -50,7 +55,7 @@ object Text2Speech {
                 textToSpeech?.let()
                 {   t2s ->
                     t2s.language = Locale.US
-                    t2s.setSpeechRate(8.0f)
+                    t2s.setSpeechRate(1.0f)
                     t2s.setOnUtteranceProgressListener(utteranceProgressListener)
                     t2s.speak(
                         text,
