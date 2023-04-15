@@ -31,7 +31,8 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
 
         runBlocking { speak ("Good evening.") }
 
-        speakAndHearSelectiveInput(question = "How was your day?", options = listOf(
+        speakAndHearSelectiveInput(
+            question = "How was your day?", options = listOf(
             UserInputOption(
                 tokens = listOf("great", "superb", "super", "fantastic", "amazing", "stunning", "wonderful", "excellent"),
                 response = "Wow! That's great to hear!"
@@ -46,7 +47,8 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
             )
         ))
 
-        speakAndHearSelectiveInput(question = "Do you want to know what your Steam-friends are up to?", options = listOf(
+        speakAndHearSelectiveInput(
+            question = "Do you want to know what your Steam-friends are up to?", options = listOf(
             UserInputOption(
                 tokens = positiveTokens,
                 response = steamfriends_string

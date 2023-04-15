@@ -84,19 +84,22 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
         runBlocking { askForUserVoiceInput(question) }
 
-        var response: String? = null
-        while (response == null) {
+        var success: Boolean = false
+        while (!success) {
             for (option in options) {
                 if (checkIfContainsWord(option.tokens)) {
-                    response = option.response
+                    success = true
+                    if(option.response != null){
+                        runBlocking { speak(option.response!!) }
+                    }
+                    option.onSuccess?.invoke()
+                    break
                 }
             }
 
-            if (response == null)
+            if (!success)
                 runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
         }
-
-        runBlocking { speak(response) }
     }
 
     fun checkIfContainsWord(vararg tokens: String) : Boolean {
@@ -121,4 +124,4 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 }
 
-class UserInputOption(var tokens: List<String>, var response: String)
+class UserInputOption(var tokens: List<String>, var response: String? = null, var onSuccess: (() -> Unit?)? = null)
