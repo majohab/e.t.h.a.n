@@ -21,7 +21,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         println(weatherJSON)
 
         var transportation_mode = SharedPrefs.getString("transportation", "foot-walking")
-        println(transportation_mode)
 
         val eventsFreeBusy_json = calendarConnector.get()
         var timeToGo = 0
