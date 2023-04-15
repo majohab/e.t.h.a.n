@@ -4,7 +4,6 @@ import android.os.Build
 import com.example.ethan.api.connectors.*
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
-import java.time.Instant
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
@@ -100,10 +99,12 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         runBlocking { speak("Now your daily news: $news_string")}
 
         // Ask for his preferred transportation method
-        speakAndHearSelectiveInput(question = "What is your favorite type of transportation for this day?", options = listOf(
+        speakAndHearSelectiveInput(
+            question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
                 tokens = listOf("bus"),
-                response = "You successfully set bus as your favourite transportation method for today."
+                response = "You successfully set bus as your favourite transportation method for today.",
+                onSuccess = {}
             ),
             UserInputOption(
                 tokens = listOf("train"),
@@ -119,10 +120,11 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             )
         ))
 
-        speakAndHearSelectiveInput(question = "Okay cool. Do you want to hear your fortune for today?", options = listOf(
+        speakAndHearSelectiveInput(
+            question = "Okay cool. Do you want to hear your fortune for today?", options = listOf(
             UserInputOption(
                 tokens = positiveTokens,
-                response = fortune_string
+                response = fortune_string,
             ),
             UserInputOption(
                 tokens = negativeTokens,

@@ -47,7 +47,8 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
         }
         if (changeQuestion != "") {
-            speakAndHearSelectiveInput(question = changeQuestion, options = listOf(
+            speakAndHearSelectiveInput(
+                question = changeQuestion, options = listOf(
                 UserInputOption(
                     tokens = positiveTokens,
                     response = "You successfully set bus as your favourite transportation method for today."
