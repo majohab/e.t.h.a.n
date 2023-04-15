@@ -124,4 +124,4 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 }
 
-class UserInputOption(var tokens: List<String>, var response: String?, var onSuccess: (() -> Unit?)? = null)
+class UserInputOption(var tokens: List<String>, var response: String? = null, var onSuccess: (() -> Unit?)? = null)

@@ -31,7 +31,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
         timeToGo = 11//getTimeToNextEvent(event, "foot-walking")
         var routeDuration = getRouteTimeToNextEvent(event, transportation_mode)
-        var askToWalk = false
 
         if(timeToGo > 15){ return }
         runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $timeToGo minutes to catch your next event.")}
@@ -44,7 +43,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     question = "Walking to your next event would only take $routeDuration minutes. Do you want to walk instead of your current transportation method?", options = listOf(
                         UserInputOption(
                             tokens = positiveTokens,
-                            response = "",
                             onSuccess = {
                                 timeToGo = getTimeToNextEvent(event, "foot-walking")
                                 runBlocking {speak("Okay. To catch the upcoming event by foot you now need to leave in $timeToGo minutes. ")}
@@ -58,13 +56,38 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
         }else {
             if (routeDuration > 60) {
-                changeQuestion = "Your current type of transportation is set to walking. This would take more than 60 minutes as of now. Do you want to change your type of transportation for this event?"
+                speakAndHearSelectiveInput(
+                    question = "Your current type of transportation is set to walking. This would take more than 60 minutes as of now. Do you want to change your type of transportation for this event? If so, please specify how you want to travel. ", options = listOf(
+                        UserInputOption(
+                            tokens = listOf("car", "auto", "taxi"),
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "driving-car")
+                                runBlocking {speak("Okay. To catch the upcoming event by car you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = listOf("wheelchair", "rollstuhl", "rollie"),
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "wheelchair")
+                                runBlocking {speak("Okay. To catch the upcoming event by wheelchair you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = listOf("bike", "drahtesel"),
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "cycling-road")
+                                runBlocking {speak("Okay. To catch the upcoming event by bike you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = negativeTokens,
+                            response = "I understand. I won't change anything. You still need to leave withinin $timeToGo minutes. "
+                        ),
+                    ))
             }
         }
 
-        if (changeQuestion != "") {
-
-        }
+        
     }
 
     private fun getTimeToNextEvent(event: JSONObject, mode: String): Int{
