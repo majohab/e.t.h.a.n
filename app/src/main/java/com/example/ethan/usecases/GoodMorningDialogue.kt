@@ -4,6 +4,7 @@ import android.os.Build
 import com.example.ethan.api.connectors.*
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
+import java.time.Instant
 import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
@@ -15,6 +16,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
     private var recipeConnector = RecipeConnector()
+    private var navigationConnector = OpenRouteConnector()
 
     override fun executeUseCase() {
         println("GoodMorningDialogue Thread has been started!")
@@ -34,14 +36,25 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         // Reqeuest API 0
         val eventsFreeBusy_json = calendarConnector.get()
         val eventsTotal = eventsFreeBusy_json.getInt("total")
-        eventsFreeBusy_json.remove("total")
         var eventsResponseString = ""
         if (eventsTotal == 0){
             eventsResponseString += "Enjoy your free time."
         }else {
-            eventsFreeBusy_json.keys().forEach { key ->
-                val event: JSONObject = eventsFreeBusy_json.getJSONObject(key)
+            val nextEventID: Int = eventsFreeBusy_json.getInt("nextEventID")
+            var timeToGo = 0
+            eventsFreeBusy_json.getJSONObject("events").keys().forEach { key ->
+                val event: JSONObject = eventsFreeBusy_json.getJSONObject("events").getJSONObject(key)
                 eventsResponseString += "Your $key. event is about to start at ${event.get("startHour")}:${event.get("startMinute")}. "
+                if(nextEventID.toString() == key) {
+                    timeToGo = getTimeToNextEvent(event)
+                }
+            }
+            if (timeToGo > 0 && nextEventID != -1){
+                eventsResponseString += "According to your favorite type of transportation for this day you need to leave in: ${(timeToGo/60)} hours and ${timeToGo%60} minutes for your next event. "
+            }else if (nextEventID != -1){
+                eventsResponseString += "According to your favorite type of transportation for this day you need to leave immediately for your next event. "
+            }else {
+                eventsResponseString += "All your events for today are already completed. Enjoy your end of work. "
             }
         }
 
@@ -122,5 +135,17 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
 
         println("GoodMorningDialogue Thread is about to end!")
         onFinishedCallback()
+    }
+
+    private fun getTimeToNextEvent(event: JSONObject): Int{
+        val hour = event.getInt("startHour")
+        val minute = event.getInt("startMinute")
+
+        val routeDurationMin = navigationConnector.getRouteDuration("48.734276, 9.110791", event.getString("location"), "foot-walking")
+
+        val diffHour = hour - LocalDateTime.now().hour
+        val diffMinute = (minute - LocalDateTime.now().minute) + (diffHour * 60)
+
+        return diffMinute - routeDurationMin.toInt()
     }
 }

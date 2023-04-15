@@ -97,7 +97,7 @@ class OpenRouteConnector() {
         val url = "https://api.openrouteservice.org/v2/directions/$mode?".toHttpUrlOrNull()!!.newBuilder()
             .addEncodedQueryParameter("api_key", BuildConfig.API_KEY_OPENROUTE)
             .addEncodedQueryParameter("start", origin)
-            .addEncodedQueryParameter("end", "${destinationCoordinate[1]},${destinationCoordinate[0]}")
+            .addEncodedQueryParameter("end", destination)//"${destinationCoordinate[1]},${destinationCoordinate[0]}")
             .build()
 
         val request = Request.Builder()
