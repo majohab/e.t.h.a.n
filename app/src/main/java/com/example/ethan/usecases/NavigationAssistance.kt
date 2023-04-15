@@ -16,8 +16,8 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     private var calendarConnector = CalendarConnector()
 
     override fun executeUseCase() {
-        //val weatherJSON = weatherApiConnector.getCurrentWeather(48.783821, 9.215519)
-        //println(weatherJSON)
+        val weatherJSON = weatherApiConnector.getCurrentWeather(48.783821, 9.215519)
+        println(weatherJSON)
 
         var transportation_mode = "foot-walking"
 
@@ -35,7 +35,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         if(timeToGo > 15){ return }
         runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $timeToGo minutes to catch your next event.")}
 
-        var changeQuestion = ""
         if(transportation_mode != "foot-walking"){
             routeDuration = getTimeToNextEvent(event, "foot-walking")
             if (routeDuration < 10){
@@ -87,7 +86,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
         }
 
-        
+
     }
 
     private fun getTimeToNextEvent(event: JSONObject, mode: String): Int{
@@ -104,5 +103,9 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     private fun getRouteTimeToNextEvent(event: JSONObject, mode: String): Int{
         return navigationConnector.getRouteDuration("48.734276, 9.110791", event.getString("location"), mode).toInt()
+    }
+
+    private fun checkWeather(){
+
     }
 }
