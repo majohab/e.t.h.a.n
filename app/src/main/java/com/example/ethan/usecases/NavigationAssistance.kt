@@ -3,6 +3,7 @@ package com.example.ethan.usecases
 import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.OpenRouteConnector
 import com.example.ethan.api.connectors.OpenWeatherApiConnector
+import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
@@ -19,7 +20,8 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val weatherJSON = weatherApiConnector.getCurrentWeather(48.783821, 9.215519)
         println(weatherJSON)
 
-        var transportation_mode = "foot-walking"
+        var transportation_mode = SharedPrefs.getString("transportation", "foot-walking")
+        println(transportation_mode)
 
         val eventsFreeBusy_json = calendarConnector.get()
         var timeToGo = 0

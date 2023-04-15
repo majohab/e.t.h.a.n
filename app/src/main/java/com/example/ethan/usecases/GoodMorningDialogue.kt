@@ -2,6 +2,7 @@ package com.example.ethan.usecases
 
 import android.os.Build
 import com.example.ethan.api.connectors.*
+import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
@@ -104,19 +105,22 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             UserInputOption(
                 tokens = listOf("bus"),
                 response = "You successfully set bus as your favourite transportation method for today.",
-                onSuccess = {}
+                onSuccess = { SharedPrefs.setString("transportation", "bus") }
             ),
             UserInputOption(
                 tokens = listOf("train"),
-                response = "You successfully set train as your favourite transportation method for today."
+                response = "You successfully set train as your favourite transportation method for today.",
+                onSuccess = { SharedPrefs.setString("transportation", "train") }
             ),
             UserInputOption(
                 tokens = listOf("bike", "drahtesel"),
-                response = "You successfully set bike as your favourite transportation method for today."
+                response = "You successfully set bike as your favourite transportation method for today.",
+                onSuccess = { SharedPrefs.setString("transportation", "bike") }
             ),
             UserInputOption(
                 tokens = listOf("foot", "walk"),
-                response = "You successfully set walking as your favourite transportation method for today."
+                response = "You successfully set walking as your favourite transportation method for today.",
+                onSuccess = { SharedPrefs.setString("transportation", "foot-walking") }
             )
         ))
 
