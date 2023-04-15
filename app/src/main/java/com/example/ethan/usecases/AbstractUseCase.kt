@@ -1,7 +1,7 @@
 package com.example.ethan.usecases
 
 import android.os.Build
-import com.example.ethan.Preferences
+import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
@@ -27,7 +27,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
     fun getExecutionTime() : LocalTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(Preferences.get(resTimeID))
+            LocalTime.parse(SharedPrefs.getString(resTimeID))
         } else {
             TODO("VERSION.SDK_INT < O")
         }

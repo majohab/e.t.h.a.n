@@ -1,7 +1,7 @@
 package com.example.ethan.usecases
 
-import com.example.ethan.Preferences
 import com.example.ethan.api.connectors.SteamFriendsConnector
+import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
 
 class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
@@ -11,7 +11,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
     private var steamFriendsConnector = SteamFriendsConnector()
 
     override fun executeUseCase() {
-        val steamfriends_list = steamFriendsConnector.get(Preferences.get("steam_id"))
+        val steamfriends_list = steamFriendsConnector.get(SharedPrefs.getString("steam_id"))
         var steamfriends_string = ""
 
         for (pair in steamfriends_list) {
