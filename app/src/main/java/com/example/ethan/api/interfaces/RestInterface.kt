@@ -13,15 +13,15 @@ class RestInterface {
     @Throws(IOException::class)
     fun get(url: String?): String? {
         val request = Request.Builder()
-            .url(url)
+            .url(url.toString())
             .build()
-        client.newCall(request).execute().use { response -> return response.body()!!.string() }
+        client.newCall(request).execute().use { response -> return response.body!!.string() }
     }
 
     fun post(url: String?): String? {
         val request = Request.Builder()
-            .url(url)
+            .url(url.toString())
             .build()
-        client.newCall(request).execute().use { response -> return response.body()!!.string() }
+        client.newCall(request).execute().use { response -> return response.body!!.string() }
     }
 }
