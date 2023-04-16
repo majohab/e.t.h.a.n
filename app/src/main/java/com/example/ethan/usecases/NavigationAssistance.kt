@@ -12,7 +12,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     override var shortForm: String = "NA"
     private val route = RouteConnector()
-    private val openStreet = OpenStreetConector()
+    private val openStreet = OpenStreetConnector()
     private var weatherApiConnector = OpenWeatherApiConnector()
     private var calendarConnector = CalendarConnector()
 
