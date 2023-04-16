@@ -58,5 +58,6 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 response = "Okay. They are probably having fun without you nerd."
             )
         ))
+        onFinishedCallback()
     }
 }
