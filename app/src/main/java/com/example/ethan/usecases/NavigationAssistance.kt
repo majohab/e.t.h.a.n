@@ -95,7 +95,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     }
 
-    private fun getWeather(targetLocation: List<String>) :String {
+    private fun getWeather(targetLocation: List<String>): String {
         val weatherJSON = weatherApiConnector.getCurrentWeather(targetLocation[1].toDouble(), targetLocation[0].toDouble())
         val weather = weatherJSON!!.getJSONArray("weather").getJSONObject(0)
         return weather.getString("main")
