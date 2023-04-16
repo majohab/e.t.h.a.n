@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.example.ethan.notifications.Notifier" />
+        <receiver android:name="com.example.ethan.notifications.AlarmsReceiver" />
     </application>
 
     <queries>
