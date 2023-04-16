@@ -19,7 +19,7 @@ class OpenStreetConectorTest{
 
     @Test
     fun parseData(){
-
+        val targetLocations = openStreetConector.getDynamic("https://nominatim.openstreetmap.org/search/Unter%20den%20Linden%201%20Berlin?format=json&addressdetails=1&limit=1&polygon_svg=1")
 
     }
 }

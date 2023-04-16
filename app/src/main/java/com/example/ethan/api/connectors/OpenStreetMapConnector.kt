@@ -10,7 +10,7 @@ data class OsmRestaurant(val name: String, val lat: Double, val lon: Double, val
 
 class OpenStreetMapApi {
     private val httpClient = OkHttpClient()
-    private val objectMapper = ObjectMapper()
+    //private val objectMapper = ObjectMapper()
 
     fun findNearestRestaurants(latitude: Double, longitude: Double, radius: Int, cuisine: String? = null): List<OsmRestaurant> {
         val query = """
