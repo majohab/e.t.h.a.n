@@ -3,6 +3,7 @@ package com.example.ethan.usecases
 import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.OpenStreetMapApi
 import com.example.ethan.sharedprefs.SharedPrefs
+import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 
 class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
@@ -80,6 +81,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             question = "What cuisine do you have in mind for today?", options = options
         )
 
-        runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by " + tranportationTra) }
+        runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by " + transportTranslations[SharedPrefs.getTransportation()]) }
     }
 }
