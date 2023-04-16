@@ -9,8 +9,8 @@ import java.time.LocalDateTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
 
-    override var resTimeID = "time_GMD"
-    
+    override var shortForm: String = "GMD"
+
     private var fortuneConnector = FortuneConnector()
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()

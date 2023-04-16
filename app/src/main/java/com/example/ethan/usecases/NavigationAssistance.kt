@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 
 class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
 
-    override var resTimeID = "time_NA"
+    override var shortForm: String = "NA"
     private val route = RouteConnector()
     private val openStreet = OpenStreetConector()
     private var weatherApiConnector = OpenWeatherApiConnector()

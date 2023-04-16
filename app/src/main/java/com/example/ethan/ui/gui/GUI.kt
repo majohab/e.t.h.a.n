@@ -1,7 +1,6 @@
 package com.example.ethan.ui.gui
 
 import android.Manifest
-import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -279,7 +278,7 @@ object GUI : ComponentActivity() {
     fun FeatureItem(
         feature: Feature
     ) {
-        var remainingMinutes = AgentHandler.remainingTimes[feature.useCase]
+        var remainingMinutes = AgentHandler.remainingTimeStrings[feature.useCase]
 
         BoxWithConstraints(
             modifier = Modifier
@@ -353,7 +352,7 @@ object GUI : ComponentActivity() {
                         .padding(end = 60.dp)
                 )
                 Text(
-                    text = AgentHandler.remainingTimes[feature.useCase].toString(),
+                    text = AgentHandler.remainingTimeStrings[feature.useCase].toString(),
                     style = Typography.h4,
                     modifier = Modifier
                         .align(Alignment.TopEnd)

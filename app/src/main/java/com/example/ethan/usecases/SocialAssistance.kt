@@ -6,7 +6,7 @@ import kotlinx.coroutines.runBlocking
 
 class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
-    override var resTimeID = "time_SA"
+    override var shortForm: String = "SA"
 
     private var steamFriendsConnector = SteamFriendsConnector()
 

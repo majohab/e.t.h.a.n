@@ -7,6 +7,7 @@ import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
 import java.time.LocalTime
 
 abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
@@ -20,17 +21,39 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     @Volatile
     var lastUserVoiceInput: String = ""
 
-    abstract var resTimeID: String
+    abstract var shortForm: String
 
     var positiveTokens = listOf("yes", "yeah", "yep", "yup", "sure")
     var negativeTokens = listOf("no", "nah", "no way", "never", "save nicht")
 
     fun getExecutionTime() : LocalTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(SharedPrefs.getString(resTimeID))
+            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
         } else {
             TODO("VERSION.SDK_INT < O")
         }
+    }
+
+    fun getDoneToday() : Boolean {
+        return SharedPrefs.getBoolean(doneTodayString())
+    }
+
+    fun setDoneToday() {
+        SharedPrefs.setBoolean(doneTodayString(), true)
+    }
+
+    fun getResTimeID() : String {
+        return "time_$shortForm"
+    }
+
+    private fun doneTodayString() : String {
+        val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDate.now()
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
+
+        return shortForm + "_"+ now.dayOfMonth + ":" + now.month + ":" + now.year
     }
 
     abstract fun executeUseCase()

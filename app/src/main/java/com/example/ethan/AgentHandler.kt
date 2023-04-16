@@ -5,12 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.ui.speech.Text2Speech
-import com.example.ethan.usecases.GoodMorningDialogue
-import com.example.ethan.usecases.LunchBreakConsultant
-import com.example.ethan.usecases.NavigationAssistance
-import com.example.ethan.usecases.SocialAssistance
-import kotlinx.coroutines.delay
-import java.time.LocalDateTime
+import com.example.ethan.usecases.*
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.concurrent.thread
@@ -18,7 +13,7 @@ import kotlin.concurrent.thread
 object AgentHandler : Thread() {
 
     var useCaseRunning: Boolean = false
-    var remainingTimes = mutableStateMapOf<UseCase, String>(
+    var remainingTimeStrings = mutableStateMapOf<UseCase, String>(
         UseCase.GoodMorningDialogue to "-1",
         UseCase.NavigationAssistance to "-1",
         UseCase.LunchBreakConsultant to "-1",
@@ -31,17 +26,18 @@ object AgentHandler : Thread() {
     var socialAssistance = SocialAssistance { useCaseFinished() }
 
     override fun run() {
-
-        println("hallo")
-
         super.run()
 
         while (SharedPrefs.sharedPrefs == null) // Wait until initialized
             sleep(10)
 
         while (true) {
-            for (entry in remainingTimes) {
-                remainingTimes[entry.key] = getRemainingTimeString(entry.key)
+            for (entry in remainingTimeStrings) {
+                val useCase = entry.key
+                val remainingTime = getRemainingMinutes(useCase)
+                remainingTimeStrings[entry.key] = remainingMinutesToString(useCase, remainingTime)
+                if (remainingTime <= 0 && !useCaseToClass(useCase).getDoneToday() && !useCaseRunning)
+                    startUseCase(useCase)
             }
             sleep(5000)
         }
@@ -58,13 +54,7 @@ object AgentHandler : Thread() {
     {
         if(useCaseRunning) return
 
-        val useCaseClass = when (useCase) {
-            UseCase.GoodMorningDialogue -> goodMorningDialogue
-            UseCase.NavigationAssistance -> navigationAssistance
-            UseCase.LunchBreakConsultant -> lunchBreakConsultant
-            UseCase.SocialAssistance -> socialAssistance
-        }
-
+        val useCaseClass = useCaseToClass(useCase)
 
         Speech2Text.setCallback { input ->
             useCaseClass.onUserVoiceInputReceived(input)
@@ -76,17 +66,11 @@ object AgentHandler : Thread() {
 
         thread { useCaseClass.executeUseCase() }
 
+        useCaseClass.setDoneToday()
     }
 
-
-    private fun getRemainingTimeString (useCase: UseCase) : String {
-
-        val nextExecTime : LocalTime = when (useCase) {
-            UseCase.GoodMorningDialogue -> goodMorningDialogue.getExecutionTime()
-            UseCase.NavigationAssistance -> navigationAssistance.getExecutionTime()
-            UseCase.LunchBreakConsultant -> lunchBreakConsultant.getExecutionTime()
-            else -> socialAssistance.getExecutionTime()
-        }
+    private fun getRemainingMinutes (useCase: UseCase) : Int {
+        val nextExecTime : LocalTime = useCaseToClass(useCase).getExecutionTime()
 
         val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalTime.now()
@@ -94,14 +78,26 @@ object AgentHandler : Thread() {
             TODO("VERSION.SDK_INT < O")
         }
 
-        val minutes = ChronoUnit.MINUTES.between(now, nextExecTime).toInt()
-        if (minutes < 0)
-            return "Done"
-        if (minutes < 60)
-            return "$minutes min"
+        return ChronoUnit.MINUTES.between(now, nextExecTime).toInt()
+    }
+
+    private fun remainingMinutesToString (useCase: UseCase, minutes: Int) : String {
+        return if (minutes <= 0)
+            if (useCaseToClass(useCase).getDoneToday()) "Done" else "Ready"
+        else if (minutes < 60)
+            "$minutes min"
         else {
-            val hours = ChronoUnit.HOURS.between(now, nextExecTime).toInt()
-            return "$hours hrs"
+            val hours = minutes / 60
+            "$hours hrs"
+        }
+    }
+
+    private fun useCaseToClass (useCase: UseCase) : AbstractUseCase {
+        return when (useCase) {
+            UseCase.GoodMorningDialogue -> goodMorningDialogue
+            UseCase.NavigationAssistance -> navigationAssistance
+            UseCase.LunchBreakConsultant -> lunchBreakConsultant
+            else -> socialAssistance
         }
     }
 }
