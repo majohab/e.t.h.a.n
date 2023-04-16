@@ -9,6 +9,7 @@ import com.example.ethan.usecases.GoodMorningDialogue
 import com.example.ethan.usecases.LunchBreakConsultant
 import com.example.ethan.usecases.NavigationAssistance
 import com.example.ethan.usecases.SocialAssistance
+import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -34,6 +35,9 @@ object AgentHandler : Thread() {
         println("hallo")
 
         super.run()
+
+        while (SharedPrefs.sharedPrefs == null) // Wait until initialized
+            sleep(10)
 
         while (true) {
             for (entry in remainingTimes) {
