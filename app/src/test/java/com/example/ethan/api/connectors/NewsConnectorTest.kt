@@ -14,7 +14,7 @@ class NewsConnectorTest{
 
     @Test
     fun testString(){
-        assertEquals("https://newsapi.org/v2/top-headlines?country=us&apiKey=null",newsConnector.url)
+        assertEquals("https://newsapi.org/v2/top-headlines?country=us&apiKey=2bacda34a75040c2a69ed86d88f45bbc",newsConnector.url)
     }
 
     @Test
