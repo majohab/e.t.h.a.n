@@ -31,14 +31,20 @@ object AgentHandler : Thread() {
         while (SharedPrefs.sharedPrefs == null) // Wait until initialized
             sleep(10)
 
+        var justStarted = true
+
         while (true) {
             for (entry in remainingTimeStrings) {
                 val useCase = entry.key
                 val remainingTime = getRemainingMinutes(useCase)
                 remainingTimeStrings[entry.key] = remainingMinutesToString(useCase, remainingTime)
-                if (remainingTime <= 0 && !useCaseToClass(useCase).getDoneToday() && !useCaseRunning)
-                    startUseCase(useCase)
+
+                if (!justStarted) {
+                    if (remainingTime < 0 && !useCaseToClass(useCase).getDoneToday() && !useCaseRunning)
+                        startUseCase(useCase)
+                }
             }
+            justStarted = false
             sleep(5000)
         }
     }

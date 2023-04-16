@@ -38,15 +38,15 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
         return SharedPrefs.getBoolean(doneTodayString())
     }
 
-    fun setDoneToday() {
-        SharedPrefs.setBoolean(doneTodayString(), true)
+    fun setDoneToday(bool: Boolean = true) {
+        SharedPrefs.setBoolean(doneTodayString(), bool)
     }
 
     fun getResTimeID() : String {
         return "time_$shortForm"
     }
 
-    private fun doneTodayString() : String {
+    fun doneTodayString() : String {
         val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             LocalDate.now()
         } else {

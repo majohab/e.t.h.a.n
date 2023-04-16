@@ -3,6 +3,7 @@ package com.example.ethan.sharedprefs
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.ethan.AgentHandler
 import kotlinx.coroutines.delay
 
 object SharedPrefs {
@@ -16,10 +17,10 @@ object SharedPrefs {
         if (!contains("initialized") || !getBoolean("initialized")) { // Note: This first initialization is what causes the app to crash when first opened
             val editor = sharedPrefs!!.edit()
 
-            editor.putString("time_GMD", "08:00")
-            editor.putString("time_LBC", "12:00")
-            editor.putString("time_NA", "15:00")
-            editor.putString("time_SA", "18:00")
+            editor.putString(AgentHandler.goodMorningDialogue.getResTimeID(), "08:00")
+            editor.putString(AgentHandler.lunchBreakConsultant.getResTimeID(), "12:00")
+            editor.putString(AgentHandler.navigationAssistance.getResTimeID(), "15:00")
+            editor.putString(AgentHandler.socialAssistance.getResTimeID(), "18:00")
             editor.putString("steam_id", "76561198198615839")
 
             editor.putBoolean("initialized", true)
