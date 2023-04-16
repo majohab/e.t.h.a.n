@@ -5,14 +5,10 @@ import androidx.annotation.RequiresApi
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VFreeBusy
-import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAccessor
 import java.util.*
 
 
@@ -56,7 +52,7 @@ class CalendarConnector : AbstractConnector(){
 
             event.put("startHour", eventStart.hour)
             event.put("startMinute", eventStart.minute)
-            event.put("location", "48.782761, 9.166751")
+            event.put("location", "Lerchenstraße 1 Stuttgart")
             events.put("${index+1}", event)
         }
         result.put("events", events)
