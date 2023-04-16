@@ -103,14 +103,14 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         speakAndHearSelectiveInput(
             question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
-                tokens = listOf("bus"),
+                tokens = listOf("car", "drive"),
                 response = "You successfully set bus as your favourite transportation method for today.",
-                onSuccess = { SharedPrefs.setString("transportation", "bus") }
+                onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(
-                tokens = listOf("bike", "drahtesel"),
+                tokens = listOf("bike", "drahtesel", "cycl"),
                 response = "You successfully set bike as your favourite transportation method for today.",
-                onSuccess = { SharedPrefs.setString("transportation", "bike") }
+                onSuccess = { SharedPrefs.setString("transportation", "cycling-regular") }
             ),
             UserInputOption(
                 tokens = listOf("foot", "walk"),
