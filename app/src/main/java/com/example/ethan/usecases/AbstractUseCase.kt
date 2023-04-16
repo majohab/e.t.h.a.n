@@ -1,7 +1,7 @@
 package com.example.ethan.usecases
 
 import android.os.Build
-import com.example.ethan.Preferences
+import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
 import com.example.ethan.ui.gui.Sender
@@ -27,7 +27,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
     fun getExecutionTime() : LocalTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(Preferences.get(resTimeID))
+            LocalTime.parse(SharedPrefs.getString(resTimeID))
         } else {
             TODO("VERSION.SDK_INT < O")
         }
@@ -84,19 +84,22 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
         runBlocking { askForUserVoiceInput(question) }
 
-        var response: String? = null
-        while (response == null) {
+        var success: Boolean = false
+        while (!success) {
             for (option in options) {
                 if (checkIfContainsWord(option.tokens)) {
-                    response = option.response
+                    success = true
+                    if(option.response != null){
+                        runBlocking { speak(option.response!!) }
+                    }
+                    option.onSuccess?.invoke()
+                    break
                 }
             }
 
-            if (response == null)
+            if (!success)
                 runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
         }
-
-        runBlocking { speak(response) }
     }
 
     fun checkIfContainsWord(vararg tokens: String) : Boolean {
@@ -121,4 +124,4 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 }
 
-class UserInputOption(var tokens: List<String>, var response: String)
+class UserInputOption(var tokens: List<String>, var response: String? = null, var onSuccess: (() -> Unit?)? = null)

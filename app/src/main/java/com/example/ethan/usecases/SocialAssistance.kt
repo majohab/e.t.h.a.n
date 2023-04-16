@@ -1,7 +1,7 @@
 package com.example.ethan.usecases
 
-import com.example.ethan.Preferences
 import com.example.ethan.api.connectors.SteamFriendsConnector
+import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
 
 class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
@@ -11,7 +11,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
     private var steamFriendsConnector = SteamFriendsConnector()
 
     override fun executeUseCase() {
-        val steamfriends_list = steamFriendsConnector.get(Preferences.get("steam_id"))
+        val steamfriends_list = steamFriendsConnector.get(SharedPrefs.getString("steam_id"))
         var steamfriends_string = ""
 
         for (pair in steamfriends_list) {
@@ -31,7 +31,8 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
 
         runBlocking { speak ("Good evening.") }
 
-        speakAndHearSelectiveInput(question = "How was your day?", options = listOf(
+        speakAndHearSelectiveInput(
+            question = "How was your day?", options = listOf(
             UserInputOption(
                 tokens = listOf("great", "superb", "super", "fantastic", "amazing", "stunning", "wonderful", "excellent"),
                 response = "Wow! That's great to hear!"
@@ -46,7 +47,8 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
             )
         ))
 
-        speakAndHearSelectiveInput(question = "Do you want to know what your Steam-friends are up to?", options = listOf(
+        speakAndHearSelectiveInput(
+            question = "Do you want to know what your Steam-friends are up to?", options = listOf(
             UserInputOption(
                 tokens = positiveTokens,
                 response = steamfriends_string

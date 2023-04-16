@@ -1,6 +1,7 @@
 package com.example.ethan.ui.gui
 
 import android.Manifest
+import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -41,7 +42,6 @@ object GUI : ComponentActivity() {
     private var textInput by mutableStateOf ("Tap on the microphone and say something")
     private var micRms by mutableStateOf(0.1f)
     private const val username = "John"
-
 
     @Composable
     fun MainScreen() {

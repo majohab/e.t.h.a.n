@@ -1,111 +1,112 @@
 package com.example.ethan.usecases
 
-import androidx.compose.ui.tooling.data.SourceLocation
-import com.example.ethan.BuildConfig
 import com.example.ethan.api.connectors.CalendarConnector
-import com.example.ethan.api.connectors.OpenStreetConector
+import com.example.ethan.api.connectors.OpenRouteConnector
 import com.example.ethan.api.connectors.OpenWeatherApiConnector
-import com.example.ethan.api.connectors.RouteConnector
+import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
+import java.time.LocalDateTime
 
-class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
-    private val route = RouteConnector()
-    private val calendarConnector = CalendarConnector()
-    private val openStreet = OpenStreetConector()
-
-    val favoriteMovementType = 0
-
-    val movementTypes = listOf("driving-car", "cycling-regular", "foot-walking")
-
-    val favoriteMovementTypeName = movementTypes[favoriteMovementType]
+class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
     override var resTimeID = "time_NA"
-    private var weatherApiConnector = OpenWeatherApiConnector()
 
+    private var navigationConnector = OpenRouteConnector()
+    private var weatherApiConnector = OpenWeatherApiConnector()
+    private var calendarConnector = CalendarConnector()
 
     override fun executeUseCase() {
+        val weatherJSON = weatherApiConnector.getCurrentWeather(48.783821, 9.215519)
+        println(weatherJSON)
 
-        println("NavigationAssistance has been started!")
+        var transportation_mode = SharedPrefs.getString("transportation", "foot-walking")
 
+        val eventsFreeBusy_json = calendarConnector.get()
+        var timeToGo = 0
+        val nextEventID: Int = eventsFreeBusy_json.getInt("nextEventID")
+        if (nextEventID == -1) {
+            return
+        }
+        val event = eventsFreeBusy_json.getJSONObject("events").getJSONObject(nextEventID.toString())
 
-        val target ="Lerchenstraße 1 Stuttgart"
-        val curent = getLocation()
-        val nextMeeting = 60
-        var output = ""
+        timeToGo = 11//getTimeToNextEvent(event, "foot-walking")
+        var routeDuration = getRouteTimeToNextEvent(event, transportation_mode)
 
+        if(timeToGo > 15){ return }
+        runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $timeToGo minutes to catch your next event.")}
 
-        val locations = getQueryLocationString(target, curent)
-
-        val queryString = "&start=" + locations[0][0] + "," + locations[0][1] + "&end=" + locations[1][0] + "," + locations[1][1]
-
-        val durations = getDurations(queryString)
-
-        println(durations)
-
-        val leaveTime = nextMeeting - durations[favoriteMovementType]
-
-        output += "To get to your next meeting at $target in $nextMeeting minutes by $favoriteMovementTypeName you need to leave in ${leaveTime.toInt()} minutes!\n"
-
-
-        val weather = getWeather(locations[1])
-
-        var sugestion = "You should be fine"
-
-        if (weather == "Rain"){
-            sugestion = "You should bring an umbrella"
+        if(transportation_mode != "foot-walking"){
+            routeDuration = getTimeToNextEvent(event, "foot-walking")
+            if (routeDuration < 10){
+                speakAndHearSelectiveInput(
+                    question = "Walking to your next event would only take $routeDuration minutes. Do you want to walk instead of your current transportation method?", options = listOf(
+                        UserInputOption(
+                            tokens = positiveTokens,
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "foot-walking")
+                                runBlocking {speak("Okay. To catch the upcoming event by foot you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = negativeTokens,
+                            response = "I understand. I won't change anything. You still need to leave in $timeToGo minutes."
+                        ),
+                    ))
+            }
+        }else {
+            if (routeDuration > 60) {
+                speakAndHearSelectiveInput(
+                    question = "Your current type of transportation is set to walking. This would take more than 60 minutes as of now. Do you want to change your type of transportation for this event? If so, please specify how you want to travel. ", options = listOf(
+                        UserInputOption(
+                            tokens = listOf("car", "auto", "taxi"),
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "driving-car")
+                                runBlocking {speak("Okay. To catch the upcoming event by car you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = listOf("wheelchair", "rollstuhl", "rollie"),
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "wheelchair")
+                                runBlocking {speak("Okay. To catch the upcoming event by wheelchair you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = listOf("bike", "drahtesel"),
+                            onSuccess = {
+                                timeToGo = getTimeToNextEvent(event, "cycling-road")
+                                runBlocking {speak("Okay. To catch the upcoming event by bike you now need to leave in $timeToGo minutes. ")}
+                            }
+                        ),
+                        UserInputOption(
+                            tokens = negativeTokens,
+                            response = "I understand. I won't change anything. You still need to leave withinin $timeToGo minutes. "
+                        ),
+                    ))
+            }
         }
 
-        output += "it is going to be $weather at your target location. $sugestion"
-
-        runBlocking { speak(output) }
-
-        onFinishedCallback()
-    }
-
-    private fun getLocation(): String {
-        return "Hermann Hesse Straße 20 Nufringen"
-    }
-
-    private fun getDurations(locations : String): ArrayList<Double> {
-        val durations = ArrayList<Double>()
-
-        movementTypes.forEach {
-
-            val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_Routes + locations
-
-
-            val response = route.getDynamic(url)
-
-            val duration = extractDuration(response)
-            durations.add(duration/60)
-        }
-        return durations
-    }
-
-    private fun getQueryLocationString(target : String, curent : String): List<List<String>> {
-        val openstreetURL = "https://nominatim.openstreetmap.org/search/"
-        val openstreetEnding = "?format=json&addressdetails=1&limit=1&polygon_svg=1"
-
-        val targetLocations = openStreet.getDynamic(openstreetURL+ target + openstreetEnding)
-
-        val curentLocations = openStreet.getDynamic(openstreetURL+ curent + openstreetEnding)
-
-        return listOf(listOf(targetLocations.getString("lon"), targetLocations.getString("lat")), listOf(curentLocations.getString("lon"), curentLocations.getString("lat")))
 
     }
 
-    private fun getWeather(targetLocation: List<String>): String {
-        val weatherJSON = weatherApiConnector.getCurrentWeather(targetLocation[1].toDouble(), targetLocation[0].toDouble())
-        val weather = weatherJSON!!.getJSONArray("weather").getJSONObject(0)
-        return weather.getString("main")
+    private fun getTimeToNextEvent(event: JSONObject, mode: String): Int{
+        val hour = event.getInt("startHour")
+        val minute = event.getInt("startMinute")
+
+        val routeDurationMin = navigationConnector.getRouteDuration("48.734276, 9.110791", event.getString("location"), mode)
+
+        val diffHour = hour - LocalDateTime.now().hour
+        val diffMinute = (minute - LocalDateTime.now().minute) + (diffHour * 60)
+
+        return diffMinute - routeDurationMin.toInt()
     }
-    private fun extractDuration(response : JSONObject): Double {
-        val features = response.getJSONArray("features")
-        val feature = features.getJSONObject(0)
-        val properties = feature.getJSONObject("properties")
-        val segments = properties.getJSONArray("segments")
-        val segment = segments.getJSONObject(0)
-        return segment.getDouble("duration")
+
+    private fun getRouteTimeToNextEvent(event: JSONObject, mode: String): Int{
+        return navigationConnector.getRouteDuration("48.734276, 9.110791", event.getString("location"), mode).toInt()
+    }
+
+    private fun checkWeather(){
+
     }
 }
