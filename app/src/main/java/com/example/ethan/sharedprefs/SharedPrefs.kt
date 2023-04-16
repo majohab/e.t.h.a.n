@@ -9,7 +9,7 @@ object SharedPrefs {
 
     var sharedPrefs: SharedPreferences? = null
 
-    fun initSharedPrefs(activity: Activity) {
+    fun initSharedPrefs(activity: Activity, onFirstInit: (() -> Unit)? = null) {
 
         sharedPrefs = activity.getPreferences(Context.MODE_PRIVATE)
 
@@ -24,6 +24,8 @@ object SharedPrefs {
 
             editor.putBoolean("initialized", true)
             editor.apply()
+
+            onFirstInit?.invoke()
         }
     }
 
