@@ -1,7 +1,9 @@
 package com.example.ethan.usecases
 
+import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.OpenStreetMapApi
+import com.example.ethan.api.connectors.OsmRestaurant
 import com.example.ethan.sharedprefs.SharedPrefs
 import org.json.JSONArray
 import org.json.JSONObject
@@ -105,8 +107,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
         println("Start your break at: " + suggested_breakTime)
 
-        val restaurants = openStreetMapRestaurant.findNearestRestaurants(37.7749, -122.4194, 1000 , "italian")
-        println(restaurants)
         // get time slots >x minutes
         // suggest restaurants that are in time
 
@@ -129,21 +129,83 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val validCuisines_input = validCuisines.map {it.replace("_", " ")}
 
         var seletedCuisine = ""
-        val options = mutableListOf<UserInputOption>()
+        val cuisineOptions = mutableListOf<UserInputOption>()
         for (i in validCuisines_input.indices) {
             val option = UserInputOption(
                 tokens = listOf(validCuisines_input[i]),
+
                 onSuccess = {
                     seletedCuisine = validCuisines[i]
                     println("") // DO NOT DELETE THIS LINE
                 }
             )
-            options.add(option)
+            cuisineOptions.add(option)
         }
         speakAndHearSelectiveInput(
-            question = "What cuisine do you have in mind for today?", options = options
+            question = "What cuisine do you have in mind for today?", options = cuisineOptions
         )
 
-        runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by " + transportTranslations[SharedPrefs.getTransportation()]) }
+        var restaurants = listOf<OsmRestaurant>()
+        while (restaurants.isEmpty()) {
+
+            runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by " + transportTranslations[SharedPrefs.getTransportation()]) }
+            runBlocking { speak("Beep, Boop, Beep, Boop...") }
+
+            restaurants = openStreetMapRestaurant.findNearestRestaurants(
+                LocalLocation.getCurrentLocation().getString("lat").toDouble(),
+                LocalLocation.getCurrentLocation().getString("lon").toDouble(),
+                1000,
+                seletedCuisine
+            )
+            println(restaurants)
+            if (restaurants.isEmpty()) {
+                runBlocking { speak("Sadly, I didn't find a fitting restaurant in a radius of 1000 meters") }
+                speakAndHearSelectiveInput(
+                    question = "Please give me a different cuisine to search for.",
+                    options = cuisineOptions
+                )
+            }
+        }
+
+        var restaurantCount = minOf(3, restaurants.count())
+        if (restaurantCount == 1) {
+            val restaurant = restaurants[0]
+            val name = restaurant
+            val website = restaurant.website
+            runBlocking { speak("What about $name? You can find their website here: $website") }
+        }
+        else {
+            var restaurantsNamesString = ""
+            for (i in 0 until restaurantCount) {
+                if (i > 0)
+                    restaurantsNamesString += ", "
+                restaurantsNamesString += restaurants[i].name
+            }
+            runBlocking { speak("I found the following restaurants: $restaurantsNamesString") }
+
+            var selectedRestaurant = restaurants[0]
+            val restaurantOptions = mutableListOf<UserInputOption>()
+            for (i in 0 until restaurantCount) {
+                val option = UserInputOption(
+                    tokens = when (i) {
+                        0 -> listOf("1", "one", "first", restaurants[i].name)
+                        1 -> listOf("2", "two", "second", restaurants[i].name)
+                        else -> listOf("3", "three", "third", "last", restaurants[i].name)
+                    },
+                    onSuccess = {
+                        selectedRestaurant = restaurants[i]
+                        println("") // DO NOT DELETE THIS LINE
+                    }
+                )
+                restaurantOptions.add(option)
+            }
+            speakAndHearSelectiveInput(
+                question = "Which one sounds the most appealing for you?", options = restaurantOptions
+            )
+            runBlocking { speak("Okay. This is the website of " + selectedRestaurant.name + ": " + selectedRestaurant.website) }
+            runBlocking { speak("I will calculate the best route now, using " + SharedPrefs.getTransportation() + " as the transportation type.") }
+        }
+
+        onFinishedCallback()
     }
 }

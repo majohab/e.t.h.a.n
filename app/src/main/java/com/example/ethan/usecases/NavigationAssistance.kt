@@ -68,7 +68,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 speakAndHearSelectiveInput(
                     question = "Hello. This is your PDA ETHAN. I want to inform you that you " +
                             "needed to leave $overflow minutes ago to catch your next event. " +
-                            "Your best option to be on time is to travel by $bestMethod. "     +
+                            "Your best option to be on time is to travel by " + transportTranslations[bestMethod] + ". "     +
                             "Do you want to use the suggested method?",
                     options = listOf(
                         UserInputOption(
