@@ -108,7 +108,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(
-                tokens = listOf("bike", "drahtesel", "cycl"),
+                tokens = listOf("bike", "drahtesel", "cycl", "bicycle"),
                 response = "You successfully set bike as your favourite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "cycling-regular") }
             ),
@@ -116,6 +116,11 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 tokens = listOf("foot", "walk"),
                 response = "You successfully set walking as your favourite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "foot-walking") }
+            ),
+            UserInputOption(
+                tokens = listOf("wheelchair"),
+                response = "You successfully set wheelchair as your favourite transportation method for today.",
+                onSuccess = { SharedPrefs.setString("transportation", "wheelchair") }
             )
         ))
 
