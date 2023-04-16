@@ -17,6 +17,8 @@ class MainActivity : ComponentActivity() {
         AgentHandler.start()
 
         SharedPrefs.initSharedPrefs(this)
+        LocalLocation.initLocalLocation(this)
+
 
         setContent {
             MainScreen()
