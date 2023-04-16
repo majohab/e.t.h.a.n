@@ -1,5 +1,6 @@
 package com.example.ethan.usecases
 
+import com.example.ethan.api.connectors.RawgApiConnector
 import com.example.ethan.api.connectors.SteamFriendsConnector
 import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
@@ -9,6 +10,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
     override var shortForm: String = "SA"
 
     private var steamFriendsConnector = SteamFriendsConnector()
+    private var rawgApiConnector = RawgApiConnector()
 
     override fun executeUseCase() {
         val steamfriends_list = steamFriendsConnector.get(SharedPrefs.getString("steam_id"))
@@ -28,6 +30,9 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 } + ". "
             }
         }
+
+        val genres = rawgApiConnector.getGenres()
+        println(genres)
 
         runBlocking { speak ("Good evening.") }
 

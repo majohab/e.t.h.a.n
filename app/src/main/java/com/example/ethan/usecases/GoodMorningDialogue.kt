@@ -15,7 +15,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
-    private var recipeConnector = RecipeConnector()
     private var navigationConnector = OpenRouteConnector()
 
     override fun executeUseCase() {
@@ -27,7 +26,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         //val recipe_one_id = recipe_one.getInt("id")
         //val recipe_recipe = recipeConnector.get(recipe_one_id)
         //val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
-        //println(recipe_sourceUrl)
+        //val genres = rawgApiConnector.getGenres()
+        //println(genres)
 
         // Request API 1
         val fortune_json = fortuneConnector.get()
