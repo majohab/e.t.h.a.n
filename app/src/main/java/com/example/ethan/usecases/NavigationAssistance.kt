@@ -4,6 +4,8 @@ import com.example.ethan.BuildConfig
 import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
+import com.example.ethan.transportation.getAllTransportationKeys
+import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
@@ -12,12 +14,12 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     override var shortForm: String = "NA"
     private val route = RouteConnector()
-    private val openStreet = OpenStreetConector()
+    private val openStreet = OpenStreetConnector()
     private var weatherApiConnector = OpenWeatherApiConnector()
     private var calendarConnector = CalendarConnector()
 
     override fun executeUseCase() {
-        var transportation_mode = SharedPrefs.getString("transportation", "foot-walking")
+        var transportation_mode = SharedPrefs.getTransportation()
 
         val eventsFreeBusy_json = calendarConnector.get()
         var timeToGo = 0
@@ -59,14 +61,14 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     }
                     speak("Hello. This is your PDA ETHAN. I want to inform you that you " +
                         "needed to leave $overflow minutes ago to catch your next event. " +
-                        "Your best option would be to travel by $bestMethod. " +
+                        "Your best option would be to travel by " + transportTranslations[bestMethod] + ". " +
                         "However, you still have a delay of ${overflow - (timeWithPreffered - bestMethodTime)} " +
                         "if you go right away. $suffix") }
             }else {
                 speakAndHearSelectiveInput(
                     question = "Hello. This is your PDA ETHAN. I want to inform you that you " +
                             "needed to leave $overflow minutes ago to catch your next event. " +
-                            "Your best option to be on time is to travel by $bestMethod. "     +
+                            "Your best option to be on time is to travel by " + transportTranslations[bestMethod] + ". "     +
                             "Do you want to use the suggested method?",
                     options = listOf(
                         UserInputOption(
@@ -199,7 +201,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     private fun getDurations(target : String): Map<String, Int> {
         val durations = mutableMapOf<String, Int>()
-        val movementTypes = listOf("driving-car", "cycling-regular", "foot-walking", "wheelchair")
+        val movementTypes = getAllTransportationKeys()
 
         val current = currentLocation()
 

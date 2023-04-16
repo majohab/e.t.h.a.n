@@ -15,7 +15,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
-    private var recipeConnector = RecipeConnector()
     private var navigationConnector = OpenRouteConnector()
 
     override fun executeUseCase() {
@@ -27,7 +26,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         //val recipe_one_id = recipe_one.getInt("id")
         //val recipe_recipe = recipeConnector.get(recipe_one_id)
         //val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
-        //println(recipe_sourceUrl)
+        //val genres = rawgApiConnector.getGenres()
+        //println(genres)
 
         // Request API 1
         val fortune_json = fortuneConnector.get()
@@ -103,19 +103,24 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         speakAndHearSelectiveInput(
             question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
-                tokens = listOf("bus"),
+                tokens = listOf("car", "drive"),
                 response = "You successfully set bus as your favourite transportation method for today.",
-                onSuccess = { SharedPrefs.setString("transportation", "bus") }
+                onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(
-                tokens = listOf("bike", "drahtesel"),
+                tokens = listOf("bike", "drahtesel", "cycl", "bicycle"),
                 response = "You successfully set bike as your favourite transportation method for today.",
-                onSuccess = { SharedPrefs.setString("transportation", "bike") }
+                onSuccess = { SharedPrefs.setString("transportation", "cycling-regular") }
             ),
             UserInputOption(
                 tokens = listOf("foot", "walk"),
                 response = "You successfully set walking as your favourite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "foot-walking") }
+            ),
+            UserInputOption(
+                tokens = listOf("wheelchair"),
+                response = "You successfully set wheelchair as your favourite transportation method for today.",
+                onSuccess = { SharedPrefs.setString("transportation", "wheelchair") }
             )
         ))
 

@@ -19,6 +19,7 @@ steps:
                  'API_KEY_RECIPE=$env:API_KEY_RECIPE' + "`n"
                  'API_KEY_OPENROUTE=$env:API_KEY_OPENROUTE' + "`n"
                  'API_KEY_WEATHER=$env:API_KEY_WEATHER' + "`n"
+                 'API_KEY_RAWG=$env:API_KEY_RAWG' + "`n"
 
       Set-Content -Path "$(System.DefaultWorkingDirectory)/local.properties" -Value $content
 

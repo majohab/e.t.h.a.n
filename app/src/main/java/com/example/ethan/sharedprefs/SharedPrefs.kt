@@ -28,6 +28,10 @@ object SharedPrefs {
         }
     }
 
+    fun getTransportation() : String {
+        return getString("transportation", "foot-walking")
+    }
+
     fun get(key: String, defaultValue: Int = -1) : Int {
         return if (sharedPrefs == null) defaultValue else sharedPrefs!!.getInt(key, defaultValue)
     }
