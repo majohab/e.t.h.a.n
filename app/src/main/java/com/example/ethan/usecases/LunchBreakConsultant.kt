@@ -1,9 +1,7 @@
 package com.example.ethan.usecases
 
 import com.example.ethan.LocalLocation
-import com.example.ethan.api.connectors.CalendarConnector
-import com.example.ethan.api.connectors.OpenStreetMapApi
-import com.example.ethan.api.connectors.OsmRestaurant
+import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
 import org.json.JSONArray
 import org.json.JSONObject
@@ -16,9 +14,12 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     override var shortForm: String = "LBC"
     private var openStreetMapRestaurant = OpenStreetMapApi()
     private var calendarConnector = CalendarConnector()
+    private val openRouteConnector = OpenRouteConnector()
 
     override fun executeUseCase() {
-        SharedPrefs.setString("transportation", "foot-walking")
+
+        var origin = LocalLocation.getCurrentLocation()
+
         var breakTime = 12
         var breakDuration = 1
         var suggested_breakTime = breakTime
@@ -107,10 +108,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
         println("Start your break at: " + suggested_breakTime)
 
-        // get time slots >x minutes
-        // suggest restaurants that are in time
-
-
         val validCuisines = listOf("afghan", "african", "algerian", "american", "arab", "argentinian", "armenian", "asian", "australian", "austrian", "azerbaijani", "balkan",
             "bangladeshi", "basque", "bbq", "belarusian", "belgian", "brazilian", "breakfast", "british", "bulgarian", "burmese", "cajun", "cambodian", "cameroonian", "canadian",
             "caribbean", "caucasian", "central_asian", "chilean", "chinese", "colombian", "corsican", "cote_d'ivoirean", "croatian", "cuban", "cuisine_of_the_levant", "cypriot", "czech",
@@ -148,12 +145,12 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var restaurants = listOf<OsmRestaurant>()
         while (restaurants.isEmpty()) {
 
-            runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by " + transportTranslations[SharedPrefs.getTransportation()]) }
+            runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by ${transportTranslations[SharedPrefs.getTransportation()]}.") }
             runBlocking { speak("Beep, Boop, Beep, Boop...") }
 
             restaurants = openStreetMapRestaurant.findNearestRestaurants(
-                LocalLocation.getCurrentLocation().getString("lat").toDouble(),
-                LocalLocation.getCurrentLocation().getString("lon").toDouble(),
+                origin.getString("lat").toDouble(),
+                origin.getString("lon").toDouble(),
                 1000,
                 seletedCuisine
             )
@@ -167,7 +164,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
         }
 
-        var restaurantCount = minOf(3, restaurants.count())
+        val restaurantCount = minOf(3, restaurants.count())
         if (restaurantCount == 1) {
             val restaurant = restaurants[0]
             val name = restaurant
@@ -202,10 +199,35 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             speakAndHearSelectiveInput(
                 question = "Which one sounds the most appealing for you?", options = restaurantOptions
             )
-            runBlocking { speak("Okay. This is the website of " + selectedRestaurant.name + ": " + selectedRestaurant.website) }
-            runBlocking { speak("I will calculate the best route now, using " + SharedPrefs.getTransportation() + " as the transportation type.") }
-        }
+            runBlocking { speak("Okay. This is the website of ${selectedRestaurant.name}: ${selectedRestaurant.website}") }
 
+            origin = LocalLocation.getCurrentLocation()
+            val originString = "${origin.getString("lon")},${origin.getString("lat")}"
+            val destinationString = "${selectedRestaurant.lon},${selectedRestaurant.lat}"
+            val properties = openRouteConnector.getRoute(originString, destinationString, SharedPrefs.getTransportation())
+
+            if (properties == null) {
+                runBlocking { speak("I sadly could not find a route to this restaurant.") }
+            } else {
+                val duration = openRouteConnector.getRouteDuration(properties).toInt()
+                val instructions = openRouteConnector.getRouteInstructions(properties)
+
+                runBlocking { speak("By ${transportTranslations[SharedPrefs.getTransportation()]}, you will need to travel $duration minutes. "+
+                    "You get there by following these instructions:") }
+
+                var instructionsString = ""
+                for (i in instructions.indices) {
+                    instructionsString += "$i. ${instructions[i].first}. "
+                    //instructionsString += if (i < instructions.size - 1)
+                    //    ", then walk for ${instructions[i].second / 60} minutes."
+                    //else
+                    //    "."
+                }
+
+                runBlocking { speak(instructionsString) }
+            }
+
+        }
         onFinishedCallback()
     }
 }
