@@ -8,6 +8,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import org.json.JSONArray
+import org.json.JSONObject
 
 class OpenRouteConnector() {
 
@@ -92,8 +94,27 @@ class OpenRouteConnector() {
     }
 
     fun getRouteDuration(origin: String, destination: String, mode: String): Double {
-        val destinationCoordinate = getCoordinates(destination)
+        val properties = getRoute(origin, destination, mode)
+        val summary = properties!!.getJSONObject("summary")
+        return summary.getDouble("duration")
+    }
 
+    fun getRouteSteps(origin: String, destination: String, mode: String): List<Pair<String, Double>> {
+        val properties = getRoute(origin, destination, mode)
+        val steps: JSONArray = properties!!.getJSONArray("segments").getJSONObject(0).getJSONArray("steps")
+
+        val instructionsList = mutableListOf<Pair<String, Double>>()
+        for (i in 0 until steps.length()) {
+            instructionsList.add(
+                Pair(steps.getJSONObject(i).getString("instruction"), steps.getJSONObject(i).getDouble("duration"))
+            )
+        }
+
+        return instructionsList
+    }
+
+    fun getRoute(origin: String, destination: String, mode: String): JSONObject? {
+        val destinationCoordinate = getCoordinates(destination)
         val url = "https://api.openrouteservice.org/v2/directions/$mode?".toHttpUrlOrNull()!!.newBuilder()
             .addEncodedQueryParameter("api_key", BuildConfig.API_KEY_OPENROUTE)
             .addEncodedQueryParameter("start", origin)
@@ -105,15 +126,15 @@ class OpenRouteConnector() {
             .build()
 
         val response = OkHttpClient().newCall(request).execute()
-        val responseBody = response.body?.string()
 
-        val mapper = ObjectMapper()
-        val routeResponse: RouteResponse = mapper.readValue(responseBody ?: "")
-        if(routeResponse.routes.isEmpty())
-        {
-            return Double.NaN
-        }
-        return routeResponse.routes.first().summary.duration
+        if (!response.isSuccessful)
+            return null
+
+        val responseBody = response.body?.string()
+        val responseBody_JSON = JSONObject(responseBody)
+
+        val properties = responseBody_JSON.getJSONArray("features").getJSONObject(0).getJSONObject("properties")
+        return properties
     }
 
     fun getCoordinates(query: String): List<Double> {

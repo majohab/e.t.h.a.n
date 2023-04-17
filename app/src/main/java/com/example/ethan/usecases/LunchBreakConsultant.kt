@@ -1,9 +1,7 @@
 package com.example.ethan.usecases
 
 import com.example.ethan.LocalLocation
-import com.example.ethan.api.connectors.CalendarConnector
-import com.example.ethan.api.connectors.OpenStreetMapApi
-import com.example.ethan.api.connectors.OsmRestaurant
+import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
@@ -13,8 +11,14 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     override var shortForm: String = "LBC"
     private var openStreetMapRestaurant = OpenStreetMapApi()
     private var calendarConnector = CalendarConnector()
+    private val openRouteConnector = OpenRouteConnector()
 
     override fun executeUseCase() {
+
+        val a = openRouteConnector.getRouteSteps("8.681495,49.41461", "8.687872,49.420318", "foot-walking")
+        println(a)
+
+
         var breakTime = 12
         val timeOptions = mutableListOf<UserInputOption>()
         for (i in 0..23) {
@@ -42,10 +46,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
             }
         }
-
-        // get time slots >x minutes
-        // suggest restaurants that are in time
-
 
         val validCuisines = listOf("afghan", "african", "algerian", "american", "arab", "argentinian", "armenian", "asian", "australian", "austrian", "azerbaijani", "balkan",
             "bangladeshi", "basque", "bbq", "belarusian", "belgian", "brazilian", "breakfast", "british", "bulgarian", "burmese", "cajun", "cambodian", "cameroonian", "canadian",
@@ -139,7 +139,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 question = "Which one sounds the most appealing for you?", options = restaurantOptions
             )
             runBlocking { speak("Okay. This is the website of " + selectedRestaurant.name + ": " + selectedRestaurant.website) }
-            runBlocking { speak("I will calculate the best route now, using " + SharedPrefs.getTransportation() + " as the transportation type.") }
+            runBlocking { speak("I will calculate how you can get there by " + transportTranslations[SharedPrefs.getTransportation()] + ".") }
         }
 
         onFinishedCallback()
