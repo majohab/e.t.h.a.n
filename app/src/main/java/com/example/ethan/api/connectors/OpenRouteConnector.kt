@@ -94,14 +94,20 @@ class OpenRouteConnector() {
     }
 
     fun getRouteDuration(origin: String, destination: String, mode: String): Double {
-        val properties = getRoute(origin, destination, mode)
-        val summary = properties!!.getJSONObject("summary")
-        return summary.getDouble("duration")
+        return getRouteDuration(getRoute(origin, destination, mode)!!)
     }
 
-    fun getRouteSteps(origin: String, destination: String, mode: String): List<Pair<String, Double>> {
-        val properties = getRoute(origin, destination, mode)
-        val steps: JSONArray = properties!!.getJSONArray("segments").getJSONObject(0).getJSONArray("steps")
+    fun getRouteDuration(properties: JSONObject) : Double {
+        val summary = properties.getJSONObject("summary")
+        return summary.getDouble("duration") / 60
+    }
+
+    fun getRouteInstructions(origin: String, destination: String, mode: String): List<Pair<String, Double>> {
+        return getRouteInstructions(getRoute(origin, destination, mode)!!)
+    }
+
+    fun getRouteInstructions(properties: JSONObject) : List<Pair<String, Double>> {
+        val steps: JSONArray = properties.getJSONArray("segments").getJSONObject(0).getJSONArray("steps")
 
         val instructionsList = mutableListOf<Pair<String, Double>>()
         for (i in 0 until steps.length()) {
