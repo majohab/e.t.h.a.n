@@ -26,4 +26,17 @@ class CalendarConnectorTest{
 
 
     }
+
+
+    @Test
+    fun getFirstPreferenceTest(){
+        calendarConnector.getIdealExecutionTime(2, 5, 10)
+    }
+
+
+    @Test
+    fun getFirstBreaksTest(){
+
+        
+    }
 }

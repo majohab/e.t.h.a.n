@@ -13,12 +13,7 @@ class SocialAssistanceTest : UseCaseTest() {
     } as AbstractUseCase
 
     override fun mockingbird() {
-        //mock_waitForAPIs(5000)
-        println("test")
-        mock_onEthanVoiceOutputFinished(10)
-        mock_speakAndHearSelectiveInput("yes")
-        mock_onEthanVoiceOutputFinished(10)
-        println("a1")
+
 
 
 
