@@ -119,6 +119,20 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
         }
     }
 
+    fun dynamicOptions(tokens: List<String>, onSuccess: ((String) -> Unit)) : List<UserInputOption>{
+        val options = mutableListOf<UserInputOption>()
+        for (i in tokens.indices) {
+            val option = UserInputOption(
+                tokens = listOf(tokens[i]),
+                onSuccess = {
+                    onSuccess(tokens[i])
+                }
+            )
+            options.add(option)
+        }
+        return options
+    }
+
     fun checkIfContainsWord(vararg tokens: String) : Boolean {
         return checkIfContainsWord(tokens.asList())
     }
@@ -141,4 +155,4 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 }
 
-class UserInputOption(var tokens: List<String>, var response: String? = null, var onSuccess: (() -> Unit?)? = null)
+class UserInputOption(var tokens: List<String>, var response: String? = null, var onSuccess: (() -> Unit)? = null)

@@ -16,7 +16,7 @@ class RecipeConnectorTest{
     @Test
     fun search(){
         val recipe_json = recipeConnector.search("pasta")
-        val recipe_one = recipe_json.getJSONArray("results").getJSONObject(0)
+        val recipe_one = recipe_json!!.getJSONArray("results").getJSONObject(0)
         val recipe_one_id = recipe_one.getInt("id")
         val recipe_recipe = recipeConnector.get(recipe_one_id)
         val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
