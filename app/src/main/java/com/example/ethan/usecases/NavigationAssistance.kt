@@ -164,7 +164,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
         onFinishedCallback()
     }
-
+    
     private fun getNextTimeToGo(event: JSONObject): LocalTime{
         val transportationMode = SharedPrefs.getTransportation()
 

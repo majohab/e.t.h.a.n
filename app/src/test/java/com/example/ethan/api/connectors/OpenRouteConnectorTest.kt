@@ -31,12 +31,12 @@ class OpenRouteConnectorTest{
     }
 
     @Test
-    fun getRouteDurationTest(){
+    fun getRouteDurationTestWithoutJSON(){
         val routeDurationMin = openRouteConnector.getRouteDuration("8.681495,49.41461", "8.687872,49.420318", "foot-walking")
     }
 
     @Test
-    fun getCoordinatesTest(){
+    fun getRouteDurationTestWithJSON(){
 
     }
 }

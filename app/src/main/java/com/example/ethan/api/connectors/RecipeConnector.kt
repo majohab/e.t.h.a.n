@@ -18,6 +18,8 @@ class RecipeConnector {
     public fun search(term: String): JSONObject{
         val url = "https://api.spoonacular.com/recipes/complexSearch?query=" + term + "&number=2&apiKey=" + BuildConfig.API_KEY_RECIPE
         val response = restInterface.get(url)
+        println(response)
+        println(JSONObject(response!!))
         return JSONObject(response!!)
     }
 }

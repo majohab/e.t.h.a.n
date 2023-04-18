@@ -15,13 +15,32 @@ class RawgApiConnectorTest{
     }
 
     @Test
-    fun testString(){
+    fun testGetGenres(){
         rawgApiConnector.getGenres()
     }
 
     @Test
-    fun parseData(){
+    fun testgetTopGamesByCategory(){
 
+        rawgApiConnector.getTopGamesByCategory(1)
     }
+
+    @Test
+    fun dataclassesTest(){
+        RawgApiConnector.RawgApiResponse(
+            listOf(
+                RawgApiConnector.GameResponse(
+                    1,
+                    "Fortnite",
+                    "2023",4.3f,"abv")
+            )
+        )
+        RawgApiConnector.Game( 1,
+            "Fortnite",
+            "2023",4.3f,"abv"
+        )
+    }
+
+
 
 }
