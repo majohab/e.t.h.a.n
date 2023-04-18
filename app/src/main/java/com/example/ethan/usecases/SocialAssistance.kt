@@ -149,8 +149,10 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
 
     override fun getExecutionTime() : LocalTime {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            calendarConnector
-            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+            val prefered = LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+            val duration = LocalTime.parse(SharedPrefs.getString("social_duration"))
+            val startend = calendarConnector.getIdealExecutionTime(prefered.hour, prefered.minute, duration.hour*60)
+            startend.first
         } else {
             TODO("VERSION.SDK_INT < O")
         }

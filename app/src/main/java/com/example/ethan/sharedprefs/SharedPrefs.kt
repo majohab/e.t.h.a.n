@@ -22,7 +22,7 @@ object SharedPrefs {
             editor.putString(AgentHandler.navigationAssistance.getResTimeID(), "15:00")
             editor.putString(AgentHandler.socialAssistance.getResTimeID(), "18:00")
             editor.putString("steam_id", "76561198198615839")
-
+            editor.putString("social_duration", "01:00")
             editor.putBoolean("initialized", true)
             editor.apply()
         }
