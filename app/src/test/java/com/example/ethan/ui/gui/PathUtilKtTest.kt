@@ -1,30 +1,42 @@
 package com.example.ethan.ui.gui
 
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.*
+import org.mockito.junit.MockitoJUnitRunner
 
-import org.junit.Assert.*
+
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
 import kotlin.math.abs
 
 
-import org.junit.Test
+@RunWith(MockitoJUnitRunner::class)
+class PathTest {
 
-class PathUtilKtTest {
+    @Mock
+    private lateinit var path: Path
 
     @Test
-    fun `standardQuadFromTo should add a quadratic bezier curve to the path`() {
-        // arrange
-        val path = Path()
-        val from = Offset(x = 0f, y = 0f)
-        val to = Offset(x = 100f, y = 100f)
+    fun `test standardQuadFromTo`() {
+        // Arrange
+        val from = Offset(0f, 0f)
+        val to = Offset(100f, 100f)
+        val expectedX1 = 0f
+        val expectedY1 = 0f
+        val expectedX2 = 50f
+        val expectedY2 = 50f
 
-        // act
-        //path.standardQuadFromTo(from, to)
-        //path.quadraticBezierTo(2.0F,2.0F, 4.0F, 4.0F)
-        //anpassungen für mocking nötig
+        // Act
+        path.standardQuadFromTo(from, to)
 
-        // assert
-        //assertEquals(1,1 )
-
+        // Assert
+        verify(path).quadraticBezierTo(
+            expectedX1,
+            expectedY1,
+            expectedX2,
+            expectedY2
+        )
     }
 }

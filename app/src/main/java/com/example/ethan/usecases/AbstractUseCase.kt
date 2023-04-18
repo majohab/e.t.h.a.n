@@ -80,6 +80,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 
     fun onEthanVoiceOutputFinished(){
+        println("Ethan done")
         awaitEthanVoiceOutput = false
     }
 
@@ -100,7 +101,6 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     fun speakAndHearSelectiveInput(question: String, options: List<UserInputOption>) {
 
         runBlocking { askForUserVoiceInput(question) }
-
         var success: Boolean = false
         while (!success) {
             for (option in options) {

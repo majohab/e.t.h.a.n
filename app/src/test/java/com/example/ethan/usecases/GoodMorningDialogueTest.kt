@@ -1,26 +1,24 @@
 package com.example.ethan.usecases
 
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
 
-class GoodMorningDialogueTest{
+class GoodMorningDialogueTest : UseCaseTest(){
 
-    private lateinit var goodMorningDialogue: GoodMorningDialogue
+    override var abstractUseCase = GoodMorningDialogue {
+        // this code will be executed when the use case is finished
+        println("Good morning dialogue is finished!")
+    } as AbstractUseCase
 
-    @Before
-    fun setUp(){
-        goodMorningDialogue = GoodMorningDialogue {
-            // this code will be executed when the use case is finished
-            println("Good morning dialogue is finished!")
-        }
-
-        // now you can call the execute method to start the use case
-
-    }
-
-    @Test
-    fun createTest(){
-       //goodMorningDialogue.executeUseCase()
+    override fun mockingbird() {
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("car")
+        println("a1")
+        mock_waitForAPIs(3000)
+        println("a2")
+        mock_speakAndHearSelectiveInput("yes")
+        println("a3")
+        mock_waitForAPIs(3000)
+        println("a4s")
+        mock_onEthanVoiceOutputFinished(1)
     }
 }

@@ -76,6 +76,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         {
             val stocknews_json = stocksConnector.get(stockslist_tickers[i])
             println(stocknews_json)
+            if (!stocknews_json.has("Global Quote"))
+                continue
             val stocknews_quote = stocknews_json.getJSONObject("Global Quote")
             val price = stocknews_quote.optString("05. price").toFloat().toString()
             stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
@@ -100,7 +102,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
                 tokens = listOf("car", "drive"),
-                response = "You successfully set bus as your favourite transportation method for today.",
+                response = "You successfully set driving as your favourite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(
@@ -119,6 +121,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 onSuccess = { SharedPrefs.setString("transportation", "wheelchair") }
             )
         ))
+        println("Test")
 
         speakAndHearSelectiveInput(
             question = "Okay cool. Do you want to hear your fortune for today?", options = listOf(
@@ -132,10 +135,13 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             )
         ))
 
+        println("Test 2")
+
         runBlocking { speak("Have a great day!") }
         // Say how long it'll take the user to its destination
 
-        println("GoodMorningDialogue Thread is about to end!")
+        println("Test 3")
+
         onFinishedCallback()
     }
 

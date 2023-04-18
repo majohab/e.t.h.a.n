@@ -20,8 +20,7 @@ class RecipeConnectorTest{
         val recipe_one_id = recipe_one.getInt("id")
         val recipe_recipe = recipeConnector.get(recipe_one_id)
         val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
-        //println(recipe_sourceUrl)
-        println(recipe_sourceUrl)
+
         assertEquals("http://www.foodista.com/recipe/K6QWSKQM/pasta-with-tuna",recipe_sourceUrl)
     }
 }

@@ -1,11 +1,8 @@
 package com.example.ethan.usecases
 
-import android.os.Build
-import com.example.ethan.BuildConfig
 import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
-import com.example.ethan.transportation.getAllTransportationKeys
 import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
@@ -19,46 +16,40 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     private val openStreet = OpenStreetConnector()
     private var weatherApiConnector = OpenWeatherApiConnector()
     private var calendarConnector = CalendarConnector()
+    private var nextExecutionTime: LocalTime? = null
 
     override fun executeUseCase() {
-        var transportation_mode = SharedPrefs.getTransportation()
+        nextExecutionTime = null
+        val transportationMode = SharedPrefs.getTransportation()
 
-        val eventsFreeBusy_json = calendarConnector.get()
-        var timeToGo = 0
-        val nextEventID: Int = eventsFreeBusy_json.getInt("nextEventID")
-        if (nextEventID == -1) {
+        val nextEvent = getNextEvent()
+        if (nextEvent == null) {
+            runBlocking { speak("Congrats! You have no more events for today.") }
+            onFinishedCallback()
             return
         }
-        val event = eventsFreeBusy_json.getJSONObject("events").getJSONObject(nextEventID.toString())
 
-        val estimatedTimes = route.getDurations(event.getString("location"))
+        val estimatedTimes = route.getDurations(nextEvent.getString("location"))
+        val timeWithPreferred = estimatedTimes[transportationMode]!!
+        var routeDuration = timeWithPreferred
 
-        val timeWithPreffered = estimatedTimes[transportation_mode]!!
-        timeToGo = getTimeToGo(event, timeWithPreffered)
-        var routeDuration = timeWithPreffered
+        var goInXMinutes = getTimeToGo(nextEvent, timeWithPreferred)
 
-        val weather_dest = getWeather(event.getString("location"))
-        val weather_orig = getWeather(LocalLocation.getCurrentLocation())
-        val raining: Boolean = weather_dest == "Rain" || weather_orig == "Rain"
+        if (goInXMinutes < 0){
+            val overflow = -1*goInXMinutes
+            val bestMethod = getBestTransportMethode(estimatedTimes, transportationMode)
+            val bestMethodTime = estimatedTimes[bestMethod]!!
 
-        if (timeToGo > 15) {
-            return
-        }
-        if (timeToGo < 0){
-            val overflow = -1*timeToGo
-            val bestMethod = getBestTransportMethode(estimatedTimes, transportation_mode)
-            var bestMethodTime = estimatedTimes[bestMethod]!!
-
-            if ((timeWithPreffered - bestMethodTime) < overflow){
+            if ((timeWithPreferred - bestMethodTime) < overflow){
                 runBlocking {
                     var suffix = ""
-                    if (raining && bestMethod == "foot-walking"){
+                    if (isRainOnRoute(nextEvent) && bestMethod == "foot-walking"){
                         suffix = "Be aware that rain is possible on your way. "
                     }
                     speak("Hello. This is your PDA ETHAN. I want to inform you that you " +
                         "needed to leave $overflow minutes ago to catch your next event. " +
                         "Your best option would be to travel by " + transportTranslations[bestMethod] + ". " +
-                        "However, you still have a delay of ${overflow - (timeWithPreffered - bestMethodTime)} " +
+                        "However, you still have a delay of ${overflow - (timeWithPreferred - bestMethodTime)} " +
                         "if you go right away. $suffix") }
             }else {
                 speakAndHearSelectiveInput(
@@ -70,19 +61,20 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                         UserInputOption(
                             tokens = positiveTokens,
                             onSuccess = {
-                                timeToGo = getTimeToGo(event, estimatedTimes[bestMethod]!!)
+                                goInXMinutes = getTimeToGo(nextEvent, estimatedTimes[bestMethod]!!)
                                 var suffix = ""
-                                if (raining && bestMethod == "foot-walking"){
+                                if (isRainOnRoute(nextEvent) && bestMethod == "foot-walking"){
                                     suffix = "Be aware that it could rain on your way. "
                                 }
-                                runBlocking { speak("Okay. Your updated time to leave is in $timeToGo minutes. $suffix ") }
+                                SharedPrefs.setString("transportation", bestMethod)
+                                runBlocking { speak("Okay. Your updated time to leave is in $goInXMinutes minutes. $suffix ") }
                             }
                         ),
                         UserInputOption(
                             tokens = negativeTokens,
                             onSuccess = {
                                 var suffix = ""
-                                if (raining && transportation_mode == "foot-walking"){
+                                if (isRainOnRoute(nextEvent) && transportationMode == "foot-walking"){
                                     suffix = "Be aware that it could rain on your way. "
                                 }
                                 runBlocking { speak("I understand. I won't change anything. Please leave as soon as possible to minimize your delay. $suffix ") }
@@ -91,13 +83,13 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     ))
             }
         }else {
-            runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $timeToGo minutes to catch your next event.") }
+            runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $goInXMinutes minutes to catch your next event.") }
 
-            if (transportation_mode != "foot-walking") {
+            if (transportationMode != "foot-walking") {
                 routeDuration = estimatedTimes["foot-walking"]!!
                 if (routeDuration < 10) {
                     var suffix = ""
-                    if (raining){
+                    if (isRainOnRoute(nextEvent)){
                         suffix = "Be aware that it could rain on your way. "
                     }
                     speakAndHearSelectiveInput(
@@ -106,13 +98,14 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                             UserInputOption(
                                 tokens = positiveTokens,
                                 onSuccess = {
-                                    timeToGo = getTimeToGo(event, estimatedTimes["foot-walking"]!!)
-                                    runBlocking { speak("Okay. To catch the upcoming event by foot you now need to leave in $timeToGo minutes. ") }
+                                    goInXMinutes = getTimeToGo(nextEvent, estimatedTimes["foot-walking"]!!)
+                                    SharedPrefs.setString("transportation", "foot-walking")
+                                    runBlocking { speak("Okay. To catch the upcoming event by foot you now need to leave in $goInXMinutes minutes. ") }
                                 }
                             ),
                             UserInputOption(
                                 tokens = negativeTokens,
-                                response = "I understand. I won't change anything. You still need to leave in $timeToGo minutes."
+                                response = "I understand. I won't change anything. You still need to leave in $goInXMinutes minutes."
                             ),
                         ))
                 }
@@ -124,47 +117,85 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                             UserInputOption(
                                 tokens = listOf("car", "auto", "taxi"),
                                 onSuccess = {
-                                    timeToGo = getTimeToGo(event, estimatedTimes["driving-car"]!!)
-                                    runBlocking { speak("Okay. To catch the upcoming event by car you now need to leave in $timeToGo minutes. ") }
+                                    goInXMinutes = getTimeToGo(nextEvent, estimatedTimes["driving-car"]!!)
+                                    SharedPrefs.setString("transportation", "driving-car")
+                                    runBlocking { speak("Okay. To catch the upcoming event by car you now need to leave in $goInXMinutes minutes. ") }
                                 }
                             ),
                             UserInputOption(
                                 tokens = listOf("wheelchair", "rollstuhl", "rollie"),
                                 onSuccess = {
-                                    timeToGo = getTimeToGo(event, estimatedTimes["wheelchair"]!!)
+                                    goInXMinutes = getTimeToGo(nextEvent, estimatedTimes["wheelchair"]!!)
                                     var suffix = ""
-                                    if (raining){
+                                    if (isRainOnRoute(nextEvent)){
                                         suffix = "Be aware that it could rain on your way. "
                                     }
-                                    runBlocking { speak("Okay. To catch the upcoming event by wheelchair you now need to leave in $timeToGo minutes. $suffix") }
+                                    SharedPrefs.setString("transportation", "wheelchair")
+                                    runBlocking { speak("Okay. To catch the upcoming event by wheelchair you now need to leave in $goInXMinutes minutes. $suffix") }
                                 }
                             ),
                             UserInputOption(
                                 tokens = listOf("bike", "drahtesel"),
                                 onSuccess = {
-                                    timeToGo = getTimeToGo(event, estimatedTimes["cycling-road"]!!)
+                                    goInXMinutes = getTimeToGo(nextEvent, estimatedTimes["cycling-road"]!!)
                                     var suffix = ""
-                                    if (raining){
+                                    if (isRainOnRoute(nextEvent)){
                                         suffix = "Be aware that it could rain on your way. "
                                     }
-                                    runBlocking { speak("Okay. To catch the upcoming event by bike you now need to leave in $timeToGo minutes. $suffix") }
+                                    SharedPrefs.setString("transportation", "cycling-road")
+                                    runBlocking { speak("Okay. To catch the upcoming event by bike you now need to leave in $goInXMinutes minutes. $suffix") }
                                 }
                             ),
                             UserInputOption(
                                 tokens = negativeTokens,
                                 onSuccess = {
                                     var suffix = ""
-                                    if (raining){
+                                    if (isRainOnRoute(nextEvent)){
                                         suffix = "Be aware that it could rain on your way. "
                                     }
-                                    runBlocking {speak("I understand. I won't change anything. You still need to leave withinin $timeToGo minutes. $suffix")}
+                                    runBlocking {speak("I understand. I won't change anything. You still need to leave withinin $goInXMinutes minutes. $suffix")}
                                 },
                             ),
                         ))
                 }
             }
         }
+        if (goInXMinutes > 15) {
+            runBlocking { speak("I will remind you 15 minutes before the upcoming event.") }
+        }
         onFinishedCallback()
+    }
+
+    private fun getNextTimeToGo(event: JSONObject): LocalTime{
+        val transportationMode = SharedPrefs.getTransportation()
+
+        val estimatedTimes = route.getDurations(event.getString("location"))
+
+        val timeWithPreferred = estimatedTimes[transportationMode]!!
+        val timeToGo = getTimeToGo(event, timeWithPreferred)
+
+        return LocalTime.now().plusMinutes(timeToGo.toLong())
+    }
+
+    private fun getNextEvent(): JSONObject?{
+        val eventsFreeBusy_json = calendarConnector.get()
+
+        if (eventsFreeBusy_json.getInt("total") == 0){
+            return null
+        }
+
+        val nextEventID: Int = eventsFreeBusy_json.getInt("nextEventID")
+        if (nextEventID == -1) {
+            return null
+        }
+
+        return eventsFreeBusy_json.getJSONObject("events").getJSONObject(nextEventID.toString())
+    }
+
+    private fun isRainOnRoute(event: JSONObject): Boolean{
+        val weatherDest = getWeather(event.getString("location"))
+        val weatherOrig = getWeather(LocalLocation.getCurrentLocation())
+        return weatherDest == "Rain" || weatherOrig == "Rain"
     }
 
     private fun getBestTransportMethode(estimatedTimes : Map<String, Int>, transportation_mode : String): String {
@@ -199,7 +230,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     }
 
 
-    fun getTimeToGo(event: JSONObject, timeInMinutes : Int) : Int {
+    private fun getTimeToGo(event: JSONObject, timeInMinutes : Int) : Int {
         val hour = event.getInt("startHour")
         val minute = event.getInt("startMinute")
 
@@ -210,10 +241,17 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     }
 
     override fun getExecutionTime(): LocalTime {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
-        } else {
-            TODO("VERSION.SDK_INT < O")
+        val nextEvent = getNextEvent()
+        return if (nextEvent == null){
+            setDoneToday(true)
+            LocalTime.parse("00:01")
+        }else {
+            if(nextExecutionTime == null){
+                nextExecutionTime = getNextTimeToGo(nextEvent).minusMinutes(14)
+                SharedPrefs.setString(getResTimeID(), nextExecutionTime.toString())
+                setDoneToday(false)
+            }
+            nextExecutionTime!!
         }
     }
 
