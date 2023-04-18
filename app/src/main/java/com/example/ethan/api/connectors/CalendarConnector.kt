@@ -67,8 +67,8 @@ class CalendarConnector : AbstractConnector(){
     }
 
     fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): Pair<LocalTime, LocalTime>{
-        var suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute")
-        var suggBreakEnd = LocalTime.parse("$preferredHour:$preferredMinute").plusMinutes(
+        var suggBreakStart = LocalTime.parse( String.format("%02d", preferredHour) + ":" + String.format("%02d", preferredMinute))
+        var suggBreakEnd = suggBreakStart.plusMinutes(
             preferredDuration.toLong()
         )
 
@@ -86,8 +86,8 @@ class CalendarConnector : AbstractConnector(){
             if((bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")) < (preferredHour*60 + preferredMinute) &&
                 (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) > (preferredHour*60 + preferredMinute) + preferredDuration){
 
-                // Break extends whole preferred duration
-                suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute") //preferredHour
+                suggBreakStart = suggBreakStart
+                suggBreakEnd = suggBreakEnd
 
             }else if((bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) < (preferredHour*60 + preferredMinute) + preferredDuration) {
 
