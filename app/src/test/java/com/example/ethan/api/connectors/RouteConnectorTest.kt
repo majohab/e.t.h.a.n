@@ -21,10 +21,7 @@ class RouteConnectorTest{
 
     @Test
     fun parseData(){
-        val url = "https://api.openrouteservice.org/v2/directions/" + "ab" + "?api_key=" +  BuildConfig.API_KEY_Routes + "a"
-        println(url)
-
-        val response = routeConnector.getDynamic(url)
+        val response = routeConnector.getDurations("8.687872,49.420318")
 
     }
 }

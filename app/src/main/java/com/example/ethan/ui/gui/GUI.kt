@@ -46,16 +46,9 @@ object GUI : ComponentActivity() {
     fun MainScreen() {
 
         ETHANTheme {
-            Box(
-                modifier = Modifier
-                    .background(DeepBlue)
-                    .fillMaxSize()
-            ) {
-
+            Box(modifier = Modifier.background(DeepBlue).fillMaxSize()) {
                 Column(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(horizontal = 15.dp, vertical = 0.dp), // Can't add vertical spacing, because we need the mic animation to go to the bottom
+                    modifier = Modifier.align(Alignment.TopCenter).padding(horizontal = 15.dp, vertical = 0.dp), // Can't add vertical spacing, because we need the mic animation to go to the bottom
                     verticalArrangement = Arrangement.spacedBy(15.dp) // Space between
                 )
                 {

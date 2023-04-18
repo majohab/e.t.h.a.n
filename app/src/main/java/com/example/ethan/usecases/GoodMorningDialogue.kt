@@ -120,6 +120,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 onSuccess = { SharedPrefs.setString("transportation", "wheelchair") }
             )
         ))
+        println("Test")
 
         speakAndHearSelectiveInput(
             question = "Okay cool. Do you want to hear your fortune for today?", options = listOf(
