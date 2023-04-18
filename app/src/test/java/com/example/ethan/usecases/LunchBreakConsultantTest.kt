@@ -9,11 +9,12 @@ class LunchBreakConsultantTest : UseCaseTest() {
     } as AbstractUseCase
 
     override fun mockingbird() {
-        mock_waitForAPIs(5000)
+        mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("15:00")
         println("a1")
-        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+
         println("a2")
         mock_speakAndHearSelectiveInput("indian")
         mock_waitForAPIs(5000)

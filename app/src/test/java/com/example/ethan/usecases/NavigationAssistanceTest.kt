@@ -4,22 +4,33 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class NavigationAssistanceTest{
-    private lateinit var navigationAssistance: NavigationAssistance
+class NavigationAssistanceTest : UseCaseTest() {
 
-    @Before
-    fun setUp(){
-        navigationAssistance = NavigationAssistance {
-            // this code will be executed when the use case is finished
-            println("Good morning dialogue is finished!")
-        }
+    override var abstractUseCase = NavigationAssistance {
+        // this code will be executed when the use case is finished
+        println("Navigation assistance finished")
+    } as AbstractUseCase
 
-        // now you can call the execute method to start the use case
+    override fun mockingbird() {
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        println("a1")
+
+
 
     }
 
-    @Test
-    fun createTest(){
-        //navigationAssistance.getBestTransportMethode(estimatedTimes = )
+    override fun mockingbird2() {
+        TODO("Not yet implemented")
     }
+
+    override fun mockingbird3() {
+        TODO("Not yet implemented")
+    }
+
+    override fun mockingbird4() {
+        TODO("Not yet implemented")
+    }
+
 }

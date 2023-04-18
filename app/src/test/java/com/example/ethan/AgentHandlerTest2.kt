@@ -6,6 +6,10 @@ import org.junit.Test
 
 class AgentHandlerTest2 {
 
+    private lateinit var agenthandler: AgentHandler
+
+
+
     @Test
     fun getSemaphore() {
     }

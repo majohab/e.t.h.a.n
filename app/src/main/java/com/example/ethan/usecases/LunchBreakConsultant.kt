@@ -25,7 +25,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
         var suggestedBreaktimeStart = preferredBreakTimeStart
         var suggestedBreaktimeEnd = preferredBreakTimeEnd
-
+        println("init")
         speakAndHearSelectiveInput(
             question = "Hi. I'm here to assure you having the best break today. Around what hour do" +
                     " prefer to eat something?",
@@ -40,11 +40,12 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                                 preferredBreakTimeStart = LocalTime.parse(it)
                             }
                         }
+                        println("got user input")
                         runBlocking { speak("Okay. I set your preferred break time for $timeString ") }
                     }
                 ))
         )
-
+        println("got time")
         var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
         suggestedBreaktimeStart = bestBreak.first
         suggestedBreaktimeEnd = bestBreak.second
@@ -83,7 +84,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         speakAndHearSelectiveInput(
             question = "What cuisine do you have in mind for today?", options = cuisineOptions
         )
-
         var restaurants = listOf<OsmRestaurant>()
         while (restaurants.isEmpty()) {
 
@@ -103,6 +103,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     question = "Please give me a different cuisine to search for.",
                     options = cuisineOptions
                 )
+                println("different cuisine asked for")
             }
         }
 

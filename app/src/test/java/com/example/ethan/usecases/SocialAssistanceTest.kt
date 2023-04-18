@@ -4,22 +4,37 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class SocialAssistanceTest{
-    private lateinit var socialAssistance: SocialAssistance
 
-    @Before
-    fun setUp(){
-        socialAssistance = SocialAssistance {
-            // this code will be executed when the use case is finished
-            println("Good morning dialogue is finished!")
-        }
+class SocialAssistanceTest : UseCaseTest() {
 
-        // now you can call the execute method to start the use case
+    override var abstractUseCase = SocialAssistance {
+        // this code will be executed when the use case is finished
+        println("Navigation assistance finished")
+    } as AbstractUseCase
+
+    override fun mockingbird() {
+        //mock_waitForAPIs(5000)
+        println("test")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        println("a1")
+
+
 
     }
 
-    @Test
-    fun createTest(){
-        //socialAssistance.executeUseCase()
+    override fun mockingbird2() {
+        TODO("Not yet implemented")
+
     }
+
+    override fun mockingbird3() {
+        TODO("Not yet implemented")
+    }
+
+    override fun mockingbird4() {
+        TODO("Not yet implemented")
+    }
+
 }
