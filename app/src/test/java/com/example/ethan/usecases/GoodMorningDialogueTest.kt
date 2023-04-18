@@ -20,7 +20,8 @@ class GoodMorningDialogueTest{
     }
 
     @Test
-    fun createTest(){
-       //goodMorningDialogue.executeUseCase()
+    fun createTest() {
+        goodMorningDialogue.executeUseCase()
+        println("Test")
     }
 }

@@ -165,7 +165,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         onFinishedCallback()
     }
 
-    private fun getBestTransportMethode(estimatedTimes : Map<String, Int>, transportation_mode : String): String {
+    fun getBestTransportMethode(estimatedTimes : Map<String, Int>, transportation_mode : String): String {
         var bestMethod = transportation_mode
         var bestMethodTime = estimatedTimes[transportation_mode]!!
         estimatedTimes.keys.forEach{
