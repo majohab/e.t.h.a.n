@@ -41,7 +41,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 val event: JSONObject = eventsFreeBusy_json.getJSONObject("events").getJSONObject(key)
                 eventsResponseString += "Your $key. event is about to start at ${event.get("startHour")}:${event.get("startMinute")}. "
                 if(nextEventID.toString() == key) {
-                    timeToGo = getTimeToNextEvent(event)
+                    timeToGo = route.getTimeToNextEvent(event)
                 }
             }
             if (timeToGo > 0 && nextEventID != -1){
@@ -137,58 +137,4 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println("GoodMorningDialogue Thread is about to end!")
         onFinishedCallback()
     }
-
-    private fun getTimeToNextEvent(event: JSONObject): Int{
-        val hour = event.getInt("startHour")
-        val minute = event.getInt("startMinute")
-
-
-        val routTime = getDurations(event.getString("location"))[SharedPrefs.getTransportation()]!!
-
-
-        val diffHour = hour - LocalDateTime.now().hour
-        val diffMinute = (minute - LocalDateTime.now().minute) + (diffHour * 60)
-
-        return diffMinute - routTime
-    }
-
-    private fun getDurations(target : String): Map<String, Int> {
-        val durations = mutableMapOf<String, Int>()
-        val movementTypes = getAllTransportationKeys()
-
-        val current = currentLocation()
-
-        val locations = getQueryLocationString(target, current)
-        movementTypes.forEach {
-
-            val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_Routes + locations
-            println(url)
-
-            val response = route.getDynamic(url)
-
-            val duration = (extractDuration(response)/60).toInt()
-            durations[it] = duration
-        }
-        println(durations)
-        return durations
-    }
-
-    private fun getQueryLocationString(target : String, current : JSONObject): String {
-        val openstreetURL = "https://nominatim.openstreetmap.org/search/"
-        val openstreetEnding = "?format=json&addressdetails=1&limit=1&polygon_svg=1"
-
-        val targetLocations = openStreet.getDynamic(openstreetURL+ target + openstreetEnding)
-
-        val locations = listOf(listOf(current.getString("lon"), current.getString("lat")), listOf(targetLocations.getString("lon"), targetLocations.getString("lat")))
-        val query = "&start=" + locations[0][0] + "," + locations[0][1] + "&end=" + locations[1][0] + "," + locations[1][1]
-        return query
-    }
-
-    private fun extractDuration(response: JSONObject): Double {
-        return response.getDouble("Duration")
-    }
-    private fun currentLocation(): JSONObject {
-        return LocalLocation.getCurrentLocation()
-    }
-
 }
