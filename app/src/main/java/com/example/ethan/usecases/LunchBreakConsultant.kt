@@ -1,5 +1,6 @@
 package com.example.ethan.usecases
 
+import android.os.Build
 import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
@@ -170,5 +171,13 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
         }
         onFinishedCallback()
+    }
+
+    override fun getExecutionTime(): LocalTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
     }
 }

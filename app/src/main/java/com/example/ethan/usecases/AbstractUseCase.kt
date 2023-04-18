@@ -26,13 +26,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     var positiveTokens = listOf("yes", "yeah", "yep", "yup", "sure")
     var negativeTokens = listOf("no", "nah", "no way", "never", "save nicht")
 
-    fun getExecutionTime() : LocalTime {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-    }
+    abstract fun getExecutionTime() : LocalTime
 
     fun getDoneToday() : Boolean {
         return SharedPrefs.getBoolean(doneTodayString())

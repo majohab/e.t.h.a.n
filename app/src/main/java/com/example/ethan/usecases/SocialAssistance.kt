@@ -1,9 +1,12 @@
 package com.example.ethan.usecases
 
+import android.os.Build
+import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.RawgApiConnector
 import com.example.ethan.api.connectors.SteamFriendsConnector
 import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
+import java.time.LocalTime
 
 class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
@@ -11,6 +14,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
 
     private var steamFriendsConnector = SteamFriendsConnector()
     private var rawgApiConnector = RawgApiConnector()
+    private var calendarConnector = CalendarConnector()
 
     override fun executeUseCase() {
 
@@ -141,5 +145,16 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         speakAndHearSelectiveInput(
             question = genrestring, options = options
         )
+    }
+
+    override fun getExecutionTime() : LocalTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val prefered = LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+            val duration = LocalTime.parse(SharedPrefs.getString("social_duration"))
+            val startend = calendarConnector.getIdealExecutionTime(prefered.hour, prefered.minute, duration.hour*60)
+            startend.first
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
     }
 }
