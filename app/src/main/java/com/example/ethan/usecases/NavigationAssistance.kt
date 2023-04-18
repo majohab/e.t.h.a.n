@@ -45,14 +45,9 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
         if (timeToGo < 0){
             val overflow = -1*timeToGo
-            var bestMethod = transportation_mode
-            var bestMethodTime = estimatedTimes[transportation_mode]!!
-            estimatedTimes.keys.forEach{
-                if(bestMethodTime > (estimatedTimes[it]!!)){
-                    bestMethodTime = estimatedTimes[it]!!
-                    bestMethod = it
-                }
-            }
+            val bestMethod = getBestTransportMethode(estimatedTimes, transportation_mode)
+            var bestMethodTime = estimatedTimes[bestMethod]!!
+
             if ((timeWithPreffered - bestMethodTime) < overflow){
                 runBlocking {
                     var suffix = ""
@@ -169,6 +164,18 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
         }
         onFinishedCallback()
+    }
+
+    private fun getBestTransportMethode(estimatedTimes : Map<String, Int>, transportation_mode : String): String {
+        var bestMethod = transportation_mode
+        var bestMethodTime = estimatedTimes[transportation_mode]!!
+        estimatedTimes.keys.forEach{
+            if(bestMethodTime > (estimatedTimes[it]!!)){
+                bestMethodTime = estimatedTimes[it]!!
+                bestMethod = it
+            }
+        }
+        return bestMethod
     }
 
     private fun getWeather(target : String): String {
