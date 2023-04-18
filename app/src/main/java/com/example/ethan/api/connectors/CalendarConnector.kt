@@ -66,9 +66,9 @@ class CalendarConnector : AbstractConnector(){
         return result
     }
 
-    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): List<LocalTime>{
-        var suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute")
-        var suggBreakEnd = LocalTime.parse("$preferredHour:$preferredMinute").plusMinutes(
+    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): Pair<LocalTime, LocalTime>{
+        var suggBreakStart = LocalTime.parse( String.format("%02d", preferredHour) + ":" + String.format("%02d", preferredMinute))
+        var suggBreakEnd = suggBreakStart.plusMinutes(
             preferredDuration.toLong()
         )
 
@@ -77,7 +77,7 @@ class CalendarConnector : AbstractConnector(){
 
         if (eventsTotal == 0){
             // Preferred time is available
-            return listOf(suggBreakStart, suggBreakEnd)
+            return Pair(suggBreakStart, suggBreakEnd)
         }else {
             val breaks = getBreaks(events)
             val bestBreak = getBestBreak(breaks, preferredHour, preferredMinute)
@@ -86,8 +86,8 @@ class CalendarConnector : AbstractConnector(){
             if((bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")) < (preferredHour*60 + preferredMinute) &&
                 (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) > (preferredHour*60 + preferredMinute) + preferredDuration){
 
-                // Break extends whole preferred duration
-                suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute") //preferredHour
+                suggBreakStart = suggBreakStart
+                suggBreakEnd = suggBreakEnd
 
             }else if((bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) < (preferredHour*60 + preferredMinute) + preferredDuration) {
 
@@ -121,7 +121,7 @@ class CalendarConnector : AbstractConnector(){
             }
         }
 
-        return listOf(suggBreakStart, suggBreakEnd)
+        return Pair(suggBreakStart, suggBreakEnd)
     }
 
     private fun getBreaks(events: JSONObject): JSONArray{

@@ -46,8 +46,8 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         )
 
         var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
-        suggestedBreaktimeStart = bestBreak[0]
-        suggestedBreaktimeEnd = bestBreak[1]
+        suggestedBreaktimeStart = bestBreak.first
+        suggestedBreaktimeEnd = bestBreak.second
         runBlocking { speak("You should start your break at: $suggestedBreaktimeStart. It will end at: $suggestedBreaktimeEnd") }
 
         val validCuisines = listOf("afghan", "african", "algerian", "american", "arab", "argentinian", "armenian", "asian", "australian", "austrian", "azerbaijani", "balkan",
