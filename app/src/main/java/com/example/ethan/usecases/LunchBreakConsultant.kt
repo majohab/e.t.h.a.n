@@ -33,14 +33,11 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 UserInputOption(
                     tokens = listOf(":"),
                     onSuccess = {
-                        var timeString = ""
                         lastUserVoiceInput.split(" ").forEach{
                             if (it.contains(":")){
-                                timeString = it
                                 preferredBreakTimeStart = LocalTime.parse(it)
                             }
                         }
-                        runBlocking { speak("Okay. I set your preferred break time for $timeString ") }
                     }
                 ))
         )
