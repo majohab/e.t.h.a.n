@@ -137,7 +137,7 @@ class OpenRouteConnector() {
             return null
 
         val responseBody = response.body?.string()
-        val responseBody_JSON = JSONObject(responseBody)
+        val responseBody_JSON = JSONObject(responseBody!!)
 
         val properties = responseBody_JSON.getJSONArray("features").getJSONObject(0).getJSONObject("properties")
         return properties
