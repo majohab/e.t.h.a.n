@@ -18,6 +18,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     override fun executeUseCase() {
 
+        println("test0")
         var origin = LocalLocation.getCurrentLocation()
 
         var breakTime = 12
@@ -34,11 +35,13 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             )
             timeOptions.add(option)
         }
+        println("Test1")
         speakAndHearSelectiveInput(
             question = "Hi. I'm here to assure you having the best break today. Around what hour do" +
                     " prefer to eat something?", options = timeOptions
         )
 
+        println("test2")
         val eventsFreeBusy_json = calendarConnector.get()
         val eventsTotal = eventsFreeBusy_json.getInt("total")
         var event_before: JSONObject? = null
@@ -122,7 +125,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             "tanzanian", "tapas", "tex-mex", "thai", "tibetan", "tunisian", "turkish", "ukrainian", "uruguayan", "uzbek", "vegan", "vegetarian", "venezuelan", "vietnamese", "welsh",
             "west_african", "yemeni", "zambian","zimbabwean"
         )
-
+        println("test3")
         val validCuisines_input = validCuisines.map {it.replace("_", " ")}
 
         var seletedCuisine = ""
@@ -141,7 +144,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         speakAndHearSelectiveInput(
             question = "What cuisine do you have in mind for today?", options = cuisineOptions
         )
-
+        println("test3")
         var restaurants = listOf<OsmRestaurant>()
         while (restaurants.isEmpty()) {
 
@@ -161,8 +164,12 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     question = "Please give me a different cuisine to search for.",
                     options = cuisineOptions
                 )
+                println("cuisineOptions")
+
+
             }
         }
+        println("test4")
 
         val restaurantCount = minOf(3, restaurants.count())
         if (restaurantCount == 1) {
@@ -170,8 +177,10 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             val name = restaurant
             val website = restaurant.website
             runBlocking { speak("What about $name? You can find their website here: $website") }
+            println("test5.5")
         }
         else {
+            println("test5")
             var restaurantsNamesString = ""
             for (i in 0 until restaurantCount) {
                 if (i > 0)
@@ -179,7 +188,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 restaurantsNamesString += restaurants[i].name
             }
             runBlocking { speak("I found the following restaurants: $restaurantsNamesString") }
-
+            println("test6")
             var selectedRestaurant = restaurants[0]
             val restaurantOptions = mutableListOf<UserInputOption>()
             for (i in 0 until restaurantCount) {
@@ -196,6 +205,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 )
                 restaurantOptions.add(option)
             }
+            println("test7")
             speakAndHearSelectiveInput(
                 question = "Which one sounds the most appealing for you?", options = restaurantOptions
             )

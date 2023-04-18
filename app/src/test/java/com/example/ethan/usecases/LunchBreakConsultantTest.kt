@@ -1,25 +1,43 @@
 package com.example.ethan.usecases
 
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
 
-class LunchBreakConsultantTest{
-    private lateinit var lunchBreakConsultant: LunchBreakConsultant
+class LunchBreakConsultantTest : UseCaseTest() {
 
-    @Before
-    fun setUp(){
-        lunchBreakConsultant = LunchBreakConsultant {
-            // this code will be executed when the use case is finished
-            println("Good morning dialogue is finished!")
-        }
+    override var abstractUseCase = LunchBreakConsultant {
+        // this code will be executed when the use case is finished
+        println("Good morning dialogue is finished!")
+    } as AbstractUseCase
 
-        // now you can call the execute method to start the use case
+    override fun mockingbird() {
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("15:00")
+        println("a1")
+        mock_waitForAPIs(5000)
+        println("a2")
+        mock_speakAndHearSelectiveInput("indian")
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        println("a3")
+        mock_speakAndHearSelectiveInput("1")
+        mock_waitForAPIs(3000)
+
+        println("a4s")
+        mock_onEthanVoiceOutputFinished(1)
+
 
     }
 
-    @Test
-    fun createTest(){
-        //lunchBreakConsultant.executeUseCase()
+    override fun mockingbird2() {
+        TODO("Not yet implemented")
     }
+
+    override fun mockingbird3() {
+        TODO("Not yet implemented")
+    }
+
+    override fun mockingbird4() {
+        TODO("Not yet implemented")
+    }
+
 }

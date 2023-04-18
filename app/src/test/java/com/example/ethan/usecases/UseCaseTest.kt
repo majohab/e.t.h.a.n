@@ -82,6 +82,13 @@ abstract class UseCaseTest {
 
     abstract fun mockingbird()
 
+    abstract fun mockingbird2()
+
+    abstract fun mockingbird3()
+
+    abstract fun mockingbird4()
+
+
     fun mock_waitForAPIs(duration: Long) {
         Thread.sleep(duration)
     }
