@@ -19,11 +19,10 @@ class CalendarConnector : AbstractConnector(){
     override val url: String
         get() = "http://www.h2991977.stratoserver.net/TINF20B.ics"
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun parseData(data: String): JSONObject {
         val calendar = CalendarBuilder().build(data.byteInputStream())
         val startOfToday = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 14)
+            set(Calendar.DAY_OF_MONTH, 21)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
