@@ -1,5 +1,6 @@
 package com.example.ethan.usecases
 
+import android.os.Build
 import com.example.ethan.BuildConfig
 import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
@@ -9,6 +10,7 @@ import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
 
@@ -205,6 +207,14 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val diffMinute = (minute - LocalDateTime.now().minute) + (diffHour * 60)
 
         return diffMinute - timeInMinutes
+    }
+
+    override fun getExecutionTime(): LocalTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
     }
 
 }
