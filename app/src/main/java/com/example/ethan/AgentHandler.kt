@@ -59,6 +59,7 @@ object AgentHandler : Thread() {
     fun startUseCase(useCase: UseCase)
     {
         if(useCaseRunning) return
+        useCaseRunning = true
 
         val useCaseClass = useCaseToClass(useCase)
 

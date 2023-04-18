@@ -17,7 +17,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     override fun executeUseCase() {
 
-        var origin = LocalLocation.getCurrentLocation()
+        val origin = LocalLocation.getCurrentLocation()
 
         var preferredBreakTimeStart = LocalTime.parse("12:00")
         var preferredBreakDuration = 60
