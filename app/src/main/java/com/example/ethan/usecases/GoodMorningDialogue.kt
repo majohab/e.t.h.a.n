@@ -75,6 +75,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         {
             val stocknews_json = stocksConnector.get(stockslist_tickers[i])
             println(stocknews_json)
+            if (!stocknews_json.has("Global Quote"))
+                continue
             val stocknews_quote = stocknews_json.getJSONObject("Global Quote")
             val price = stocknews_quote.optString("05. price").toFloat().toString()
             stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
