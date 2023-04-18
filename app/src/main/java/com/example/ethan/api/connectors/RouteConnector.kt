@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 
 class RouteConnector() : AbstractConnector() {
 
-    private val route = RouteConnector()
     private val openStreet = OpenStreetConnector()
 
     override val url: String
@@ -55,7 +54,7 @@ class RouteConnector() : AbstractConnector() {
             val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_Routes + locations
             println(url)
 
-            val response = route.getDynamic(url)
+            val response = getDynamic(url)
 
             val duration = (extractDuration(response)/60).toInt()
             durations[it] = duration
