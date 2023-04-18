@@ -1,8 +1,11 @@
 package com.example.ethan.usecases
 
 import android.os.Build
+import com.example.ethan.BuildConfig
+import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
+import com.example.ethan.transportation.getAllTransportationKeys
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
@@ -15,19 +18,11 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var newsConnector = NewsConnector()
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
-    private var navigationConnector = OpenRouteConnector()
+    private val route = RouteConnector()
+    private val openStreet = OpenStreetConnector()
 
     override fun executeUseCase() {
         println("GoodMorningDialogue Thread has been started!")
-
-        // Request Recipe
-        //val recipe_json = recipeConnector.search("pasta")
-        //val recipe_one = recipe_json.getJSONArray("results").getJSONObject(0)
-        //val recipe_one_id = recipe_one.getInt("id")
-        //val recipe_recipe = recipeConnector.get(recipe_one_id)
-        //val recipe_sourceUrl = recipe_recipe.getString("sourceUrl")
-        //val genres = rawgApiConnector.getGenres()
-        //println(genres)
 
         // Request API 1
         val fortune_json = fortuneConnector.get()
@@ -46,7 +41,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 val event: JSONObject = eventsFreeBusy_json.getJSONObject("events").getJSONObject(key)
                 eventsResponseString += "Your $key. event is about to start at ${event.get("startHour")}:${event.get("startMinute")}. "
                 if(nextEventID.toString() == key) {
-                    timeToGo = getTimeToNextEvent(event)
+                    timeToGo = route.getTimeToNextEvent(event)
                 }
             }
             if (timeToGo > 0 && nextEventID != -1){
@@ -141,17 +136,5 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
 
         println("GoodMorningDialogue Thread is about to end!")
         onFinishedCallback()
-    }
-
-    private fun getTimeToNextEvent(event: JSONObject): Int{
-        val hour = event.getInt("startHour")
-        val minute = event.getInt("startMinute")
-
-        val routeDurationMin = navigationConnector.getRouteDuration("48.734276, 9.110791", event.getString("location"), "foot-walking")
-
-        val diffHour = hour - LocalDateTime.now().hour
-        val diffMinute = (minute - LocalDateTime.now().minute) + (diffHour * 60)
-
-        return diffMinute - routeDurationMin.toInt()
     }
 }

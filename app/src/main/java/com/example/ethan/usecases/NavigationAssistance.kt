@@ -27,10 +27,9 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         if (nextEventID == -1) {
             return
         }
-        val event =
-            eventsFreeBusy_json.getJSONObject("events").getJSONObject(nextEventID.toString())
+        val event = eventsFreeBusy_json.getJSONObject("events").getJSONObject(nextEventID.toString())
 
-        val estimatedTimes = getDurations(event.getString("location"))
+        val estimatedTimes = route.getDurations(event.getString("location"))
 
         val timeWithPreffered = estimatedTimes[transportation_mode]!!
         timeToGo = getTimeToGo(event, timeWithPreffered)
@@ -45,14 +44,9 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
         if (timeToGo < 0){
             val overflow = -1*timeToGo
-            var bestMethod = transportation_mode
-            var bestMethodTime = estimatedTimes[transportation_mode]!!
-            estimatedTimes.keys.forEach{
-                if(bestMethodTime > (estimatedTimes[it]!!)){
-                    bestMethodTime = estimatedTimes[it]!!
-                    bestMethod = it
-                }
-            }
+            val bestMethod = getBestTransportMethode(estimatedTimes, transportation_mode)
+            var bestMethodTime = estimatedTimes[bestMethod]!!
+
             if ((timeWithPreffered - bestMethodTime) < overflow){
                 runBlocking {
                     var suffix = ""
@@ -171,6 +165,18 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         onFinishedCallback()
     }
 
+    private fun getBestTransportMethode(estimatedTimes : Map<String, Int>, transportation_mode : String): String {
+        var bestMethod = transportation_mode
+        var bestMethodTime = estimatedTimes[transportation_mode]!!
+        estimatedTimes.keys.forEach{
+            if(bestMethodTime > (estimatedTimes[it]!!)){
+                bestMethodTime = estimatedTimes[it]!!
+                bestMethod = it
+            }
+        }
+        return bestMethod
+    }
+
     private fun getWeather(target : String): String {
         val targetLocations = openStreet.getDynamic("https://nominatim.openstreetmap.org/search/" + target + "?format=json&addressdetails=1&limit=1&polygon_svg=1")
         val weatherJSON = weatherApiConnector.getCurrentWeather(
@@ -188,52 +194,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         )
         val weather = weatherJSON!!.getJSONArray("weather").getJSONObject(0)
         return weather.getString("main")
-    }
-
-    private fun extractDuration(response: JSONObject): Double {
-        val features = response.getJSONArray("features")
-        val feature = features.getJSONObject(0)
-        val properties = feature.getJSONObject("properties")
-        val segments = properties.getJSONArray("segments")
-        val segment = segments.getJSONObject(0)
-        return segment.getDouble("duration")
-    }
-
-    private fun getDurations(target : String): Map<String, Int> {
-        val durations = mutableMapOf<String, Int>()
-        val movementTypes = getAllTransportationKeys()
-
-        val current = currentLocation()
-
-        val locations = getQueryLocationString(target, current)
-        println(locations)
-        movementTypes.forEach {
-
-            val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_Routes + locations
-            println(url)
-
-            val response = route.getDynamic(url)
-
-            val duration = (extractDuration(response)/60).toInt()
-            durations[it] = duration
-        }
-        println(durations)
-        return durations
-    }
-
-    private fun getQueryLocationString(target : String, current : JSONObject): String {
-        val openstreetURL = "https://nominatim.openstreetmap.org/search/"
-        val openstreetEnding = "?format=json&addressdetails=1&limit=1&polygon_svg=1"
-
-        val targetLocations = openStreet.getDynamic(openstreetURL+ target + openstreetEnding)
-
-        val locations = listOf(listOf(current.getString("lon"), current.getString("lat")), listOf(targetLocations.getString("lon"), targetLocations.getString("lat")))
-        val query = "&start=" + locations[0][0] + "," + locations[0][1] + "&end=" + locations[1][0] + "," + locations[1][1]
-        return query
-    }
-
-    private fun currentLocation(): JSONObject {
-        return LocalLocation.getCurrentLocation()
     }
 
 
