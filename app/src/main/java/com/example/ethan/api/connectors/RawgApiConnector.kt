@@ -7,6 +7,7 @@ import java.net.URL
 class RawgApiConnector() {
 
     private val baseUrl = "https://api.rawg.io/api"
+        get() = field
     private val gson = Gson()
 
     fun getGenres(): List<Pair<Int, String>> {

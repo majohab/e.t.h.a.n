@@ -32,7 +32,7 @@ class OpenRouteConnectorTest{
 
     @Test
     fun getRouteDurationTest(){
-        val routeDurationMin = openRouteConnector.getRouteDuration("48.734276, 9.110791", "abc", "foot-walking")
+        val routeDurationMin = openRouteConnector.getRouteDuration("8.681495,49.41461", "8.687872,49.420318", "foot-walking")
     }
 
     @Test
