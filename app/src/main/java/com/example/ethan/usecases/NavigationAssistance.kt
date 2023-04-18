@@ -198,12 +198,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     }
 
     private fun extractDuration(response: JSONObject): Double {
-        val features = response.getJSONArray("features")
-        val feature = features.getJSONObject(0)
-        val properties = feature.getJSONObject("properties")
-        val segments = properties.getJSONArray("segments")
-        val segment = segments.getJSONObject(0)
-        return segment.getDouble("duration")
+        return response.getDouble("Duration")
     }
 
     private fun getDurations(target : String): Map<String, Int> {
@@ -213,7 +208,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val current = currentLocation()
 
         val locations = getQueryLocationString(target, current)
-        println(locations)
         movementTypes.forEach {
 
             val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_Routes + locations
