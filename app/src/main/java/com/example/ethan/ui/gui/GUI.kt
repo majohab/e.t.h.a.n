@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
 import com.example.ethan.ui.gui.theme.ETHANTheme
 import androidx.compose.material.*
@@ -24,6 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ethan.AgentHandler
@@ -34,6 +39,7 @@ import com.example.ethan.ui.speech.Text2Speech
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import java.util.regex.Pattern
 
 
 object GUI : ComponentActivity() {
@@ -206,6 +212,37 @@ object GUI : ComponentActivity() {
 
         val meColor = BlueViolet3
         val ethanColor = LightRed
+        val uriColor = ButtonBlue
+
+        // UriHandler parse and opens URI inside AnnotatedString Item in Browse
+        val uriHandler = LocalUriHandler.current
+
+        val annotatedString = buildAnnotatedString {
+            val plainText = message.text
+
+            val uriPattern = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))")
+            val substrings = mutableListOf<String>()
+            var start = 0
+
+            val matcher = uriPattern.matcher(plainText)
+            while (matcher.find()) {
+                val uriStart = matcher.start()
+                val uriEnd = matcher.end()
+                if (uriStart > start) {
+                    append(plainText.substring(start, uriStart))
+                }
+                val uriString = plainText.substring(uriStart, uriEnd)
+                pushStringAnnotation(tag = "URI", annotation = uriString)
+                withStyle(style = SpanStyle(color = uriColor)) {
+                    append(uriString)
+                }
+                start = uriEnd
+            }
+            if (start < plainText.length) {
+                append(plainText.substring(start))
+            }
+        }
+
 
         Column(
             modifier = Modifier
@@ -223,10 +260,15 @@ object GUI : ComponentActivity() {
                     else -> ethanColor
                 },
             ) {
-                Text(
+                ClickableText(
                     modifier = Modifier.padding(7.5.dp),
-                    text = message.text,
-                    style = Typography.h3
+                    text = annotatedString,
+                    style = Typography.h3,
+                    onClick = {offset ->
+                        annotatedString.getStringAnnotations(tag = "URI", start = offset, end = offset).firstOrNull()?.let { stringAnnotation ->
+                            uriHandler.openUri(stringAnnotation.item)
+                        }
+                    }
                 )
             }
             Text (
