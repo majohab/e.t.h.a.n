@@ -1,9 +1,12 @@
 package com.example.ethan.usecases
 
+import android.os.Build
+import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.RawgApiConnector
 import com.example.ethan.api.connectors.SteamFriendsConnector
 import com.example.ethan.sharedprefs.SharedPrefs
 import kotlinx.coroutines.runBlocking
+import java.time.LocalTime
 
 class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
@@ -11,9 +14,16 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
 
     private var steamFriendsConnector = SteamFriendsConnector()
     private var rawgApiConnector = RawgApiConnector()
+    private var calendarConnector = CalendarConnector()
 
     override fun executeUseCase() {
 
+        // Steam id
+        //if(SharedPrefs.getString("steam_id") == "")
+        //{
+        //    askForSteamId()
+        //}
+        //commented out because text to speech to shit
 
         // Steam API
         val steamfriends_list = steamFriendsConnector.get(SharedPrefs.getString("steam_id"))
@@ -31,6 +41,10 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                     else -> {}
                 } + ". "
             }
+        }
+        if(steamfriends_string == "")
+        {
+            steamfriends_string = "None of your friends are online."
         }
 
         speakAndHearSelectiveInput(
@@ -60,38 +74,16 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                                 onSuccess = {
                                     SharedPrefs.setInt("fav_games_genre", -1)
                                 }
+                            ),
+                            UserInputOption(
+                                tokens = negativeTokens,
+                                response = "Alright then.",
                             )
                         )
-                    )
+                        )
+
                     if(SharedPrefs.get("fav_games_genre") == -1) {
-                        val genres = rawgApiConnector.getGenres()
-                        var genrestring = "Which of the following genres is your favorite? "
-                        var options = mutableListOf<UserInputOption>()
-                        var i = 0
-                        for (pair in genres) {
-                            val key = pair.first
-                            val value = pair.second
-                            if(i < genres.size)
-                            {
-                                genrestring += "$value, "
-                            } else
-                            {
-                                genrestring += "$value."
-                            }
-                            options.add(
-                                UserInputOption(
-                                tokens = listOf(value),
-                                response = "Ok i added $value as your favorite genre.",
-                                onSuccess = {
-                                    SharedPrefs.setInt("fav_games_genre", key)
-                                }
-                            )
-                            )
-                            i++
-                        }
-                        speakAndHearSelectiveInput(
-                            question = genrestring, options = options
-                        )
+                        askForFavGenre()
                     }
                     val games = rawgApiConnector.getTopGamesByCategory(SharedPrefs.get("fav_games_genre"))
                     var gamestring = "Ok i can recommend the following games from your favorite genre. "
@@ -109,5 +101,60 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                     )
         ))
         onFinishedCallback()
+    }
+
+    fun askForSteamId(): String?
+    {
+        runBlocking { askForUserVoiceInput("Whats your steam user name?") }
+        var steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
+        while (steamid.isNullOrBlank())
+        {
+            runBlocking { askForUserVoiceInput("I did not get that.") }
+            steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
+        }
+        runBlocking { "Ok i set your steam user name to $lastUserVoiceInput, which has the following steam id: $steamid." }
+        SharedPrefs.setString("steam_id", steamid.toString())
+        return steamid
+    }
+
+    fun askForFavGenre()
+    {
+        val genres = rawgApiConnector.getGenres()
+        var genrestring = "Which of the following genres is your favorite? "
+        var options = mutableListOf<UserInputOption>()
+        for (i in 0 until genres.size) {
+            val key = genres[i].first
+            val value = genres[i].second
+            if(i < genres.size)
+            {
+                genrestring += "$value, "
+            } else
+            {
+                genrestring += "$value."
+            }
+            options.add(
+                UserInputOption(
+                    tokens = listOf(value),
+                    response = "Ok i added $value as your favorite genre.",
+                    onSuccess = {
+                        SharedPrefs.setInt("fav_games_genre", key)
+                    }
+                )
+            )
+        }
+        speakAndHearSelectiveInput(
+            question = genrestring, options = options
+        )
+    }
+
+    override fun getExecutionTime() : LocalTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val prefered = LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+            val duration = LocalTime.parse(SharedPrefs.getString("social_duration"))
+            val startend = calendarConnector.getIdealExecutionTime(prefered.hour, prefered.minute, duration.hour*60)
+            startend.first
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
     }
 }

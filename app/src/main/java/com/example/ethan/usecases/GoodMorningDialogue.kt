@@ -9,6 +9,7 @@ import com.example.ethan.transportation.getAllTransportationKeys
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback) {
 
@@ -101,7 +102,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
                 tokens = listOf("car", "drive"),
-                response = "You successfully set bus as your favourite transportation method for today.",
+                response = "You successfully set driving as your favourite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(
@@ -142,5 +143,13 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println("Test 3")
 
         onFinishedCallback()
+    }
+
+    override fun getExecutionTime(): LocalTime {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
+        } else {
+            TODO("VERSION.SDK_INT < O")
+        }
     }
 }
