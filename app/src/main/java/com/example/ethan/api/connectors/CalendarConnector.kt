@@ -5,11 +5,14 @@ import androidx.annotation.RequiresApi
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VFreeBusy
+import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.math.abs
 
 
 class CalendarConnector : AbstractConnector(){
@@ -61,5 +64,109 @@ class CalendarConnector : AbstractConnector(){
         result.put("events", events)
         result.put("total",startTimes.size)
         return result
+    }
+
+    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): LocalTime{
+        var suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute")
+
+        val events = get()
+        val eventsTotal = events.getInt("total")
+
+        if (eventsTotal == 0){
+            // Preferred time is available
+            return suggBreakStart
+        }else {
+            val breaks = getBreaks(events)
+            val bestBreak = getBestBreak(breaks, preferredHour, preferredMinute)
+
+
+            if((bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")) < (preferredHour*60 + preferredMinute) &&
+                (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) > (preferredHour*60 + preferredMinute) + preferredDuration){
+
+                // Break extends whole preferred duration
+                suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute") //preferredHour
+
+            }else if((bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) < (preferredHour*60 + preferredMinute) + preferredDuration) {
+
+                // Break ends before preferred break ends
+                if(bestBreak.getInt("duration") >= preferredDuration){
+                    // Duration is long enough
+                    val minutes = (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) - preferredDuration
+                    suggBreakStart = LocalTime.parse("${(minutes/60)}:${minutes%60}")
+                }else {
+                    val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
+                    suggBreakStart = LocalTime.parse("${(minutes/60)}:${minutes%60}")
+                }
+
+            } else if((bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")) > (preferredHour*60 + preferredMinute)){
+
+                // Break starts after preferred break starts
+                val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
+                suggBreakStart = LocalTime.parse("${(minutes/60)}:${minutes%60}")
+            }
+        }
+
+        return suggBreakStart
+    }
+
+    private fun getBreaks(events: JSONObject): JSONArray{
+        var lastEvent: JSONObject? = null
+        val breaks: JSONArray = JSONArray()
+
+        events.getJSONObject("events").keys().forEach {
+            val event = events.getJSONObject("events").getJSONObject(it)
+            val breakSlot = JSONObject()
+            if(lastEvent == null){
+                breakSlot.put("startHour", 0)
+                breakSlot.put("startMinute", 0)
+                breakSlot.put("endHour", event.getInt("startHour"))
+                breakSlot.put("endMinute", event.getInt("startMinute"))
+                breakSlot.put("duration", event.getInt("startHour")*60+event.getInt("startMinute"))
+            }else {
+                breakSlot.put("startHour", lastEvent!!.getInt("endHour"))
+                breakSlot.put("startMinute", lastEvent!!.getInt("endMinute"))
+                breakSlot.put("endHour", event.getInt("startHour"))
+                breakSlot.put("endMinute", event.getInt("startMinute"))
+                breakSlot.put("duration", ( (event.getInt("startHour")*60+event.getInt("startMinute")) - (lastEvent!!.getInt("endHour")*60+lastEvent!!.getInt("endMinute"))))
+            }
+            lastEvent = event
+            breaks.put(breakSlot)
+        }
+
+        val lastBreakSlot = JSONObject()
+        lastBreakSlot.put("startHour", lastEvent!!.getInt("endHour"))
+        lastBreakSlot.put("startMinute", lastEvent!!.getInt("endMinute"))
+        lastBreakSlot.put("endHour", 23)
+        lastBreakSlot.put("endMinute", 59)
+        lastBreakSlot.put("duration", (23*60+59) - (lastEvent!!.getInt("endHour")*60+lastEvent!!.getInt("endMinute")))
+        breaks.put(lastBreakSlot)
+
+        return breaks
+    }
+
+    private fun getBestBreak(breaks: JSONArray, preferredHour: Int, preferredMinute: Int): JSONObject{
+        var minDistance = 24*60
+        var bestBreak = JSONObject()
+
+        for (x in 0 until breaks.length()){
+            val breakSlot = breaks.getJSONObject(x)
+
+            // Distances till start of break slot and end of break slot (determine if ideal time is at start or end of break)
+            val distanceStart =
+                abs((preferredHour * 60 + preferredMinute) - (breakSlot.getInt("startHour") * 60 + breakSlot.getInt("startMinute")))
+            val distanceEnd =
+                abs((preferredHour * 60 + preferredMinute) - (breakSlot.getInt("endHour") * 60 + breakSlot.getInt("endMinute")))
+
+            if(distanceStart < minDistance){
+                minDistance = distanceStart
+                bestBreak = breakSlot
+            }
+            if (distanceEnd < minDistance){
+                minDistance = distanceEnd
+                bestBreak = breakSlot
+            }
+        }
+
+        return bestBreak
     }
 }
