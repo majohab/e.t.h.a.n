@@ -20,7 +20,7 @@ class CalendarConnector : AbstractConnector(){
     override fun parseData(data: String): JSONObject {
         val calendar = CalendarBuilder().build(data.byteInputStream())
         val startOfToday = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 14)
+            set(Calendar.DAY_OF_MONTH, 20)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
@@ -39,24 +39,28 @@ class CalendarConnector : AbstractConnector(){
         result.put("nextEventID", -1)
         var events = JSONObject()
         var nextEventSet = false
-        startTimes.forEachIndexed { index, element ->
-            val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneId.systemDefault())
-            var times = element.removeSuffix("\r").split("/")
-            val event = JSONObject()
-            val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
-            val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
+        println(events)
+        println(startTimes)
+        if (startTimes.isNotEmpty() && startTimes[0] != "") {
+            startTimes.forEachIndexed { index, element ->
+                val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneId.systemDefault())
+                var times = element.removeSuffix("\r").split("/")
+                val event = JSONObject()
+                val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
+                val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
 
-            if(!Instant.from(formatter.parse((times[0]))).isAfter(Instant.now()) && !nextEventSet){
-                nextEventSet = true
-                result.put("nextEventID", index+1)
+                if(!Instant.from(formatter.parse((times[0]))).isAfter(Instant.now()) && !nextEventSet){
+                    nextEventSet = true
+                    result.put("nextEventID", index+1)
+                }
+
+                event.put("startHour", eventStart.hour)
+                event.put("startMinute", eventStart.minute)
+                event.put("endHour", eventEnd.hour)
+                event.put("endMinute", eventEnd.minute)
+                event.put("location", "Lerchenstraße 1 Stuttgart")
+                events.put("${index+1}", event)
             }
-
-            event.put("startHour", eventStart.hour)
-            event.put("startMinute", eventStart.minute)
-            event.put("endHour", eventEnd.hour)
-            event.put("endMinute", eventEnd.minute)
-            event.put("location", "Lerchenstraße 1 Stuttgart")
-            events.put("${index+1}", event)
         }
         result.put("events", events)
         result.put("total",startTimes.size)

@@ -134,10 +134,13 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             )
         ))
 
+        println("Test 2")
+
         runBlocking { speak("Have a great day!") }
         // Say how long it'll take the user to its destination
 
-        println("GoodMorningDialogue Thread is about to end!")
+        println("Test 3")
+
         onFinishedCallback()
     }
 }
