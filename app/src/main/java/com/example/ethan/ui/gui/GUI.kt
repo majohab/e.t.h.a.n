@@ -221,7 +221,6 @@ object GUI : ComponentActivity() {
             val plainText = message.text
 
             val uriPattern = Pattern.compile("(?i)\\b((?:https?://|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\))+(?:\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]))")
-            val substrings = mutableListOf<String>()
             var start = 0
 
             val matcher = uriPattern.matcher(plainText)

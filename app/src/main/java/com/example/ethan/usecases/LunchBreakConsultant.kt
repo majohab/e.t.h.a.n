@@ -47,11 +47,25 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
         suggestedBreaktimeStart = bestBreak.first
         suggestedBreaktimeEnd = bestBreak.second
-        runBlocking { speak("You should start your break at: $suggestedBreaktimeStart. It will end at: $suggestedBreaktimeEnd") }
+        runBlocking { speak("You should start your break at: $suggestedBreaktimeStart. It will end at: $suggestedBreaktimeEnd.") }
 
         fun homeCooking() {
 
-            val orderedFoodTokens = listOf( "Rice", "Pasta", "Chicken", "Beef", "Fish", "Potatoes", "Bread", "Eggs", "Cheese", "Milk", "Butter", "Yogurt", "Apples", "Oranges", "Bananas",
+            val orderedFoodTokens = listOf(
+                // Foods
+                "pizza", "pasta", "hamburger", "hot dog", "taco", "burrito", "sushi", "steak", "chicken", "fish and chips", "fried chicken", "meatloaf", "lasagna", "spaghetti", "mac and cheese",
+                "grilled cheese", "quesadilla", "enchiladas", "pad thai", "ramen", "pho", "chow mein", "stir fry", "biryani", "curry", "risotto", "shepherd's pie", "beef stew", "chili", "souvlaki",
+                "gyro", "kebab", "falafel", "shakshuka", "omelette", "scrambled eggs", "pancakes", "waffles", "French toast", "bagel", "croissant", "muffin", "toast", "cereal", "oatmeal", "yogurt",
+                "salad", "caesar salad", "greek salad", "cobb salad", "spinach salad", "tuna salad", "chicken salad", "pita sandwich", "club sandwich", "BLT sandwich", "grilled chicken sandwich",
+                "tuna sandwich", "chicken parmigiana", "schnitzel", "veal parmesan", "fried rice", "lobster", "crab", "shrimp", "clams", "mussels", "crab cakes", "salmon", "tuna", "trout", "cod",
+                "haddock", "lobster roll", "chowder", "bisque", "potato soup", "chicken noodle soup", "minestrone", "split pea soup", "clam chowder", "beef noodle soup", "vegetable soup", "corn chowder",
+                "gazpacho", "chili con carne", "beef bourguignon", "coq au vin", "beef stroganoff", "meatballs", "shepherd's pie", "corned beef and cabbage", "roast beef", "pork chops",
+                "pork tenderloin", "pulled pork", "barbecue ribs", "meatloaf", "stuffed peppers", "chicken parmesan", "chicken marsala", "chicken cordon bleu", "grilled chicken", "roast chicken",
+                "chicken fajitas", "chicken enchiladas", "chicken tikka masala", "beef tacos", "fish tacos", "vegetable stir fry", "tofu stir fry", "vegetable curry", "tofu curry", "falafel wrap",
+                "vegetable fajitas", "vegetable enchiladas", "mushroom risotto", "spinach and feta stuffed chicken", "broiled salmon", "shrimp scampi", "lobster bisque",
+
+                // Ingredients
+                "Rice", "Pasta", "Chicken", "Beef", "Fish", "Potatoes", "Bread", "Eggs", "Cheese", "Milk", "Butter", "Yogurt", "Apples", "Oranges", "Bananas",
                 "Strawberries", "Blueberries", "Tomatoes", "Carrots", "Broccoli", "Spinach", "Lettuce", "Cucumbers", "Onions", "Garlic", "Peppers", "Mushrooms", "Corn", "Beans", "Lentils",
                 "Chickpeas", "Nuts", "Seeds", "Olive oil", "Canola oil", "Salt", "Pepper", "Sugar", "Honey", "Chocolate", "Peanut butter", "Jam", "Bacon", "Sausages", "Ham", "Salmon", "Tuna",
                 "Shrimp", "Crab", "Lobster", "Scallops", "Clams", "Mussels", "Oysters", "Soy sauce", "Vinegar", "Mustard", "Mayonnaise", "Ketchup", "Hot sauce", "Curry powder", "Cinnamon", "Nutmeg",
@@ -83,7 +97,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     recipesOptionsNamesString += ", "
                 recipesOptionsNamesString += recipesOptions.getJSONObject(i).getString("title")
             }
-            runBlocking { speak("I found the recipes for the following meals: $recipesOptionsNamesString") }
+            runBlocking { speak("I found the recipes for the following meals: $recipesOptionsNamesString.") }
 
             var recipeID = recipesOptions.getJSONObject(0).getInt("id")
             var recipeOptions = mutableListOf<UserInputOption>()
