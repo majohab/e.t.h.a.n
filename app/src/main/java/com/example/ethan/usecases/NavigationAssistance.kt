@@ -31,8 +31,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val timeWithPreferred = estimatedTimes[transportationMode]!!
         var routeDuration = timeWithPreferred
 
-        val nextTimeToGo = getNextTimeToGo(nextEvent)
-        var goInXMinutes = nextTimeToGo.hour*60 + nextTimeToGo.minute
+        var goInXMinutes = getTimeToGo(nextEvent, timeWithPreferred)
 
         if (goInXMinutes < 0){
             val overflow = -1*goInXMinutes
@@ -164,7 +163,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
         onFinishedCallback()
     }
-    
+
     private fun getNextTimeToGo(event: JSONObject): LocalTime{
         val transportationMode = SharedPrefs.getTransportation()
 

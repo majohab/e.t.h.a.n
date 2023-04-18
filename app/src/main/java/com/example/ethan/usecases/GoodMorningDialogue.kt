@@ -102,7 +102,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
                 tokens = listOf("car", "drive"),
-                response = "You successfully set bus as your favourite transportation method for today.",
+                response = "You successfully set driving as your favourite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(

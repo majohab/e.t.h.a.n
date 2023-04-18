@@ -10,6 +10,7 @@ import org.json.JSONObject
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.abs
@@ -45,13 +46,13 @@ class CalendarConnector : AbstractConnector(){
         println(startTimes)
         if (startTimes.isNotEmpty() && startTimes[0] != "") {
             startTimes.forEachIndexed { index, element ->
-                val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneId.systemDefault())
+                val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC)
                 var times = element.removeSuffix("\r").split("/")
                 val event = JSONObject()
-                val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
-                val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneId.systemDefault()).plusMinutes((timeZoneOffsetInMillis / 1000 / 60).toLong())
-
-                if(!Instant.from(formatter.parse((times[0]))).isAfter(Instant.now()) && !nextEventSet){
+                val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneOffset.ofHours(2))
+                val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneOffset.ofHours(2))
+                //TODO
+                if(eventStart > Instant.now().plusSeconds(60 * 60 * 24 * 3).atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
                     nextEventSet = true
                     result.put("nextEventID", index+1)
                 }
