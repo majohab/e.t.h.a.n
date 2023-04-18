@@ -66,7 +66,7 @@ class CalendarConnector : AbstractConnector(){
         return result
     }
 
-    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): List<LocalTime>{
+    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): Pair<LocalTime, LocalTime>{
         var suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute")
         var suggBreakEnd = LocalTime.parse("$preferredHour:$preferredMinute").plusMinutes(
             preferredDuration.toLong()
@@ -77,7 +77,7 @@ class CalendarConnector : AbstractConnector(){
 
         if (eventsTotal == 0){
             // Preferred time is available
-            return listOf(suggBreakStart, suggBreakEnd)
+            return Pair(suggBreakStart, suggBreakEnd)
         }else {
             val breaks = getBreaks(events)
             val bestBreak = getBestBreak(breaks, preferredHour, preferredMinute)
@@ -121,7 +121,7 @@ class CalendarConnector : AbstractConnector(){
             }
         }
 
-        return listOf(suggBreakStart, suggBreakEnd)
+        return Pair(suggBreakStart, suggBreakEnd)
     }
 
     private fun getBreaks(events: JSONObject): JSONArray{
