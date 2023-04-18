@@ -87,7 +87,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var restaurants = listOf<OsmRestaurant>()
         while (restaurants.isEmpty()) {
 
-            runBlocking { speak("Got you! I will find a restaurant with a $seletedCuisine cuisine and calculate how you can get there by ${transportTranslations[SharedPrefs.getTransportation()]}.") }
+            runBlocking { speak("Got you! I will find restaurants with a $seletedCuisine cuisine near you.") }
             runBlocking { speak("Beep, Boop, Beep, Boop...") }
 
             restaurants = openStreetMapRestaurant.findNearestRestaurants(
@@ -143,7 +143,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             )
             runBlocking { speak("Okay. This is the website of ${selectedRestaurant.name}: ${selectedRestaurant.website}") }
 
-            origin = LocalLocation.getCurrentLocation()
             val originString = "${origin.getString("lon")},${origin.getString("lat")}"
             val destinationString = "${selectedRestaurant.lon},${selectedRestaurant.lat}"
             val properties = openRouteConnector.getRoute(originString, destinationString, SharedPrefs.getTransportation())
