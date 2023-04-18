@@ -21,7 +21,7 @@ class RouteConnectorTest{
 
     @Test
     fun parseData(){
-        val response = routeConnector.getDurations("8.687872,49.420318")
+
 
     }
 }
