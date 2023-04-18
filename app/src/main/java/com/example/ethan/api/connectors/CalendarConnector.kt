@@ -66,15 +66,18 @@ class CalendarConnector : AbstractConnector(){
         return result
     }
 
-    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): LocalTime{
+    fun getIdealExecutionTime(preferredHour: Int, preferredMinute: Int, preferredDuration: Int): List<LocalTime>{
         var suggBreakStart = LocalTime.parse("$preferredHour:$preferredMinute")
+        var suggBreakEnd = LocalTime.parse("$preferredHour:$preferredMinute").plusMinutes(
+            preferredDuration.toLong()
+        )
 
         val events = get()
         val eventsTotal = events.getInt("total")
 
         if (eventsTotal == 0){
             // Preferred time is available
-            return suggBreakStart
+            return listOf(suggBreakStart, suggBreakEnd)
         }else {
             val breaks = getBreaks(events)
             val bestBreak = getBestBreak(breaks, preferredHour, preferredMinute)
@@ -92,21 +95,33 @@ class CalendarConnector : AbstractConnector(){
                 if(bestBreak.getInt("duration") >= preferredDuration){
                     // Duration is long enough
                     val minutes = (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) - preferredDuration
-                    suggBreakStart = LocalTime.parse("${(minutes/60)}:${minutes%60}")
+                    suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
+                    suggBreakEnd = suggBreakStart.plusMinutes(preferredDuration.toLong())
                 }else {
                     val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
-                    suggBreakStart = LocalTime.parse("${(minutes/60)}:${minutes%60}")
+                    val minutesEnd = bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")
+                    suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
+                    suggBreakEnd = LocalTime.parse( String.format("%02d", minutesEnd/60) + ":" + String.format("%02d", minutesEnd%60))
                 }
 
             } else if((bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")) > (preferredHour*60 + preferredMinute)){
 
                 // Break starts after preferred break starts
-                val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
-                suggBreakStart = LocalTime.parse("${(minutes/60)}:${minutes%60}")
+                if(bestBreak.getInt("duration") >= preferredDuration){
+                    // Duration is long enough
+                    val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
+                    suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
+                    suggBreakEnd = suggBreakStart.plusMinutes(preferredDuration.toLong())
+                }else {
+                    val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
+                    val minutesEnd = bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")
+                    suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
+                    suggBreakEnd = LocalTime.parse( String.format("%02d", minutesEnd/60) + ":" + String.format("%02d", minutesEnd%60))
+                }
             }
         }
 
-        return suggBreakStart
+        return listOf(suggBreakStart, suggBreakEnd)
     }
 
     private fun getBreaks(events: JSONObject): JSONArray{

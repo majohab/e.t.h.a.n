@@ -18,9 +18,12 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
         var origin = LocalLocation.getCurrentLocation()
 
-        var preferredBreakTime = LocalTime.parse("12:00")
+        var preferredBreakTimeStart = LocalTime.parse("12:00")
         var preferredBreakDuration = 60
-        var suggestedBreaktime = preferredBreakTime
+        var preferredBreakTimeEnd = preferredBreakTimeStart.plusMinutes(preferredBreakDuration.toLong())
+
+        var suggestedBreaktimeStart = preferredBreakTimeStart
+        var suggestedBreaktimeEnd = preferredBreakTimeEnd
 
         speakAndHearSelectiveInput(
             question = "Hi. I'm here to assure you having the best break today. Around what hour do" +
@@ -33,7 +36,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                         lastUserVoiceInput.split(" ").forEach{
                             if (it.contains(":")){
                                 timeString = it
-                                preferredBreakTime = LocalTime.parse(it)
+                                preferredBreakTimeStart = LocalTime.parse(it)
                             }
                         }
                         runBlocking { speak("Okay. I set your preferred break time for $timeString ") }
@@ -41,8 +44,10 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 ))
         )
 
-        suggestedBreaktime = calendarConnector.getIdealExecutionTime(preferredBreakTime.hour, preferredBreakTime.minute, preferredBreakDuration)
-        runBlocking { speak("You should start your break at: ${suggestedBreaktime.toString()}") }
+        var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
+        suggestedBreaktimeStart = bestBreak[0]
+        suggestedBreaktimeEnd = bestBreak[1]
+        runBlocking { speak("You should start your break at: $suggestedBreaktimeStart. It will end at: $suggestedBreaktimeEnd") }
 
         val validCuisines = listOf("afghan", "african", "algerian", "american", "arab", "argentinian", "armenian", "asian", "australian", "austrian", "azerbaijani", "balkan",
             "bangladeshi", "basque", "bbq", "belarusian", "belgian", "brazilian", "breakfast", "british", "bulgarian", "burmese", "cajun", "cambodian", "cameroonian", "canadian",
