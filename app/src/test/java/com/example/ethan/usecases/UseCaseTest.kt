@@ -64,7 +64,7 @@ abstract class UseCaseTest {
         Mockito.`when`(mockEditor.putBoolean("initialized", true)).thenReturn(mockEditor)
         Mockito.`when`(sharedPrefs.getString("steam_id","")).thenReturn("76561198198615839")
         Mockito.`when`(sharedPrefs.getInt("fav_games_genre",-1)).thenReturn(-1)
-        Mockito.`when`(sharedPrefs.setString("transportation", "foot-walking")).thenReturn()
+
 
         doNothing().`when`(mockEditor).apply()
 
