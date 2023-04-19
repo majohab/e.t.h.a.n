@@ -16,7 +16,7 @@ class RecipeConnector {
 
     // search for recipe will return 2
     public fun search(term: String): JSONObject?{
-        val url = "https://api.spoonacular.com/recipes/complexSearch?query=" + term + "&number=2&apiKey=" + BuildConfig.API_KEY_RECIPE
+        val url = "https://api.spoonacular.com/recipes/complexSearch?query=" + term + "&number=5&apiKey=" + BuildConfig.API_KEY_RECIPE
         val response = restInterface.get(url) ?: return null
         return JSONObject(response)
     }
