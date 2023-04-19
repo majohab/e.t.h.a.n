@@ -12,7 +12,9 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("15:00")
+        mock_onEthanVoiceOutputFinished(10)
         println("a1")
+        mock_speakAndHearSelectiveInput("restaurant")
         mock_onEthanVoiceOutputFinished(10)
 
         println("a2")
@@ -30,15 +32,60 @@ class LunchBreakConsultantTest : UseCaseTest() {
     }
 
     override fun mockingbird2() {
-        TODO("Not yet implemented")
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("15:00")
+        println("a1")
+        mock_onEthanVoiceOutputFinished(10)
+
+        println("a2")
+        mock_speakAndHearSelectiveInput("indian")
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        println("a3")
+        mock_speakAndHearSelectiveInput("1")
+        mock_waitForAPIs(3000)
+
+        println("a4s")
+        mock_onEthanVoiceOutputFinished(1)
     }
 
     override fun mockingbird3() {
-        TODO("Not yet implemented")
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("15:00")
+        println("a1")
+        mock_onEthanVoiceOutputFinished(10)
+
+        println("a2")
+        mock_speakAndHearSelectiveInput("indian")
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        println("a3")
+        mock_speakAndHearSelectiveInput("1")
+        mock_waitForAPIs(3000)
+
+        println("a4s")
+        mock_onEthanVoiceOutputFinished(1)
     }
 
     override fun mockingbird4() {
-        TODO("Not yet implemented")
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("15:00")
+        println("a1")
+        mock_onEthanVoiceOutputFinished(10)
+
+        println("a2")
+        mock_speakAndHearSelectiveInput("indian")
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        println("a3")
+        mock_speakAndHearSelectiveInput("1")
+        mock_waitForAPIs(3000)
+
+        println("a4s")
+        mock_onEthanVoiceOutputFinished(1)
     }
 
 }

@@ -48,9 +48,10 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         suggestedBreaktimeStart = bestBreak.first
         suggestedBreaktimeEnd = bestBreak.second
         runBlocking { speak("You should start your break at: $suggestedBreaktimeStart. It will end at: $suggestedBreaktimeEnd.") }
-
+        println("spoke 0")
+        println("start your breaktime at" + suggestedBreaktimeStart)
         fun homeCooking() {
-
+            println("homeCooking start")
             val orderedFoodTokens = listOf(
                 // Foods
                 "pizza", "pasta", "hamburger", "hot dog", "taco", "burrito", "sushi", "steak", "chicken", "fish and chips", "fried chicken", "meatloaf", "lasagna", "spaghetti", "mac and cheese",
