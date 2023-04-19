@@ -8,11 +8,11 @@ abstract class AbstractConnector() {
     private val restInterface = RestInterface()
     abstract val url: String
 
-    public fun get(): JSONObject{
+    fun get(): JSONObject{
         val response = restInterface.get(url)
         return parseData(response!!)
     }
-    public fun getDynamic(uri : String): JSONObject{
+    fun getDynamic(uri : String): JSONObject{
         val response = restInterface.get(uri)
         return parseData(response!!)
     }

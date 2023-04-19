@@ -90,11 +90,21 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 )
                 println("i am going to search")
                 recipeOptionsJson = recipeConnector.search(selectedFoodToken)
-                if (recipeOptionsJson == null)
-                    recipeQuestion = "I sadly couldn't find any recipes that include $selectedFoodToken. Please try something else."
+                if (recipeOptionsJson == null) {
+                    recipeQuestion =
+                        "I sadly couldn't find any recipes that include $selectedFoodToken. Please try something else."
                     println("did not found recipe")
+                }
             }
             println("found recipies")
+
+            // Did not receive a correct response, e.g. because we already called the API 150 times a day
+            if (recipeOptionsJson.getInt("code") == 402) {
+                runBlocking { speak("I'm sorry, I can't seem to have any recipes for you today. Please check again tomorrow.") }
+                onFinishedCallback()
+                return
+            }
+
 
             val recipesOptions = recipeOptionsJson.getJSONArray("results")
             val recipeOptionsCount = minOf(5, recipesOptions.length())

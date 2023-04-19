@@ -96,4 +96,6 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0-alpha08"
 
     testImplementation 'org.mockito:mockito-core:3.11.2'
+
+    androidTestImplementation "androidx.test:rules:1.4.0"
 }
