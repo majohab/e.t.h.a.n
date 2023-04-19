@@ -78,13 +78,16 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             var selectedFoodToken = ""
             var recipeOptionsJson: JSONObject? = null
             var recipeQuestion = "Alrighty, home cook. What kind of meal would you like to eat?"
+            println("what do you want to eat?")
             while (recipeOptionsJson == null) {
+                println("in while")
                 speakAndHearSelectiveInput(
                     question = recipeQuestion,
                     options = dynamicOptions(orderedFoodTokens, onSuccess = { token ->
                         selectedFoodToken = token
                     })
                 )
+                println("i am going to search")
                 recipeOptionsJson = recipeConnector.search(selectedFoodToken)
                 if (recipeOptionsJson == null)
                     recipeQuestion = "I sadly couldn't find any recipes that include $selectedFoodToken. Please try something else."

@@ -28,8 +28,6 @@ class LunchBreakConsultantTest : UseCaseTest() {
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
         println("mockingbiund1finished")
-
-
     }
 
     override fun mockingbird2() {
@@ -64,8 +62,12 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_onEthanVoiceOutputFinished(10)
 
         println("a2")
-        mock_speakAndHearSelectiveInput("indian")
+        mock_speakAndHearSelectiveInput("pasta")
         mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
+        println("a3")
+        mock_speakAndHearSelectiveInput("3")
+        mock_waitForAPIs(3000)
         mock_onEthanVoiceOutputFinished(10)
         println("a3")
         mock_speakAndHearSelectiveInput("1")
@@ -86,6 +88,9 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_onEthanVoiceOutputFinished(10)
 
         println("a2")
+        mock_speakAndHearSelectiveInput("bbq")
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("indian")
         mock_waitForAPIs(5000)
         mock_onEthanVoiceOutputFinished(10)
