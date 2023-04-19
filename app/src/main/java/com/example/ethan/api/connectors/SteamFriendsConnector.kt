@@ -31,18 +31,4 @@ class SteamFriendsConnector {
 
         return friends
     }
-
-    // get steam id by username
-    fun getSteamIdByUsername(username: String): String? {
-        val url = "http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${BuildConfig.API_KEY_STEAM}&vanityurl=$username"
-        val response = restInterface.get(url)
-        val jsonResponse = JSONObject(response!!)
-
-        val success = jsonResponse.getJSONObject("response").getInt("success")
-        return if (success == 1) {
-            jsonResponse.getJSONObject("response").getString("steamid")
-        } else {
-            null
-        }
-    }
 }

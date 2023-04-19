@@ -1,6 +1,5 @@
 package com.example.ethan.api.connectors
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -10,7 +9,6 @@ data class OsmRestaurant(val name: String, val lat: Double, val lon: Double, val
 
 class OpenStreetMapApi {
     private val httpClient = OkHttpClient()
-    //private val objectMapper = ObjectMapper()
 
     fun findNearestRestaurants(latitude: Double, longitude: Double, radius: Int, cuisine: String? = null): List<OsmRestaurant> {
         val query = """

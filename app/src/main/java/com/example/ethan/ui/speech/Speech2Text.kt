@@ -102,8 +102,5 @@ object Speech2Text {
 
         })
         speechRecognizer.startListening(intent)
-
-        //resultLauncher.launch(intent)
-        //startActivityForResult(intent, 101)
     }
 }

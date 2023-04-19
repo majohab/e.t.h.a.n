@@ -102,10 +102,6 @@ class OpenRouteConnector() {
         return summary.getDouble("duration") / 60
     }
 
-    fun getRouteInstructions(origin: String, destination: String, mode: String): List<Pair<String, Double>> {
-        return getRouteInstructions(getRoute(origin, destination, mode)!!)
-    }
-
     fun getRouteInstructions(properties: JSONObject) : List<Pair<String, Double>> {
         val steps: JSONArray = properties.getJSONArray("segments").getJSONObject(0).getJSONArray("steps")
 
@@ -120,7 +116,7 @@ class OpenRouteConnector() {
     }
 
     fun getRoute(origin: String, destination: String, mode: String): JSONObject? {
-        val destinationCoordinate = getCoordinates(destination)
+        getCoordinates(destination)
         val url = "https://api.openrouteservice.org/v2/directions/$mode?".toHttpUrlOrNull()!!.newBuilder()
             .addEncodedQueryParameter("api_key", BuildConfig.API_KEY_OPENROUTE)
             .addEncodedQueryParameter("start", origin)
