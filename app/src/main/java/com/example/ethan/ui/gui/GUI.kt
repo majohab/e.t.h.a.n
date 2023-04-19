@@ -26,6 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -409,6 +410,7 @@ object GUI : ComponentActivity() {
                         .clip(RoundedCornerShape(10.dp))
                         .background(ButtonBlue)
                         .padding(vertical = 4.dp, horizontal = 12.dp)
+                        .testTag("${feature.useCase.name}_invoke")
                 )
             }
         }
