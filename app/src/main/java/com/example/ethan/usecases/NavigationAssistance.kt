@@ -16,8 +16,10 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     private val openStreet = OpenStreetConnector()
     private var weatherApiConnector = OpenWeatherApiConnector()
     private var calendarConnector = CalendarConnector()
+    private var nextExecutionTime: LocalTime? = null
 
     override fun executeUseCase() {
+        nextExecutionTime = null
         val transportationMode = SharedPrefs.getTransportation()
 
         val nextEvent = getNextEvent()
@@ -245,10 +247,12 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             setDoneToday(true)
             LocalTime.parse("00:01")
         }else {
-            val nextExecutionTime = getNextTimeToGo(nextEvent).minusMinutes(14)
-            SharedPrefs.setString(getResTimeID(), nextExecutionTime.toString())
-            setDoneToday(false)
-            nextExecutionTime
+            if(nextExecutionTime == null){
+                nextExecutionTime = getNextTimeToGo(nextEvent).minusMinutes(14)
+                SharedPrefs.setString(getResTimeID(), nextExecutionTime.toString())
+                setDoneToday(false)
+            }
+            nextExecutionTime!!
         }
     }
 
