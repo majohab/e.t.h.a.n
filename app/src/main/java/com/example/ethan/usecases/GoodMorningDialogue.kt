@@ -1,11 +1,8 @@
 package com.example.ethan.usecases
 
 import android.os.Build
-import com.example.ethan.BuildConfig
-import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
-import com.example.ethan.transportation.getAllTransportationKeys
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalDateTime
@@ -24,12 +21,11 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     override fun executeUseCase() {
         println("GoodMorningDialogue Thread has been started!")
 
-        // Request API 1
+        // Request Fortune API
         val fortune_json = fortuneConnector.get()
         val fortune_string = fortune_json.getString("fortune")
-        println("got api 1")
 
-        // Reqeuest API 0
+        // Request Free Calendar times and decide on response
         val eventsFreeBusy_json = calendarConnector.get()
         val eventsTotal = eventsFreeBusy_json.getInt("total")
         var eventsResponseString = ""
@@ -53,8 +49,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 eventsResponseString += "All your events for today are already completed. Enjoy your end of work. "
             }
         }
-        println("got api 0")
-        // Request API 2
+
+        // Request News API
         val news_json = newsConnector.get()
         println(news_json)
         val news_articles = news_json.getJSONArray("articles")
@@ -66,9 +62,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             news_string += ("Article " + (i + 1) + ": $title. ")
                             //+ "$description ")
         }
-        println("got api 2")
 
-        // Request API 3
+        // Request Stocks API
         val stockslist_tickers = listOf("AAPL", "MSFT", "GOOG")
         val stockslist_names = listOf("Apple", "Microsoft", "Alphabet")
         var stocknews_string = ""
@@ -82,14 +77,8 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             val price = stocknews_quote.optString("05. price").toFloat().toString()
             stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
         }
-        println("got api 3")
 
-
-        val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime.now()
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+        val now = LocalDateTime.now()
 
         // Greet user with all gathered information
         runBlocking { speak("Good morning. Today is the ${now.dayOfMonth} of ${now.month}. It is ${now.hour} o'clock and ${now.minute} minutes. ")}
@@ -121,7 +110,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 onSuccess = { SharedPrefs.setString("transportation", "wheelchair") }
             )
         ))
-        println("Test")
 
         speakAndHearSelectiveInput(
             question = "Okay cool. Do you want to hear your fortune for today?", options = listOf(
@@ -135,20 +123,12 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             )
         ))
 
-        println("Test 2")
-
         runBlocking { speak("Have a great day!") }
-
-        println("Test 3")
 
         onFinishedCallback()
     }
 
     override fun getExecutionTime(): LocalTime {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+        return LocalTime.parse(SharedPrefs.getString(getResTimeID()))
     }
 }
