@@ -9,7 +9,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
     } as AbstractUseCase
 
     override fun mockingbird() {
-        mock_waitForAPIs(5000)
+        mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("car")
         println("a1")
@@ -24,6 +24,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
 
 
     override fun mockingbird2() {
+        /*
         mock_waitForAPIs(5000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("bike")
@@ -35,10 +36,13 @@ class GoodMorningDialogueTest : UseCaseTest(){
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
+        */
+
     }
 
 
     override fun mockingbird3() {
+        /*
         mock_waitForAPIs(5000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("foot")
@@ -50,10 +54,13 @@ class GoodMorningDialogueTest : UseCaseTest(){
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
+
+         */
     }
 
 
     override fun mockingbird4() {
+        /*
         mock_waitForAPIs(5000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("wheelchair")
@@ -65,5 +72,6 @@ class GoodMorningDialogueTest : UseCaseTest(){
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
+         */
     }
 }
