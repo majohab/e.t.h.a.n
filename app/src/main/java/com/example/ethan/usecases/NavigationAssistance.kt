@@ -50,7 +50,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     speak("Hello. This is your PDA ETHAN. I want to inform you that you " +
                         "needed to leave $overflow minutes ago to catch your next event. " +
                         "Your best option would be to travel by " + transportTranslations[bestMethod] + ". " +
-                        "However, you still have a delay of ${overflow - (timeWithPreferred - bestMethodTime)} " +
+                        "However, you will have a delay of ${overflow - (timeWithPreferred - bestMethodTime)} " +
                         "if you go right away. $suffix") }
             }else {
                 speakAndHearSelectiveInput(

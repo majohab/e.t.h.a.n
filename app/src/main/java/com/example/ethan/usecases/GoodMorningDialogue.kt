@@ -20,7 +20,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private var stocksConnector = StocksConnector()
     private var calendarConnector = CalendarConnector()
     private val route = RouteConnector()
-    private val openStreet = OpenStreetConnector()
 
     override fun executeUseCase() {
         println("GoodMorningDialogue Thread has been started!")
@@ -103,22 +102,22 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             question = "What is your favorite type of transportation for this day?", options = listOf(
             UserInputOption(
                 tokens = listOf("car", "drive"),
-                response = "You successfully set driving as your favourite transportation method for today.",
+                response = "You successfully set driving as your favorite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "driving-car") }
             ),
             UserInputOption(
                 tokens = listOf("bike", "drahtesel", "cycl", "bicycle"),
-                response = "You successfully set bike as your favourite transportation method for today.",
+                response = "You successfully set bike as your favorite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "cycling-regular") }
             ),
             UserInputOption(
                 tokens = listOf("foot", "walk"),
-                response = "You successfully set walking as your favourite transportation method for today.",
+                response = "You successfully set walking as your favorite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "foot-walking") }
             ),
             UserInputOption(
                 tokens = listOf("wheelchair"),
-                response = "You successfully set wheelchair as your favourite transportation method for today.",
+                response = "You successfully set wheelchair as your favorite transportation method for today.",
                 onSuccess = { SharedPrefs.setString("transportation", "wheelchair") }
             )
         ))
@@ -139,7 +138,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         println("Test 2")
 
         runBlocking { speak("Have a great day!") }
-        // Say how long it'll take the user to its destination
 
         println("Test 3")
 

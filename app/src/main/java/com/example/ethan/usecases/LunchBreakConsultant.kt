@@ -29,8 +29,8 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var suggestedBreaktimeEnd = preferredBreakTimeEnd
         println("init")
         speakAndHearSelectiveInput(
-            question = "Hi. I'm here to assure you having the best break today. Around what hour do" +
-                    " you prefer to eat something?",
+            question = "Hi. I'm here to assure you having the best break today. Around what hour would you" +
+                    " prefer to eat something?",
             options = listOf(
                 UserInputOption(
                     tokens = listOf(":"),
@@ -98,7 +98,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     recipesOptionsNamesString += ", "
                 recipesOptionsNamesString += recipesOptions.getJSONObject(i).getString("title")
             }
-            runBlocking { speak("I found the recipes for the following meals: $recipesOptionsNamesString.") }
+            runBlocking { speak("I found several recipes for following meals: $recipesOptionsNamesString.") }
 
             var recipeID = recipesOptions.getJSONObject(0).getInt("id")
             var recipeOptions = mutableListOf<UserInputOption>()
@@ -122,7 +122,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             val recipe = recipeConnector.get(recipeID)
             val recipe_sourceUrl = recipe.getString("sourceUrl")
 
-            runBlocking { speak("Cool, the following URL provides cooking instructions: $recipe_sourceUrl") }
+            runBlocking { speak("Cool, the following URL provides the cooking instructions: $recipe_sourceUrl") }
         }
 
         fun goingOut() {
@@ -216,7 +216,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     restaurantOptions.add(option)
                 }
                 speakAndHearSelectiveInput(
-                    question = "Which one sounds the most appealing for you?", options = restaurantOptions
+                    question = "Which one sounds the most appealing to you?", options = restaurantOptions
                 )
                 if (selectedRestaurant.website.isNotEmpty() && selectedRestaurant.website.isNotBlank())
                     runBlocking { speak("Okay. This is the website of ${selectedRestaurant.name}: ${selectedRestaurant.website}") }
@@ -250,7 +250,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
 
         speakAndHearSelectiveInput(
-            question = "Do you want to eat in a restaurant or cook by yourself?",
+            question = "Do you want to eat in a restaurant or cook at home?",
             options = listOf(
                 UserInputOption(
                     tokens = listOf("restaurant", "go out", "going out", "somewhere", "someplace", "some place"),
