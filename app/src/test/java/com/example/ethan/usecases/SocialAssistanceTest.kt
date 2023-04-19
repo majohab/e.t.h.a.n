@@ -23,11 +23,16 @@ class SocialAssistanceTest : UseCaseTest() {
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("yes")
         println("a3")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("Action")
+
         mock_waitForAPIs(3000)
-        mock_waitForAPIs(3000)
+
 
         println("a4s")
         mock_onEthanVoiceOutputFinished(10)
+        mock_onEthanVoiceOutputFinished(10)
+
         println("mock finished")
 
 
@@ -72,11 +77,16 @@ class SocialAssistanceTest : UseCaseTest() {
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("yes")
         println("a3")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("Action")
+
         mock_waitForAPIs(3000)
-        mock_waitForAPIs(3000)
+
 
         println("a4s")
         mock_onEthanVoiceOutputFinished(10)
+        mock_onEthanVoiceOutputFinished(10)
+
         println("mock finished")
     }
 
@@ -91,11 +101,16 @@ class SocialAssistanceTest : UseCaseTest() {
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("yes")
         println("a3")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("Action")
+
         mock_waitForAPIs(3000)
-        mock_waitForAPIs(3000)
+
 
         println("a4s")
         mock_onEthanVoiceOutputFinished(10)
+        mock_onEthanVoiceOutputFinished(10)
+
         println("mock finished")
     }
 

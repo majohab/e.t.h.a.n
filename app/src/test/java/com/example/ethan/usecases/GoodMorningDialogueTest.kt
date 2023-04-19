@@ -24,54 +24,47 @@ class GoodMorningDialogueTest : UseCaseTest(){
 
 
     override fun mockingbird2() {
-        /*
-        mock_waitForAPIs(5000)
+        mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("bike")
         println("a1")
         mock_waitForAPIs(3000)
         println("a2")
-        mock_speakAndHearSelectiveInput("no")
+        mock_speakAndHearSelectiveInput("yes")
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
-        */
 
     }
 
 
     override fun mockingbird3() {
-        /*
-        mock_waitForAPIs(5000)
+        mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("foot")
         println("a1")
         mock_waitForAPIs(3000)
         println("a2")
-        mock_speakAndHearSelectiveInput("no")
+        mock_speakAndHearSelectiveInput("yes")
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
-
-         */
     }
 
 
     override fun mockingbird4() {
-        /*
-        mock_waitForAPIs(5000)
+        mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("wheelchair")
         println("a1")
         mock_waitForAPIs(3000)
         println("a2")
-        mock_speakAndHearSelectiveInput("no")
+        mock_speakAndHearSelectiveInput("yes")
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
-         */
     }
 }
