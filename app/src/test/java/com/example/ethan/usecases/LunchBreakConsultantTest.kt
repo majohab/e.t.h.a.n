@@ -48,7 +48,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_waitForAPIs(3000)
 
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(20)
     }
 
     override fun mockingbird3() {

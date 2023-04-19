@@ -99,7 +99,7 @@ object AgentHandler : Thread() {
         }
     }
 
-    private fun useCaseToClass (useCase: UseCase) : AbstractUseCase {
+    fun useCaseToClass (useCase: UseCase) : AbstractUseCase {
         return when (useCase) {
             UseCase.GoodMorningDialogue -> goodMorningDialogue
             UseCase.NavigationAssistance -> navigationAssistance
