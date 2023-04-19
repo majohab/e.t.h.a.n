@@ -65,6 +65,7 @@ abstract class UseCaseTest {
         Mockito.`when`(sharedPrefs.getString("steam_id","")).thenReturn("76561198198615839")
         Mockito.`when`(sharedPrefs.getInt("fav_games_genre",-1)).thenReturn(-1)
 
+
         doNothing().`when`(mockEditor).apply()
 
         SharedPrefs.initSharedPrefs(activity)

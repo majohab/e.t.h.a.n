@@ -33,7 +33,7 @@ class RouteConnector() : AbstractConnector() {
     }
 
 
-    public fun getTimeToNextEvent(event: JSONObject): Int{
+    fun getTimeToNextEvent(event: JSONObject): Int{
         val hour = event.getInt("startHour")
         val minute = event.getInt("startMinute")
 
