@@ -8,7 +8,6 @@ import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalTime
-import java.util.zip.DeflaterOutputStream
 
 class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
@@ -23,18 +22,18 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val origin = LocalLocation.getCurrentLocation()
 
         var preferredBreakTimeStart = LocalTime.parse("12:00")
-        var preferredBreakDuration = 60
-        var preferredBreakTimeEnd = preferredBreakTimeStart.plusMinutes(preferredBreakDuration.toLong())
+        val preferredBreakDuration = 60
+        val preferredBreakTimeEnd = preferredBreakTimeStart.plusMinutes(preferredBreakDuration.toLong())
 
         var suggestedBreaktimeStart = preferredBreakTimeStart
         var suggestedBreaktimeEnd = preferredBreakTimeEnd
-        println("init")
-        var gottime = false
+
         runBlocking { askForUserVoiceInput("Hi. I'm here to assure you having the best break today. Around what hour would you prefer to eat something?") }
+        var gottime = false
         while (!gottime) {
-            var timestring = formatTime(lastUserVoiceInput)
-            println(timestring)
+            val timestring = formatTime(lastUserVoiceInput)
             if (timestring.equals("00:00")) {
+                // No valid input
                 gottime = false
                 runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
             }
@@ -44,15 +43,12 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
         }
 
-        println("got time")
-        var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
+        val bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
         suggestedBreaktimeStart = bestBreak.first
         suggestedBreaktimeEnd = bestBreak.second
         runBlocking { speak("You should start your break at: $suggestedBreaktimeStart. It will end at: $suggestedBreaktimeEnd.") }
-        println("spoke 0")
-        println("start your breaktime at" + suggestedBreaktimeStart)
+
         fun homeCooking() {
-            println("homeCooking start")
             val orderedFoodTokens = listOf(
                 // Foods
                 "pizza", "pasta", "hamburger", "hot dog", "taco", "burrito", "sushi", "steak", "chicken", "fish and chips", "fried chicken", "meatloaf", "lasagna", "spaghetti", "mac and cheese",
@@ -79,22 +75,18 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             var selectedFoodToken = ""
             var recipeOptionsJson: JSONObject? = null
             var recipeQuestion = "Alrighty, home cook. What kind of meal would you like to eat?"
-            println("what do you want to eat?")
+
             while (recipeOptionsJson == null) {
-                println("in while")
                 speakAndHearSelectiveInput(
                     question = recipeQuestion,
                     options = dynamicOptions(orderedFoodTokens, onSuccess = { token ->
                         selectedFoodToken = token
                     })
                 )
-                println("i am going to search")
                 recipeOptionsJson = recipeConnector.search(selectedFoodToken)
                 if (recipeOptionsJson == null)
                     recipeQuestion = "I sadly couldn't find any recipes that include $selectedFoodToken. Please try something else."
-                    println("did not found recipe")
             }
-            println("found recipies")
 
             val recipesOptions = recipeOptionsJson.getJSONArray("results")
             val recipeOptionsCount = minOf(5, recipesOptions.length())
@@ -104,10 +96,10 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     recipesOptionsNamesString += ", "
                 recipesOptionsNamesString += recipesOptions.getJSONObject(i).getString("title")
             }
-            runBlocking { speak("I found several recipes for following meals: $recipesOptionsNamesString.") }
 
+            runBlocking { speak("I found several recipes for following meals: $recipesOptionsNamesString.") }
             var recipeID = recipesOptions.getJSONObject(0).getInt("id")
-            var recipeOptions = mutableListOf<UserInputOption>()
+            val recipeOptions = mutableListOf<UserInputOption>()
             for (i in 0 until recipeOptionsCount) {
                 val recipeName = recipesOptions.getJSONObject(i).getString("title")
                 val id = recipesOptions.getJSONObject(i).getInt("id")
@@ -127,7 +119,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 question = "Which one would you like to cook?",
                 options = recipeOptions
             )
-
             val recipe = recipeConnector.get(recipeID)
             val recipe_sourceUrl = recipe.getString("sourceUrl")
 
@@ -157,7 +148,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             for (i in validCuisines_input.indices) {
                 val option = UserInputOption(
                     tokens = listOf(validCuisines_input[i]),
-
                     onSuccess = {
                         seletedCuisine = validCuisines[i]
                         println("") // DO NOT DELETE THIS LINE
@@ -194,9 +184,8 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             val restaurantCount = minOf(3, restaurants.count())
             if (restaurantCount == 1) {
                 val restaurant = restaurants[0]
-                val name = restaurant
                 val website = restaurant.website
-                runBlocking { speak("What about $name? You can find their website here: $website") }
+                runBlocking { speak("What about $restaurant? You can find their website here: $website") }
             }
             else {
                 var restaurantsNamesString = ""
@@ -233,7 +222,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 val originString = "${origin.getString("lon")},${origin.getString("lat")}"
                 val destinationString = "${selectedRestaurant.lon},${selectedRestaurant.lat}"
                 val properties = openRouteConnector.getRoute(originString, destinationString, SharedPrefs.getTransportation())
-
                 if (properties == null) {
                     runBlocking { speak("I sadly could not find a route to this restaurant.") }
                 } else {
@@ -246,10 +234,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     var instructionsString = ""
                     for (i in instructions.indices) {
                         instructionsString += "${i+1}. ${instructions[i].first}. "
-                        //instructionsString += if (i < instructions.size - 1)
-                        //    ", then walk for ${instructions[i].second / 60} minutes."
-                        //else
-                        //    "."
                     }
 
                     runBlocking { speak(instructionsString) }
@@ -301,10 +285,6 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     }
 
     override fun getExecutionTime(): LocalTime {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.parse(SharedPrefs.getString(getResTimeID()))
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+        return LocalTime.parse(SharedPrefs.getString(getResTimeID()))
     }
 }
