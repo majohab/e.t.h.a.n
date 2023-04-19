@@ -26,7 +26,9 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         //commented out because text to speech to shit
 
         // Steam API
-        val steamfriends_list = steamFriendsConnector.get(SharedPrefs.getString("steam_id"))
+        println("before")
+        var steam_id = SharedPrefs.getString("steam_id")
+        val steamfriends_list = steamFriendsConnector.get(steam_id)
         var steamfriends_string = ""
         for (pair in steamfriends_list) {
             val key = pair.first
@@ -46,6 +48,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         {
             steamfriends_string = "None of your friends are online."
         }
+        println("test2")
 
         speakAndHearSelectiveInput(
             question = "Good evening. Do you want to know what your Steam-friends are up to?", options = listOf(

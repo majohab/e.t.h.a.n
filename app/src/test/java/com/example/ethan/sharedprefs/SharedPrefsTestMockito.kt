@@ -8,6 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 
@@ -44,7 +45,7 @@ class SharedPrefsTest {
         `when`(mockEditor.putString("18:00", AgentHandler.socialAssistance.getResTimeID())).thenReturn(mockEditor)
         `when`(mockEditor.putString("steam_id", "76561198198615839")).thenReturn(mockEditor)
         `when`(mockEditor.putBoolean("initialized", true)).thenReturn(mockEditor)
-        //`when`(mockEditor.apply()).thenReturn(Unit)
+        doNothing().`when`(mockEditor).apply()
 
         SharedPrefs.initSharedPrefs(activity)
         /*

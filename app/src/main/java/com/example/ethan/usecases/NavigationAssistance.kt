@@ -26,9 +26,10 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         if (nextEvent == null) {
             runBlocking { speak("Congrats! You have no more events for today.") }
             onFinishedCallback()
+            println("no new event")
             return
         }
-
+        println("new event")
         val estimatedTimes = route.getDurations(nextEvent.getString("location"))
         val timeWithPreferred = estimatedTimes[transportationMode]!!
         var routeDuration = timeWithPreferred

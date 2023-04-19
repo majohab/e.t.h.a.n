@@ -52,7 +52,7 @@ class CalendarConnector : AbstractConnector(){
                 val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneOffset.ofHours(2))
                 val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneOffset.ofHours(2))
                 //TODO
-                if(eventStart > Instant.now().plusSeconds(60 * 60 * 24 * 3).atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
+                if(eventStart > Instant.now().plusSeconds(60 * 60 * 24 * 2).atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
                     nextEventSet = true
                     result.put("nextEventID", index+1)
                 }

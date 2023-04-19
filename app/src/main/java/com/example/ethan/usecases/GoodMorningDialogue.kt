@@ -28,6 +28,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         // Request API 1
         val fortune_json = fortuneConnector.get()
         val fortune_string = fortune_json.getString("fortune")
+        println("got api 1")
 
         // Reqeuest API 0
         val eventsFreeBusy_json = calendarConnector.get()
@@ -53,7 +54,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
                 eventsResponseString += "All your events for today are already completed. Enjoy your end of work. "
             }
         }
-
+        println("got api 0")
         // Request API 2
         val news_json = newsConnector.get()
         println(news_json)
@@ -66,7 +67,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             news_string += ("Article " + (i + 1) + ": $title. ")
                             //+ "$description ")
         }
-        println(news_string)
+        println("got api 2")
 
         // Request API 3
         val stockslist_tickers = listOf("AAPL", "MSFT", "GOOG")
@@ -82,7 +83,7 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
             val price = stocknews_quote.optString("05. price").toFloat().toString()
             stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
         }
-        //println(stocknews_string)
+        println("got api 3")
 
 
         val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

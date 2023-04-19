@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.doNothing
 import org.mockito.MockitoAnnotations
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -61,7 +62,7 @@ abstract class UseCaseTest {
         Mockito.`when`(mockEditor.putString("18:00", AgentHandler.socialAssistance.getResTimeID())).thenReturn(mockEditor)
         Mockito.`when`(mockEditor.putString("steam_id", "76561198198615839")).thenReturn(mockEditor)
         Mockito.`when`(mockEditor.putBoolean("initialized", true)).thenReturn(mockEditor)
-        //`when`(mockEditor.apply()).thenReturn(Unit)
+        doNothing().`when`(mockEditor).apply()
 
         SharedPrefs.initSharedPrefs(activity)
 
@@ -81,6 +82,13 @@ abstract class UseCaseTest {
     }
 
     abstract fun mockingbird()
+
+    abstract fun mockingbird2()
+
+    abstract fun mockingbird3()
+
+    abstract fun mockingbird4()
+
 
     fun mock_waitForAPIs(duration: Long) {
         Thread.sleep(duration)
