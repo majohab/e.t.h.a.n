@@ -22,15 +22,24 @@ class NavigationAssistanceTest : UseCaseTest() {
     }
 
     override fun mockingbird2() {
-        TODO("Not yet implemented")
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        println("a1")
     }
 
     override fun mockingbird3() {
-        TODO("Not yet implemented")
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        println("a1")
     }
 
     override fun mockingbird4() {
-        TODO("Not yet implemented")
+        mock_waitForAPIs(1000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        println("a1")
     }
 
 }
