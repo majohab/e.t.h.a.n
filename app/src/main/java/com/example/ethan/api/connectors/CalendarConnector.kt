@@ -23,7 +23,7 @@ class CalendarConnector : AbstractConnector(){
     override fun parseData(data: String): JSONObject {
         val calendar = CalendarBuilder().build(data.byteInputStream())
         val startOfToday = Calendar.getInstance().apply {
-            set(Calendar.DAY_OF_MONTH, 20)
+            //set(Calendar.DAY_OF_MONTH, 20)
             set(Calendar.HOUR_OF_DAY, 0)
             set(Calendar.MINUTE, 0)
             set(Calendar.SECOND, 0)
@@ -52,7 +52,9 @@ class CalendarConnector : AbstractConnector(){
                 val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneOffset.ofHours(2))
                 val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneOffset.ofHours(2))
                 //TODO
-                if(eventStart > Instant.now().plusSeconds(60 * 60 * 14).atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
+                if(eventStart > Instant.now()
+                        //.plusSeconds(60 * 60 * 14)
+                        .atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
                     nextEventSet = true
                     result.put("nextEventID", index+1)
                 }
