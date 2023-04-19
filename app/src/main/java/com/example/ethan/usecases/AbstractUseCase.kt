@@ -1,6 +1,5 @@
 package com.example.ethan.usecases
 
-import android.os.Build
 import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.gui.Message
 import com.example.ethan.ui.gui.Messaging
@@ -40,12 +39,8 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
         return "time_$shortForm"
     }
 
-    fun doneTodayString() : String {
-        val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDate.now()
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
+    private fun doneTodayString() : String {
+        val now = LocalDate.now()
 
         return shortForm + "_"+ now.dayOfMonth + ":" + now.month + ":" + now.year
     }

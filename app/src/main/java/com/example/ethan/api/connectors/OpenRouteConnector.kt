@@ -120,7 +120,6 @@ class OpenRouteConnector() {
     }
 
     fun getRoute(origin: String, destination: String, mode: String): JSONObject? {
-        val destinationCoordinate = getCoordinates(destination)
         val url = "https://api.openrouteservice.org/v2/directions/$mode?".toHttpUrlOrNull()!!.newBuilder()
             .addEncodedQueryParameter("api_key", BuildConfig.API_KEY_OPENROUTE)
             .addEncodedQueryParameter("start", origin)

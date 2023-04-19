@@ -33,11 +33,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ethan.AgentHandler
-import com.example.ethan.UseCase
 import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.gui.theme.*
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.ui.speech.Text2Speech
+import com.example.ethan.usecases.GoodMorningDialogue
+import com.example.ethan.usecases.LunchBreakConsultant
+import com.example.ethan.usecases.NavigationAssistance
+import com.example.ethan.usecases.SocialAssistance
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -48,12 +51,13 @@ object GUI : ComponentActivity() {
 
     private var textInput by mutableStateOf ("Tap on the microphone and say something")
     private var micRms by mutableStateOf(0.1f)
-    private const val username = "John"
+    private var username = "John"
 
     @Composable
     fun MainScreen() {
 
-        SharedPrefs.getString("username", "John")
+        // Load username from sharedPrefs
+        username = SharedPrefs.getString("username", "John")
 
         ETHANTheme {
             Box(modifier = Modifier.background(DeepBlue).fillMaxSize()) {
@@ -65,46 +69,48 @@ object GUI : ComponentActivity() {
                     Spacer(
                         modifier = Modifier.height(15.dp)
                     )
-                    WelcomeText()
 
-                    Chat()
-                    FeatureSection(
+                    WelcomeText() // Top Bar
+
+                    Chat() // Chat with Ethan
+
+                    FeatureSection( // Four Buttons
                         features = listOf(
                             Feature(
-                                UseCase.GoodMorningDialogue,
+                                GoodMorningDialogue::class,
                                 title = "Good Morning",
                                 BlueViolet1,
                                 BlueViolet2,
                                 BlueViolet3
                             ) {
-                                AgentHandler.startUseCase(UseCase.GoodMorningDialogue)
+                                AgentHandler.startUseCase(GoodMorningDialogue::class)
                             },
                             Feature(
-                                UseCase.NavigationAssistance,
+                                NavigationAssistance::class,
                                 title = "Navigation Assistance",
                                 LightGreen1,
                                 LightGreen2,
                                 LightGreen3
                             ) {
-                                AgentHandler.startUseCase(UseCase.NavigationAssistance)
+                                AgentHandler.startUseCase(NavigationAssistance::class)
                             },
                             Feature(
-                                UseCase.LunchBreakConsultant,
+                                LunchBreakConsultant::class,
                                 title = "Lunch Break",
                                 OrangeYellow1,
                                 OrangeYellow2,
                                 OrangeYellow3
                             ) {
-                                AgentHandler.startUseCase(UseCase.LunchBreakConsultant)
+                                AgentHandler.startUseCase(LunchBreakConsultant::class)
                             },
                             Feature(
-                                UseCase.SocialAssistance,
+                                SocialAssistance::class,
                                 title = "Social Assistance",
                                 Beige1,
                                 Beige2,
                                 Beige3
                             ) {
-                                AgentHandler.startUseCase(UseCase.SocialAssistance)
+                                AgentHandler.startUseCase(SocialAssistance::class)
                             }
                         )
                     )
@@ -136,11 +142,12 @@ object GUI : ComponentActivity() {
     fun ColumnScope.Chat() {
 
         val backgroundColor = Color.Transparent
-        var messages = Messaging.messages
-        var listState = LazyListState(messages.size - 1,
+        val messages = Messaging.messages
+        val listState = LazyListState(messages.size - 1,
                                         100)
 
 
+        // Read last message
         if (messages.isNotEmpty()) {
             val lastMsg = messages[messages.size - 1]
             if (lastMsg.sender == Sender.ETHAN) {
@@ -176,7 +183,7 @@ object GUI : ComponentActivity() {
                 }
             }
 
-            /*
+            /* Text Input Field. Decided against it for now.
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -221,6 +228,7 @@ object GUI : ComponentActivity() {
         // UriHandler parse and opens URI inside AnnotatedString Item in Browse
         val uriHandler = LocalUriHandler.current
 
+        // annotatedString is necessary to highlight URIs and make them clickable
         val annotatedString = buildAnnotatedString {
             val plainText = message.text
 
@@ -287,8 +295,8 @@ object GUI : ComponentActivity() {
     @Composable
     fun CardShapeFor(message: Message): Shape {
         val roundedCorners = RoundedCornerShape(10.dp)
-        return when {
-            message.sender == Sender.USER -> roundedCorners.copy(bottomEnd = CornerSize(0))
+        return when (message.sender) {
+            Sender.USER -> roundedCorners.copy(bottomEnd = CornerSize(0))
             else -> roundedCorners.copy(bottomStart = CornerSize((0)))
         }
     }
@@ -316,8 +324,6 @@ object GUI : ComponentActivity() {
     fun FeatureItem(
         feature: Feature
     ) {
-        var remainingMinutes = AgentHandler.remainingTimeStrings[feature.useCase]
-
         BoxWithConstraints(
             modifier = Modifier
                 //.padding(7.5.dp)
@@ -327,6 +333,8 @@ object GUI : ComponentActivity() {
         ) {
             val width = constraints.maxWidth
             val height = constraints.maxHeight
+
+            // BUTTON BACKGROUND
 
             // Medium colored path
             val mediumColoredPoint1 = Offset(width * 0f, height * 0.3f)
@@ -346,6 +354,7 @@ object GUI : ComponentActivity() {
                 close()
             }
 
+            // Light colored Path
             val lightPoint1 = Offset(0f, height * 0.35f)
             val lightPoint2 = Offset(width * 0.1f, height * 0.4f)
             val lightPoint3 = Offset(width * 0.3f, height * 0.35f)
@@ -460,13 +469,13 @@ object GUI : ComponentActivity() {
                 .padding(bottom = 25.dp, top = 15.dp),
             backgroundColor = backgroundColor,
             onClick = {
-                voicePermissionState.launchPermissionRequest()
-                println(voicePermissionState.status.isGranted)
+                voicePermissionState.launchPermissionRequest() // Ask for permission
+
                 if (voicePermissionState.status.isGranted) {
                     Speech2Text.recordInput(
                         context = context,
                         onStart = { backgroundColor = activeBackgroundColor },
-                        onRmsChanged = { value: Float ->
+                        onRmsChanged = { value: Float -> // Sound level of the audio stream failed
                             micRms = value
                                        },
                         onFinished_Frontend = { input: String ->
