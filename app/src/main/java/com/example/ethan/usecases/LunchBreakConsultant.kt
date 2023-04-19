@@ -8,6 +8,7 @@ import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalTime
+import java.util.zip.DeflaterOutputStream
 
 class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
@@ -28,21 +29,21 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var suggestedBreaktimeStart = preferredBreakTimeStart
         var suggestedBreaktimeEnd = preferredBreakTimeEnd
         println("init")
-        speakAndHearSelectiveInput(
-            question = "Hi. I'm here to assure you having the best break today. Around what hour would you" +
-                    " prefer to eat something?",
-            options = listOf(
-                UserInputOption(
-                    tokens = listOf(":"),
-                    onSuccess = {
-                        lastUserVoiceInput.split(" ").forEach{
-                            if (it.contains(":")){
-                                preferredBreakTimeStart = LocalTime.parse(it)
-                            }
-                        }
-                    }
-                ))
-        )
+        var gottime = false
+        runBlocking { askForUserVoiceInput("Hi. I'm here to assure you having the best break today. Around what hour would you prefer to eat something?") }
+        while (!gottime) {
+            var timestring = formatTime(lastUserVoiceInput)
+            println(timestring)
+            if (timestring.equals("00:00")) {
+                gottime = false
+                runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
+            }
+            else {
+                gottime = true
+                preferredBreakTimeStart = LocalTime.parse(timestring)
+            }
+        }
+
         println("got time")
         var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
         suggestedBreaktimeStart = bestBreak.first
@@ -264,6 +265,31 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         )
 
         onFinishedCallback()
+    }
+
+    fun formatTime(timeString: String): String {
+        val regex = Regex("[^0-9:]") // Matches any non-digit and non-colon character
+        val cleanedString = regex.replace(timeString, "") // Removes any non-digit and non-colon characters
+        val parts = cleanedString.split(":") // Splits the cleaned string into hour and minute parts
+
+        // Extracts the hour and minute from the parts list
+        val hour: Int
+        val minute: Int
+
+        if (parts.size == 2) {
+            hour = parts[0].toIntOrNull() ?: 0
+            minute = parts[1].toIntOrNull() ?: 0
+        } else {
+            val hourRegex = Regex("\\d+")
+            hour = hourRegex.find(timeString)?.value?.toIntOrNull() ?: 0
+            minute = 0
+        }
+
+        // Formats the hour and minute into a uniform string of type "HH:mm"
+        val formattedHour = hour.toString().padStart(2, '0')
+        val formattedMinute = minute.toString().padStart(2, '0')
+
+        return "$formattedHour:$formattedMinute"
     }
 
     override fun getExecutionTime(): LocalTime {
