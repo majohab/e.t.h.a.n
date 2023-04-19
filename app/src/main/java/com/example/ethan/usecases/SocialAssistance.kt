@@ -62,44 +62,45 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 response = "Okay. They are probably having fun without you - nerd."
             )
         ))
-        println("received answer")
+
         speakAndHearSelectiveInput(
             question = "Do you need a recommendation on what you could play?", options = listOf(
             UserInputOption(
                 tokens = positiveTokens,
                 response = "Great then lets see...",
                 onSuccess = {
-                    println(SharedPrefs.get("fav_games_genre"))
-                    speakAndHearSelectiveInput(
-                        question = "Do you want to change your favorite genre?", options = listOf(
-                            UserInputOption(
-                                tokens = positiveTokens,
-                                response = "Alright then.",
-                                onSuccess = {
-                                    SharedPrefs.setInt("fav_games_genre", -1)
-                                }
-                            ),
-                            UserInputOption(
-                                tokens = negativeTokens,
-                                response = "Alright then.",
+
+                    if(SharedPrefs.get("fav_games_genre") != -1) { // If there is a genre already, ask to change it
+                        speakAndHearSelectiveInput(
+                            question = "Do you want to change your favorite genre?",
+                            options = listOf(
+                                UserInputOption(
+                                    tokens = positiveTokens,
+                                    response = "Alright then.",
+                                    onSuccess = {
+                                        SharedPrefs.setInt("fav_games_genre", -1)
+                                    }
+                                ),
+                                UserInputOption(
+                                    tokens = negativeTokens,
+                                    response = "Alright then.",
+                                )
                             )
                         )
-                        )
-                    println("got a lot of tokens")
+                    }
+
                     if(SharedPrefs.get("fav_games_genre") == -1) {
-                        println("ask for fav genre")
                         askForFavGenre()
-                        println("after ask for fav gerne")
                     }
                     val games = rawgApiConnector.getTopGamesByCategory(SharedPrefs.get("fav_games_genre"))
                     var gamestring = "Ok i can recommend the following games from your favorite genre. "
                     for (game in games)
                     {
-                        gamestring += "${game.name} is rated with ${game.rating.toString()}."
+                        gamestring += "${game.name} is rated with ${game.rating}. "
                     }
                     runBlocking { speak(gamestring) }
                     runBlocking { speak("Ok have fun") }
-                    }
+                }
             ),
             UserInputOption(
                 tokens = negativeTokens,

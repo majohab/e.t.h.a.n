@@ -28,7 +28,6 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     abstract fun getExecutionTime() : LocalTime
 
     fun getDoneToday() : Boolean {
-        //println("${doneTodayString()}: ${SharedPrefs.getBoolean(doneTodayString())}")
         return SharedPrefs.getBoolean(doneTodayString())
     }
 

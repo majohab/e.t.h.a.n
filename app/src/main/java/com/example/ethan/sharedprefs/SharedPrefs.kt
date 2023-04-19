@@ -45,11 +45,20 @@ object SharedPrefs {
     }
 
     fun getFloat(key: String, defaultValue: Float = -1f) : Float {
-        return if (sharedPrefs == null) defaultValue else sharedPrefs!!.getFloat(key, defaultValue)
+        return if (sharedPrefs == null) {
+            defaultValue
+        } else {
+            sharedPrefs!!.getFloat(key, defaultValue)
+        }
     }
 
     fun getBoolean(key: String, defaultValue: Boolean = false) : Boolean {
-        return if (sharedPrefs == null) defaultValue else sharedPrefs!!.getBoolean(key, defaultValue)
+        return if (sharedPrefs == null) {
+            defaultValue
+        } else {
+            println("$key: ${sharedPrefs!!.getBoolean(key, defaultValue)}")
+            sharedPrefs!!.getBoolean(key, defaultValue)
+        }
     }
 
     fun setBoolean(key: String, value: Boolean) {

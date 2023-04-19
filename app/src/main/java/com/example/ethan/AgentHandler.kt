@@ -14,10 +14,10 @@ object AgentHandler : Thread() {
 
     var useCaseRunning: Boolean = false
     var remainingTimeStrings = mutableStateMapOf<KClass<out AbstractUseCase>, String>( // the object the GUI observes
-        GoodMorningDialogue::class to "-1",
-        NavigationAssistance::class to "-1",
-        LunchBreakConsultant::class to "-1",
-        SocialAssistance::class to "-1"
+        GoodMorningDialogue::class to "Done",
+        NavigationAssistance::class to "Done",
+        LunchBreakConsultant::class to "Done",
+        SocialAssistance::class to "Done"
     )
 
     var goodMorningDialogue = GoodMorningDialogue { useCaseFinished() }
@@ -35,19 +35,16 @@ object AgentHandler : Thread() {
 
         // evaluate remaining times and start use case if needed
         while (true) {
-            println("while start")
             for (useCase in remainingTimeStrings.keys) {
                 val remainingTime = getRemainingMinutes(useCase)
                 remainingTimeStrings[useCase] = remainingMinutesToString(useCase, remainingTime)
-                println(useCase)
                 if (!justStarted) {
-                    if (remainingTime < 0 && classToObject(useCase).getDoneToday() && !useCaseRunning) {
+                    if (remainingTime <= 0 && !classToObject(useCase).getDoneToday() && !useCaseRunning) {
                         startUseCase(useCase)
                     }
                 }
             }
             justStarted = false
-            println("while end")
             sleep(5000)
         }
     }
@@ -85,8 +82,10 @@ object AgentHandler : Thread() {
     }
 
     private fun remainingMinutesToString (useCase: KClass<out AbstractUseCase>, minutes: Int) : String {
-        return if (minutes <= 0)
-            if (classToObject(useCase).getDoneToday()) "Done" else "Ready"
+        return if (classToObject(useCase).getDoneToday())
+            "Done"
+        else if (minutes <= 0)
+            "Ready"
         else if (minutes < 60)
             "$minutes min"
         else {
