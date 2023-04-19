@@ -8,7 +8,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("Good morning dialogue is finished!")
     } as AbstractUseCase
 
-    override fun mockingbird() {
+    override fun mockingbird1() {
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("car")
