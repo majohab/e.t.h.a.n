@@ -67,14 +67,14 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 "vegetable fajitas", "vegetable enchiladas", "mushroom risotto", "spinach and feta stuffed chicken", "broiled salmon", "shrimp scampi", "lobster bisque",
 
                 // Ingredients
-                "Rice", "Pasta", "Chicken", "Beef", "Fish", "Potatoes", "Bread", "Eggs", "Cheese", "Milk", "Butter", "Yogurt", "Apples", "Oranges", "Bananas",
-                "Strawberries", "Blueberries", "Tomatoes", "Carrots", "Broccoli", "Spinach", "Lettuce", "Cucumbers", "Onions", "Garlic", "Peppers", "Mushrooms", "Corn", "Beans", "Lentils",
-                "Chickpeas", "Nuts", "Seeds", "Olive oil", "Canola oil", "Salt", "Pepper", "Sugar", "Honey", "Chocolate", "Peanut butter", "Jam", "Bacon", "Sausages", "Ham", "Salmon", "Tuna",
-                "Shrimp", "Crab", "Lobster", "Scallops", "Clams", "Mussels", "Oysters", "Soy sauce", "Vinegar", "Mustard", "Mayonnaise", "Ketchup", "Hot sauce", "Curry powder", "Cinnamon", "Nutmeg",
-                "Cloves", "Cumin", "Paprika", "Thyme", "Rosemary", "Basil", "Oregano", "Bay leaves", "Vanilla extract", "Baking powder", "Baking soda", "Flour", "Sugar", "Brown sugar", "Powdered sugar",
+                "Rice", "Pasta", "Chicken", "Beef", "Fish", "Potato", "Bread", "Eggs", "Cheese", "Milk", "Butter", "Yogurt", "Apple", "Orange", "Banana",
+                "Strawberr", "Blueberr", "Tomato", "Carrot", "Broccoli", "Spinach", "Lettuce", "Cucumber", "Onion", "Garlic", "Pepper", "Mushroom", "Corn", "Bean", "Lentil",
+                "Chickpea", "Nut", "Seed", "Olive oil", "Canola oil", "Salt", "Pepper", "Sugar", "Honey", "Chocolate", "Peanut butter", "Jam", "Bacon", "Sausages", "Ham", "Salmon", "Tuna",
+                "Shrimp", "Crab", "Lobster", "Scallop", "Clam", "Mussel", "Oyster", "Soy sauce", "Vinegar", "Mustard", "Mayonnaise", "Ketchup", "Hot sauce", "Curry powder", "Cinnamon", "Nutmeg",
+                "Clove", "Cumin", "Paprika", "Thyme", "Rosemary", "Basil", "Oregano", "Bay leaves", "Vanilla extract", "Baking powder", "Baking soda", "Flour", "Sugar", "Brown sugar", "Powdered sugar",
                 "Cornstarch", "Breadcrumbs", "Cake mix", "Pancake mix", "Waffle mix", "Ramen noodles", "Spaghetti sauce", "Tomato sauce", "Barbecue sauce", "Salsa", "Guacamole", "Tortilla chips",
-                "Popcorn", "Crackers", "Cookies", "Cake", "Pie", "Ice cream", "Pudding", "Jello", "Peanuts", "Almonds", "Cashews", "Walnuts", "Pistachios", "Hazelnuts", "Macadamia nuts", "Brazil nuts",
-                "Sunflower seeds", "Pumpkin seeds", "Sesame seeds", "Quinoa", "Couscous", "Bulgur", "Polenta", "Grits")
+                "Popcorn", "Cracker", "Cookie", "Cake", "Pie", "Ice cream", "Pudding", "Jello", "Peanut", "Almond", "Cashew", "Walnut", "Pistachio", "Hazelnut", "Macadamia nut", "Brazil nut",
+                "Sunflower seed", "Pumpkin seed", "Sesame seed", "Quinoa", "Couscous", "Bulgur", "Polenta", "Grits")
 
             var selectedFoodToken = ""
             var recipeOptionsJson: JSONObject? = null
@@ -92,7 +92,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             }
 
             val recipesOptions = recipeOptionsJson.getJSONArray("results")
-            val recipeOptionsCount = minOf(3, recipesOptions.length())
+            val recipeOptionsCount = minOf(5, recipesOptions.length())
             var recipesOptionsNamesString = ""
             for (i in 0 until recipeOptionsCount) {
                 if (i > 0)
@@ -104,14 +104,17 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             var recipeID = recipesOptions.getJSONObject(0).getInt("id")
             var recipeOptions = mutableListOf<UserInputOption>()
             for (i in 0 until recipeOptionsCount) {
-                val restaurantName = recipesOptions.getJSONObject(i).getString("title")
+                val recipeName = recipesOptions.getJSONObject(i).getString("title")
+                val id = recipesOptions.getJSONObject(i).getInt("id")
                 val option = UserInputOption(
                     tokens = when (i) {
-                        0 -> listOf("1", "one", "first", restaurantName)
-                        1 -> listOf("2", "two", "second", restaurantName)
-                        else -> listOf("3", "three", "third", "last", restaurantName)
+                        0 -> listOf("1", "one", "first", recipeName)
+                        1 -> listOf("2", "two", "second", recipeName)
+                        2 -> listOf("3", "three", "third", recipeName)
+                        3 -> listOf("4", "four", "fourth", recipeName)
+                        else -> listOf("5", "five", "fifth", "last", recipeName)
                     },
-                    onSuccess = { recipeID = recipesOptions.getJSONObject(0).getInt("id") }
+                    onSuccess = { recipeID = id }
                 )
                 recipeOptions.add(option)
             }
