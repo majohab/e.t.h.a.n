@@ -419,7 +419,6 @@ object GUI : ComponentActivity() {
                         .clip(RoundedCornerShape(10.dp))
                         .background(ButtonBlue)
                         .padding(vertical = 4.dp, horizontal = 12.dp)
-
                 )
             }
         }

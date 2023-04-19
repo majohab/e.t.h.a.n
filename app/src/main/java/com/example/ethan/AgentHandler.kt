@@ -35,17 +35,19 @@ object AgentHandler : Thread() {
 
         // evaluate remaining times and start use case if needed
         while (true) {
-            for (entry in remainingTimeStrings) {
-                val useCase = entry.key
+            println("while start")
+            for (useCase in remainingTimeStrings.keys) {
                 val remainingTime = getRemainingMinutes(useCase)
-                remainingTimeStrings[entry.key] = remainingMinutesToString(useCase, remainingTime)
-
+                remainingTimeStrings[useCase] = remainingMinutesToString(useCase, remainingTime)
+                println(useCase)
                 if (!justStarted) {
-                    if (remainingTime < 0 && classToObject(useCase).getDoneToday() && !useCaseRunning)
+                    if (remainingTime < 0 && classToObject(useCase).getDoneToday() && !useCaseRunning) {
                         startUseCase(useCase)
+                    }
                 }
             }
             justStarted = false
+            println("while end")
             sleep(5000)
         }
     }
@@ -59,10 +61,12 @@ object AgentHandler : Thread() {
 
     fun startUseCase(useCase: KClass<out AbstractUseCase>)
     {
+        println("aaaa")
         if(useCaseRunning) return
         useCaseRunning = true
 
         val useCaseClass = classToObject(useCase)
+        useCaseClass.setDoneToday()
 
         Speech2Text.setCallback { input ->
             useCaseClass.onUserVoiceInputReceived(input)
@@ -73,8 +77,6 @@ object AgentHandler : Thread() {
         Text2Speech.setCallback { useCaseClass.onEthanVoiceOutputFinished() }
 
         thread { useCaseClass.executeUseCase() }
-
-        useCaseClass.setDoneToday()
     }
 
     private fun getRemainingMinutes (useCase: KClass<out AbstractUseCase>) : Int {
