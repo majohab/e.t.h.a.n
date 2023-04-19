@@ -1,6 +1,5 @@
 package com.example.ethan.usecases
 
-import android.os.Build
 import com.example.ethan.LocalLocation
 import com.example.ethan.api.connectors.*
 import com.example.ethan.sharedprefs.SharedPrefs
