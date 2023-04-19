@@ -48,12 +48,6 @@ object SharedPrefs {
         return if (sharedPrefs == null) defaultValue else sharedPrefs!!.getFloat(key, defaultValue)
     }
 
-    fun setFloat(key: String, value: Float) {
-        val editor = sharedPrefs!!.edit()
-        editor.putFloat(key, value)
-        editor.apply()
-    }
-
     fun getBoolean(key: String, defaultValue: Boolean = false) : Boolean {
         return if (sharedPrefs == null) defaultValue else sharedPrefs!!.getBoolean(key, defaultValue)
     }

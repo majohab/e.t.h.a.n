@@ -39,6 +39,7 @@ class SharedPrefsTest {
         `when`(mockEditor.putString("18:00", AgentHandler.socialAssistance.getResTimeID())).thenReturn(mockEditor)
         `when`(mockEditor.putString("steam_id", "76561198198615839")).thenReturn(mockEditor)
         `when`(mockEditor.putBoolean("initialized", true)).thenReturn(mockEditor)
+
         doNothing().`when`(mockEditor).apply()
 
         SharedPrefs.initSharedPrefs(activity)
@@ -53,4 +54,6 @@ class SharedPrefsTest {
         assertEquals(false, SharedPrefs.sharedPrefs?.getBoolean("initialized", false))
 
     }
+
+
 }
