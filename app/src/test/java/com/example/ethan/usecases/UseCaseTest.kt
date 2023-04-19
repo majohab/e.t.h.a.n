@@ -6,16 +6,22 @@ import android.content.SharedPreferences
 import android.os.Build
 import com.example.ethan.AgentHandler
 import com.example.ethan.sharedprefs.SharedPrefs
-import com.example.ethan.ui.gui.GUI.getPreferences
-import com.example.ethan.ui.gui.GUI.getSharedPreferences
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.MockedStatic.Verification
 import org.mockito.Mockito
 import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.mockStatic
 import org.mockito.MockitoAnnotations
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
+import java.time.Clock
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+
+
 
 abstract class UseCaseTest {
 
@@ -27,13 +33,37 @@ abstract class UseCaseTest {
     @Mock
     lateinit var sharedPrefs: SharedPreferences
 
+    @Mock
+    lateinit var mockDateTime: LocalDateTime
+
 
     @Before
     fun setUp(){
+        /*
+        val clock: Clock = Clock.fixed(Instant.parse("2023-04-20T06:08:30.00Z"), ZoneId.of("UTC"))
+
+        val dateTime: LocalDateTime = LocalDateTime.now(clock)
+        val instant = Instant.now(clock)
+
+        mockStatic(Instant::class.java).use { mockedStatic ->
+            mockedStatic.`when`<Any>(Verification { Instant.now() })
+                .thenReturn(instant)
+        }
+
+        mockStatic(LocalDateTime::class.java).use { mockedStatic ->
+            mockedStatic.`when`<Any>(Verification { LocalDateTime.now() })
+                .thenReturn(dateTime)
+        }*/
+        /*
+        mockDateTime = Mockito.mock(LocalDateTime::class.java)
+
+        val clock: Clock = Clock.fixed(Instant.parse("2023-04-20T06:08:30.00Z"), ZoneId.of("UTC"))
+        val dateTime: LocalDateTime = LocalDateTime.now(clock)
+        Mockito.`when`(mockDateTime.getnow()).thenReturn(dateTime)
 
         // now you can call the execute method to start the use case
         MockitoAnnotations.openMocks(this)
-
+        */
 
         val mockEditor = Mockito.mock(SharedPreferences.Editor::class.java)
         Mockito.`when`(activity.getPreferences(Context.MODE_PRIVATE)).thenReturn(sharedPrefs)

@@ -125,12 +125,14 @@ class UseCaseTestNavigation {
         var t = Thread {
             mockingbird4()
         }.start()
+
         val event = JSONObject()
         event.put("location", "Lerchenstrasse 1 Stuttgart")
-        event.put("startHour", "20")
+        event.put("startHour", "22")
         event.put("startMinute", "59")
-        navigationAssistance.handleNextEvents(nextEvent = event, "foot-walking")
-
+        val estimated_times = mutableMapOf<String, Int>()
+        //val respone = navigationAssistance.functionforTesting1(
+        //    1,2,"bike",event, "cycling-regular", estimated_times)
         println("Test")
     }
 
@@ -139,7 +141,7 @@ class UseCaseTestNavigation {
 
 
     fun mockingbird1(){
-        mock_waitForAPIs(7000)
+        mock_waitForAPIs(2000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("yes")
         mock_onEthanVoiceOutputFinished(10)
@@ -191,16 +193,9 @@ class UseCaseTestNavigation {
 
 
     fun mockingbird4(){
-        mock_waitForAPIs(7000)
+        mock_waitForAPIs(2000)
         mock_onEthanVoiceOutputFinished(10)
-        mock_speakAndHearSelectiveInput("yes")
-        mock_onEthanVoiceOutputFinished(10)
-        mock_speakAndHearSelectiveInput("yes")
-        mock_onEthanVoiceOutputFinished(10)
-
-        mock_speakAndHearSelectiveInput("yes")
-        mock_onEthanVoiceOutputFinished(10)
-        mock_speakAndHearSelectiveInput("yes")
+        mock_speakAndHearSelectiveInput("no")
         mock_onEthanVoiceOutputFinished(10)
 
         println("mocking bird done")
