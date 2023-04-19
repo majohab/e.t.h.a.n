@@ -62,6 +62,9 @@ abstract class UseCaseTest {
         Mockito.`when`(mockEditor.putString("18:00", AgentHandler.socialAssistance.getResTimeID())).thenReturn(mockEditor)
         Mockito.`when`(mockEditor.putString("steam_id", "76561198198615839")).thenReturn(mockEditor)
         Mockito.`when`(mockEditor.putBoolean("initialized", true)).thenReturn(mockEditor)
+        Mockito.`when`(sharedPrefs.getString("steam_id","")).thenReturn("76561198198615839")
+        Mockito.`when`(sharedPrefs.getInt("fav_games_genre",-1)).thenReturn(-1)
+
         doNothing().`when`(mockEditor).apply()
 
         SharedPrefs.initSharedPrefs(activity)
@@ -70,18 +73,50 @@ abstract class UseCaseTest {
     }
 
     @Test
-    fun createTest() {
+    fun createTest1() {
 
         var t = Thread {
-            mockingbird()
+            mockingbird1()
         }.start()
         abstractUseCase.executeUseCase()
-
 
         println("Test")
     }
 
-    abstract fun mockingbird()
+    @Test
+    fun createTest2() {
+
+        var t = Thread {
+            mockingbird2()
+        }.start()
+        abstractUseCase.executeUseCase()
+
+        println("Test")
+    }
+
+    @Test
+    fun createTest3() {
+
+        var t = Thread {
+            mockingbird3()
+        }.start()
+        abstractUseCase.executeUseCase()
+
+        println("Test")
+    }
+
+    @Test
+    fun createTest4() {
+
+        var t = Thread {
+            mockingbird4()
+        }.start()
+        abstractUseCase.executeUseCase()
+
+        println("Test")
+    }
+
+    abstract fun mockingbird1()
 
     abstract fun mockingbird2()
 

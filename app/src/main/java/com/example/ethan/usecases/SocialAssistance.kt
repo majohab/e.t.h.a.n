@@ -62,7 +62,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 response = "Okay. They are probably having fun without you - nerd."
             )
         ))
-
+        println("received answer")
         speakAndHearSelectiveInput(
             question = "Do you need a recommendation on what you could play?", options = listOf(
             UserInputOption(
@@ -85,9 +85,11 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                             )
                         )
                         )
-
+                    println("got a lot of tokens")
                     if(SharedPrefs.get("fav_games_genre") == -1) {
+                        println("ask for fav genre")
                         askForFavGenre()
+                        println("after ask for fav gerne")
                     }
                     val games = rawgApiConnector.getTopGamesByCategory(SharedPrefs.get("fav_games_genre"))
                     var gamestring = "Ok i can recommend the following games from your favorite genre. "
@@ -104,21 +106,8 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 response = "Okay. Then have fun.",
                     )
         ))
+        println("finished")
         onFinishedCallback()
-    }
-
-    fun askForSteamId(): String?
-    {
-        runBlocking { askForUserVoiceInput("What is your steam user name?") }
-        var steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
-        while (steamid.isNullOrBlank())
-        {
-            runBlocking { askForUserVoiceInput("I did not get that.") }
-            steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
-        }
-        runBlocking { "Ok i set your steam user name to $lastUserVoiceInput, which has the following steam id: $steamid." }
-        SharedPrefs.setString("steam_id", steamid.toString())
-        return steamid
     }
 
     fun askForFavGenre()
