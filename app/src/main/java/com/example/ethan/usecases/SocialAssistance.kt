@@ -58,7 +58,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
             ),
             UserInputOption(
                 tokens = negativeTokens,
-                response = "Okay. They are probably having fun without you nerd."
+                response = "Okay. They are probably having fun without you - nerd."
             )
         ))
 
@@ -108,7 +108,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
 
     fun askForSteamId(): String?
     {
-        runBlocking { askForUserVoiceInput("Whats your steam user name?") }
+        runBlocking { askForUserVoiceInput("What is your steam user name?") }
         var steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
         while (steamid.isNullOrBlank())
         {
