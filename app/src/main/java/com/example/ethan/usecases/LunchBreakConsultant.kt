@@ -88,7 +88,9 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 recipeOptionsJson = recipeConnector.search(selectedFoodToken)
                 if (recipeOptionsJson == null)
                     recipeQuestion = "I sadly couldn't find any recipes that include $selectedFoodToken. Please try something else."
+                    println("did not found recipe")
             }
+            println("found recipies")
 
             val recipesOptions = recipeOptionsJson.getJSONArray("results")
             val recipeOptionsCount = minOf(3, recipesOptions.length())

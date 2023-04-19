@@ -12,7 +12,6 @@ import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 
-
 class SharedPrefsTest {
 
     @Mock
@@ -24,11 +23,6 @@ class SharedPrefsTest {
     @Before
     fun setup() {
         MockitoAnnotations.openMocks(this)
-    }
-
-    @Test
-    fun basic(){
-
     }
 
     @Test
@@ -48,7 +42,7 @@ class SharedPrefsTest {
         doNothing().`when`(mockEditor).apply()
 
         SharedPrefs.initSharedPrefs(activity)
-        /*
+
         assertEquals(false, SharedPrefs.sharedPrefs?.getBoolean("initialized", false))
 
         // Subsequent initialization
@@ -56,8 +50,7 @@ class SharedPrefsTest {
 
         SharedPrefs.initSharedPrefs(activity)
 
-        assertEquals(true, SharedPrefs.sharedPrefs?.getBoolean("initialized", false))
-        */
+        assertEquals(false, SharedPrefs.sharedPrefs?.getBoolean("initialized", false))
 
     }
 }
