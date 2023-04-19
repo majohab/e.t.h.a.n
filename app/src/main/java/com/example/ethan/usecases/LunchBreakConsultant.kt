@@ -99,7 +99,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             println("found recipies")
 
             // Did not receive a correct response, e.g. because we already called the API 150 times a day
-            if (recipeOptionsJson.getInt("code") == 402) {
+            if (recipeOptionsJson.has("code") && recipeOptionsJson.getInt("code") == 402) {
                 runBlocking { speak("I'm sorry, I can't seem to have any recipes for you today. Please check again tomorrow.") }
                 onFinishedCallback()
                 return
