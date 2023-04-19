@@ -26,7 +26,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_waitForAPIs(3000)
 
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(10)
         println("mockingbiund1finished")
     }
 
@@ -74,7 +74,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_waitForAPIs(3000)
 
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(10)
     }
 
     override fun mockingbird4() {
@@ -99,7 +99,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
         mock_waitForAPIs(3000)
 
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(10)
 
     }
 

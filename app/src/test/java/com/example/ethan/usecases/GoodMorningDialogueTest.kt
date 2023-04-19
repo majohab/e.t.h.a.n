@@ -19,7 +19,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(10)
     }
 
 
@@ -34,7 +34,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(10)
 
     }
 
@@ -50,7 +50,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(10)
     }
 
 
