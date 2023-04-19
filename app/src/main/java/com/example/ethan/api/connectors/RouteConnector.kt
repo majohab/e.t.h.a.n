@@ -16,15 +16,20 @@ class RouteConnector() : AbstractConnector() {
         get() = "url"
 
     override fun parseData(data: String): JSONObject {
-        val json = JSONObject(data)
-        val features = json.getJSONArray("features")
-        val feature = features.getJSONObject(0)
-        val properties = feature.getJSONObject("properties")
-        val segments = properties.getJSONArray("segments")
-        val segment = segments.getJSONObject(0)
-        val duration = segment.getDouble("duration")
+        try {
+            val json = JSONObject(data)
+            val features = json.getJSONArray("features")
+            val feature = features.getJSONObject(0)
+            val properties = feature.getJSONObject("properties")
+            val segments = properties.getJSONArray("segments")
+            val segment = segments.getJSONObject(0)
+            val duration = segment.getDouble("duration")
 
-        return JSONObject("{\"Duration\" : $duration}")
+            return JSONObject("{\"Duration\" : $duration}")
+        }catch (e: java.lang.Exception) {
+            println("Error in retrieving route!")
+            return JSONObject("{\"Duration\" : 60.0}")
+        }
     }
 
 
@@ -51,8 +56,8 @@ class RouteConnector() : AbstractConnector() {
         val locations = getQueryLocationString(target, current)
         movementTypes.forEach {
 
-            val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_Routes + locations
-
+            val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_OPENROUTE + locations
+            println(url)
             val response = getDynamic(url)
 
             val duration = (extractDuration(response)/60).toInt()
