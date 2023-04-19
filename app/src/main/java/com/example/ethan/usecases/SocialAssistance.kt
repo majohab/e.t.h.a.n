@@ -1,6 +1,7 @@
 package com.example.ethan.usecases
 
 import android.os.Build
+import androidx.compose.ui.text.toLowerCase
 import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.RawgApiConnector
 import com.example.ethan.api.connectors.SteamFriendsConnector
@@ -124,9 +125,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
     {
         val genres = rawgApiConnector.getGenres()
         var genrestring = "Which of the following genres is your favorite? "
-        var options = mutableListOf<UserInputOption>()
         for (i in 0 until genres.size) {
-            val key = genres[i].first
             val value = genres[i].second
             if(i < genres.size-1)
             {
@@ -135,19 +134,29 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
             {
                 genrestring += "$value."
             }
-            options.add(
-                UserInputOption(
-                    tokens = listOf(value),
-                    response = "Ok i added $value as your favorite genre.",
-                    onSuccess = {
-                        SharedPrefs.setInt("fav_games_genre", key)
-                    }
-                )
-            )
         }
-        speakAndHearSelectiveInput(
-            question = genrestring, options = options
-        )
+        runBlocking { askForUserVoiceInput(genrestring) }
+        var gotgenre = false
+        while (!gotgenre) {
+            var token = findFirstToken(lastUserVoiceInput, genres)
+            if (token == null) {
+                gotgenre = false
+                runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
+            } else {
+                gotgenre = true
+                SharedPrefs.setInt("fav_games_genre", token.first)
+                runBlocking { speak("Ok i set your favorite genre to ${token.second}.") }
+            }
+        }
+    }
+
+    fun findFirstToken(str: String, tokens: List<Pair<Int, String>>): Pair<Int, String>? {
+        for (token in tokens) {
+            if (str.lowercase().contains(token.second.lowercase())) {
+                return token
+            }
+        }
+        return null
     }
 
     override fun getExecutionTime() : LocalTime {
