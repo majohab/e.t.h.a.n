@@ -8,6 +8,7 @@ import com.example.ethan.transportation.transportTranslations
 import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
 import java.time.LocalTime
+import java.util.zip.DeflaterOutputStream
 
 class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinishedCallback)  {
 
@@ -28,21 +29,21 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var suggestedBreaktimeStart = preferredBreakTimeStart
         var suggestedBreaktimeEnd = preferredBreakTimeEnd
         println("init")
-        speakAndHearSelectiveInput(
-            question = "Hi. I'm here to assure you having the best break today. Around what hour do" +
-                    " you prefer to eat something?",
-            options = listOf(
-                UserInputOption(
-                    tokens = listOf(":"),
-                    onSuccess = {
-                        lastUserVoiceInput.split(" ").forEach{
-                            if (it.contains(":")){
-                                preferredBreakTimeStart = LocalTime.parse(it)
-                            }
-                        }
-                    }
-                ))
-        )
+        var gottime = false
+        runBlocking { askForUserVoiceInput("Hi. I'm here to assure you having the best break today. Around what hour would you prefer to eat something?") }
+        while (!gottime) {
+            var timestring = formatTime(lastUserVoiceInput)
+            println(timestring)
+            if (timestring.equals("00:00")) {
+                gottime = false
+                runBlocking { askForUserVoiceInput("I didn't quite catch that, please repeat your response.") }
+            }
+            else {
+                gottime = true
+                preferredBreakTimeStart = LocalTime.parse(timestring)
+            }
+        }
+
         println("got time")
         var bestBreak = calendarConnector.getIdealExecutionTime(preferredBreakTimeStart.hour, preferredBreakTimeStart.minute, preferredBreakDuration)
         suggestedBreaktimeStart = bestBreak.first
@@ -66,14 +67,14 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 "vegetable fajitas", "vegetable enchiladas", "mushroom risotto", "spinach and feta stuffed chicken", "broiled salmon", "shrimp scampi", "lobster bisque",
 
                 // Ingredients
-                "Rice", "Pasta", "Chicken", "Beef", "Fish", "Potatoes", "Bread", "Eggs", "Cheese", "Milk", "Butter", "Yogurt", "Apples", "Oranges", "Bananas",
-                "Strawberries", "Blueberries", "Tomatoes", "Carrots", "Broccoli", "Spinach", "Lettuce", "Cucumbers", "Onions", "Garlic", "Peppers", "Mushrooms", "Corn", "Beans", "Lentils",
-                "Chickpeas", "Nuts", "Seeds", "Olive oil", "Canola oil", "Salt", "Pepper", "Sugar", "Honey", "Chocolate", "Peanut butter", "Jam", "Bacon", "Sausages", "Ham", "Salmon", "Tuna",
-                "Shrimp", "Crab", "Lobster", "Scallops", "Clams", "Mussels", "Oysters", "Soy sauce", "Vinegar", "Mustard", "Mayonnaise", "Ketchup", "Hot sauce", "Curry powder", "Cinnamon", "Nutmeg",
-                "Cloves", "Cumin", "Paprika", "Thyme", "Rosemary", "Basil", "Oregano", "Bay leaves", "Vanilla extract", "Baking powder", "Baking soda", "Flour", "Sugar", "Brown sugar", "Powdered sugar",
+                "Rice", "Pasta", "Chicken", "Beef", "Fish", "Potato", "Bread", "Eggs", "Cheese", "Milk", "Butter", "Yogurt", "Apple", "Orange", "Banana",
+                "Strawberr", "Blueberr", "Tomato", "Carrot", "Broccoli", "Spinach", "Lettuce", "Cucumber", "Onion", "Garlic", "Pepper", "Mushroom", "Corn", "Bean", "Lentil",
+                "Chickpea", "Nut", "Seed", "Olive oil", "Canola oil", "Salt", "Pepper", "Sugar", "Honey", "Chocolate", "Peanut butter", "Jam", "Bacon", "Sausages", "Ham", "Salmon", "Tuna",
+                "Shrimp", "Crab", "Lobster", "Scallop", "Clam", "Mussel", "Oyster", "Soy sauce", "Vinegar", "Mustard", "Mayonnaise", "Ketchup", "Hot sauce", "Curry powder", "Cinnamon", "Nutmeg",
+                "Clove", "Cumin", "Paprika", "Thyme", "Rosemary", "Basil", "Oregano", "Bay leaves", "Vanilla extract", "Baking powder", "Baking soda", "Flour", "Sugar", "Brown sugar", "Powdered sugar",
                 "Cornstarch", "Breadcrumbs", "Cake mix", "Pancake mix", "Waffle mix", "Ramen noodles", "Spaghetti sauce", "Tomato sauce", "Barbecue sauce", "Salsa", "Guacamole", "Tortilla chips",
-                "Popcorn", "Crackers", "Cookies", "Cake", "Pie", "Ice cream", "Pudding", "Jello", "Peanuts", "Almonds", "Cashews", "Walnuts", "Pistachios", "Hazelnuts", "Macadamia nuts", "Brazil nuts",
-                "Sunflower seeds", "Pumpkin seeds", "Sesame seeds", "Quinoa", "Couscous", "Bulgur", "Polenta", "Grits")
+                "Popcorn", "Cracker", "Cookie", "Cake", "Pie", "Ice cream", "Pudding", "Jello", "Peanut", "Almond", "Cashew", "Walnut", "Pistachio", "Hazelnut", "Macadamia nut", "Brazil nut",
+                "Sunflower seed", "Pumpkin seed", "Sesame seed", "Quinoa", "Couscous", "Bulgur", "Polenta", "Grits")
 
             var selectedFoodToken = ""
             var recipeOptionsJson: JSONObject? = null
@@ -96,26 +97,29 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             println("found recipies")
 
             val recipesOptions = recipeOptionsJson.getJSONArray("results")
-            val recipeOptionsCount = minOf(3, recipesOptions.length())
+            val recipeOptionsCount = minOf(5, recipesOptions.length())
             var recipesOptionsNamesString = ""
             for (i in 0 until recipeOptionsCount) {
                 if (i > 0)
                     recipesOptionsNamesString += ", "
                 recipesOptionsNamesString += recipesOptions.getJSONObject(i).getString("title")
             }
-            runBlocking { speak("I found the recipes for the following meals: $recipesOptionsNamesString.") }
+            runBlocking { speak("I found several recipes for following meals: $recipesOptionsNamesString.") }
 
             var recipeID = recipesOptions.getJSONObject(0).getInt("id")
             var recipeOptions = mutableListOf<UserInputOption>()
             for (i in 0 until recipeOptionsCount) {
-                val restaurantName = recipesOptions.getJSONObject(i).getString("title")
+                val recipeName = recipesOptions.getJSONObject(i).getString("title")
+                val id = recipesOptions.getJSONObject(i).getInt("id")
                 val option = UserInputOption(
                     tokens = when (i) {
-                        0 -> listOf("1", "one", "first", restaurantName)
-                        1 -> listOf("2", "two", "second", restaurantName)
-                        else -> listOf("3", "three", "third", "last", restaurantName)
+                        0 -> listOf("1", "one", "first", recipeName)
+                        1 -> listOf("2", "two", "second", recipeName)
+                        2 -> listOf("3", "three", "third", recipeName)
+                        3 -> listOf("4", "four", "fourth", recipeName)
+                        else -> listOf("5", "five", "fifth", "last", recipeName)
                     },
-                    onSuccess = { recipeID = recipesOptions.getJSONObject(0).getInt("id") }
+                    onSuccess = { recipeID = id }
                 )
                 recipeOptions.add(option)
             }
@@ -127,7 +131,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             val recipe = recipeConnector.get(recipeID)
             val recipe_sourceUrl = recipe.getString("sourceUrl")
 
-            runBlocking { speak("Cool, the following URL provides cooking instructions: $recipe_sourceUrl") }
+            runBlocking { speak("Cool, the following URL provides the cooking instructions: $recipe_sourceUrl") }
         }
 
         fun goingOut() {
@@ -221,7 +225,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     restaurantOptions.add(option)
                 }
                 speakAndHearSelectiveInput(
-                    question = "Which one sounds the most appealing for you?", options = restaurantOptions
+                    question = "Which one sounds the most appealing to you?", options = restaurantOptions
                 )
                 if (selectedRestaurant.website.isNotEmpty() && selectedRestaurant.website.isNotBlank())
                     runBlocking { speak("Okay. This is the website of ${selectedRestaurant.name}: ${selectedRestaurant.website}") }
@@ -255,7 +259,7 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         }
 
         speakAndHearSelectiveInput(
-            question = "Do you want to eat in a restaurant or cook by yourself?",
+            question = "Do you want to eat in a restaurant or cook at home?",
             options = listOf(
                 UserInputOption(
                     tokens = listOf("restaurant", "go out", "going out", "somewhere", "someplace", "some place"),
@@ -269,6 +273,31 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         )
 
         onFinishedCallback()
+    }
+
+    fun formatTime(timeString: String): String {
+        val regex = Regex("[^0-9:]") // Matches any non-digit and non-colon character
+        val cleanedString = regex.replace(timeString, "") // Removes any non-digit and non-colon characters
+        val parts = cleanedString.split(":") // Splits the cleaned string into hour and minute parts
+
+        // Extracts the hour and minute from the parts list
+        val hour: Int
+        val minute: Int
+
+        if (parts.size == 2) {
+            hour = parts[0].toIntOrNull() ?: 0
+            minute = parts[1].toIntOrNull() ?: 0
+        } else {
+            val hourRegex = Regex("\\d+")
+            hour = hourRegex.find(timeString)?.value?.toIntOrNull() ?: 0
+            minute = 0
+        }
+
+        // Formats the hour and minute into a uniform string of type "HH:mm"
+        val formattedHour = hour.toString().padStart(2, '0')
+        val formattedMinute = minute.toString().padStart(2, '0')
+
+        return "$formattedHour:$formattedMinute"
     }
 
     override fun getExecutionTime(): LocalTime {

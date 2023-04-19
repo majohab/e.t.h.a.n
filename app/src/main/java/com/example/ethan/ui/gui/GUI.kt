@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ethan.AgentHandler
 import com.example.ethan.UseCase
+import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.gui.theme.*
 import com.example.ethan.ui.speech.Speech2Text
 import com.example.ethan.ui.speech.Text2Speech
@@ -50,6 +51,8 @@ object GUI : ComponentActivity() {
 
     @Composable
     fun MainScreen() {
+
+        SharedPrefs.getString("username", "John")
 
         ETHANTheme {
             Box(modifier = Modifier.background(DeepBlue).fillMaxSize()) {

@@ -26,7 +26,6 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         //commented out because text to speech to shit
 
         // Steam API
-        println("before")
         var steam_id = SharedPrefs.getString("steam_id")
         val steamfriends_list = steamFriendsConnector.get(steam_id)
         var steamfriends_string = ""
@@ -38,9 +37,11 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 steamfriends_string += "$key is " + when (value) {
                     1 -> "online"
                     2 -> "busy"
+                    3 -> "away"
+                    4 -> "snoozing"
                     5 -> "looking to trade"
                     6 -> "looking to play"
-                    else -> {}
+                    else -> ""
                 } + ". "
             }
         }
@@ -48,7 +49,6 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         {
             steamfriends_string = "None of your friends are online."
         }
-        println("test2")
 
         speakAndHearSelectiveInput(
             question = "Good evening. Do you want to know what your Steam-friends are up to?", options = listOf(
@@ -58,7 +58,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
             ),
             UserInputOption(
                 tokens = negativeTokens,
-                response = "Okay. They are probably having fun without you nerd."
+                response = "Okay. They are probably having fun without you - nerd."
             )
         ))
         println("received answer")
@@ -117,7 +117,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         for (i in 0 until genres.size) {
             val key = genres[i].first
             val value = genres[i].second
-            if(i < genres.size)
+            if(i < genres.size-1)
             {
                 genrestring += "$value, "
             } else
