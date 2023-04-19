@@ -130,6 +130,44 @@ class UseCaseTestNavigation {
         event.put("location", "Lerchenstrasse 1 Stuttgart")
         event.put("startHour", "22")
         event.put("startMinute", "59")
+        val estimated_times = mutableMapOf<String, Int>(
+            "bike" to 1
+        )
+
+
+        val respone = navigationAssistance.bestTooLateAlternative(1,2,"bike",event, "cycling-regular", estimated_times)
+        println("Test")
+    }
+
+    @Test
+    fun createTest41() {
+        var t = Thread {
+            mockingbird41()
+        }.start()
+
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "22")
+        event.put("startMinute", "59")
+        val estimated_times = mutableMapOf<String, Int>(
+            "bike" to 1
+        )
+
+
+        val respone = navigationAssistance.bestTooLateAlternative(1,2,"bike",event, "cycling-regular", estimated_times)
+        println("Test")
+    }
+
+    @Test
+    fun createTest5() {
+        var t = Thread {
+            navigationAssistance.getExecutionTime()
+        }.start()
+
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "22")
+        event.put("startMinute", "59")
         val estimated_times = mutableMapOf<String, Int>()
         //val respone = navigationAssistance.functionforTesting1(
         //    1,2,"bike",event, "cycling-regular", estimated_times)
@@ -137,6 +175,101 @@ class UseCaseTestNavigation {
     }
 
 
+    @Test
+    fun createTest6() {
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "3")
+        event.put("startMinute", "59")
+        var t = Thread {
+
+            navigationAssistance.getNextTimeToGo(event)
+        }.start()
+
+
+        val estimated_times = mutableMapOf<String, Int>()
+        //val respone = navigationAssistance.functionforTesting1(
+        //    1,2,"bike",event, "cycling-regular", estimated_times)
+        println("Test")
+    }
+
+    @Test
+    fun createTestFootwalking() {
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "22")
+        event.put("startMinute", "59")
+        val estimated_times = mutableMapOf<String, Int>(
+            "bike" to 1, "foot-walking" to 2, "driving-car" to 3,
+            "wheelchair" to 4, "cycling-regular" to 5, "cycling-road" to 6
+        )
+        var t = Thread {
+            mockingbirdFootwalking()
+        }.start()
+
+        navigationAssistance.footWalkingAlternative(event ,estimatedTimes = estimated_times, 2)
+        println("Test")
+    }
+
+    @Test
+    fun createTestFootwalking1() {
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "22")
+        event.put("startMinute", "59")
+        val estimated_times = mutableMapOf<String, Int>(
+            "bike" to 1, "foot-walking" to 2, "driving-car" to 3,
+            "wheelchair" to 4, "cycling-regular" to 5, "cycling-road" to 6
+        )
+        var t = Thread {
+            mockingbirdFootwalking1()
+        }.start()
+
+        navigationAssistance.footWalkingAlternative(event ,estimatedTimes = estimated_times, 2)
+        println("Test")
+    }
+
+    @Test
+    fun createTestFootwalking2() {
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "22")
+        event.put("startMinute", "59")
+        val estimated_times = mutableMapOf<String, Int>(
+            "bike" to 1, "foot-walking" to 2, "driving-car" to 3,
+            "wheelchair" to 4, "cycling-regular" to 5, "cycling-road" to 6
+        )
+        var t = Thread {
+            mockingbirdFootwalking2()
+        }.start()
+
+        navigationAssistance.footWalkingAlternative(event ,estimatedTimes = estimated_times, 2)
+        println("Test")
+    }
+
+    fun mockingbirdFootwalking(){
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(20)
+        mock_speakAndHearSelectiveInput("no")
+        println("i said no")
+        mock_onEthanVoiceOutputFinished(20)
+    }
+
+    fun mockingbirdFootwalking1(){
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(20)
+        mock_speakAndHearSelectiveInput("bike")
+        println("i said bike")
+        mock_onEthanVoiceOutputFinished(20)
+    }
+
+    fun mockingbirdFootwalking2(){
+        mock_waitForAPIs(5000)
+        mock_onEthanVoiceOutputFinished(20)
+        mock_speakAndHearSelectiveInput("wheelchair")
+        println("i said wheelchair")
+        mock_onEthanVoiceOutputFinished(20)
+    }
 
 
 
@@ -193,10 +326,20 @@ class UseCaseTestNavigation {
 
 
     fun mockingbird4(){
-        mock_waitForAPIs(2000)
-        mock_onEthanVoiceOutputFinished(10)
+        mock_waitForAPIs(5000)
+        mock_speakAndHearSelectiveInput("yes")
+        println("i said yes")
+        mock_onEthanVoiceOutputFinished(20)
+
+        println("mocking bird done")
+
+    }
+
+    fun mockingbird41(){
+        mock_waitForAPIs(5000)
         mock_speakAndHearSelectiveInput("no")
-        mock_onEthanVoiceOutputFinished(10)
+        println("i said no")
+        mock_onEthanVoiceOutputFinished(20)
 
         println("mocking bird done")
 
