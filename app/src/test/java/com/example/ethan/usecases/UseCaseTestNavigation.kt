@@ -89,6 +89,55 @@ class UseCaseTestNavigation {
         println("Test")
     }
 
+    @Test
+    fun createTest2() {
+
+
+
+        var t = Thread {
+            mockingbird2()
+        }.start()
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "3")
+        event.put("startMinute", "00")
+        navigationAssistance.handleNextEvents(nextEvent = event, "cycling-regular")
+
+        println("Test")
+    }
+
+    @Test
+    fun createTest3() {
+        var t = Thread {
+            mockingbird3()
+        }.start()
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "22")
+        event.put("startMinute", "59")
+        navigationAssistance.handleNextEvents(nextEvent = event, "foot-walking")
+
+        println("Test")
+    }
+
+    @Test
+    fun createTest4() {
+        var t = Thread {
+            mockingbird4()
+        }.start()
+        val event = JSONObject()
+        event.put("location", "Lerchenstrasse 1 Stuttgart")
+        event.put("startHour", "20")
+        event.put("startMinute", "59")
+        navigationAssistance.handleNextEvents(nextEvent = event, "foot-walking")
+
+        println("Test")
+    }
+
+
+
+
+
     fun mockingbird1(){
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(10)
@@ -105,6 +154,59 @@ class UseCaseTestNavigation {
         println("mocking bird done")
 
     }
+
+    fun mockingbird2(){
+        mock_waitForAPIs(7000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+
+        println("mocking bird done")
+
+    }
+
+    fun mockingbird3(){
+        mock_waitForAPIs(7000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+
+        println("mocking bird done")
+
+    }
+
+
+    fun mockingbird4(){
+        mock_waitForAPIs(7000)
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+        mock_speakAndHearSelectiveInput("yes")
+        mock_onEthanVoiceOutputFinished(10)
+
+        println("mocking bird done")
+
+    }
+
 
 
 

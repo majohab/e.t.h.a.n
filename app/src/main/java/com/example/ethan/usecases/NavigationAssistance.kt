@@ -44,7 +44,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         var goInXMinutes = getTimeToGo(nextEvent, timeWithPreferred)
         println("goInX" + goInXMinutes)
         if (goInXMinutes < 0) {
-            println("in if")
+            println("in if go in Minutes")
             val overflow = -1 * goInXMinutes
             val bestMethod = getBestTransportMethode(estimatedTimes, transportationMode)
             val bestMethodTime = estimatedTimes[bestMethod]!!
@@ -97,7 +97,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 )
             }
         } else {
-            println("in else")
+            println("in else in if go in Minutes")
             runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $goInXMinutes minutes to catch your next event.") }
             println("after talk in else")
             if (transportationMode != "foot-walking") {
