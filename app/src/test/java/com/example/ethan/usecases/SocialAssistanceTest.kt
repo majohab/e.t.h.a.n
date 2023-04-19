@@ -12,7 +12,7 @@ class SocialAssistanceTest : UseCaseTest() {
         println("Navigation assistance finished")
     } as AbstractUseCase
 
-    override fun mockingbird() {
+    override fun mockingbird1() {
 
 
 

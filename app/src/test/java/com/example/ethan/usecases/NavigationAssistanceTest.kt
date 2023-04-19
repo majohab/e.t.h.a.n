@@ -11,7 +11,7 @@ class NavigationAssistanceTest : UseCaseTest() {
         println("Navigation assistance finished")
     } as AbstractUseCase
 
-    override fun mockingbird() {
+    override fun mockingbird1() {
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("yes")

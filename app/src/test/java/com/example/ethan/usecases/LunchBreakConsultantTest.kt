@@ -5,10 +5,10 @@ class LunchBreakConsultantTest : UseCaseTest() {
 
     override var abstractUseCase = LunchBreakConsultant {
         // this code will be executed when the use case is finished
-        println("Good morning dialogue is finished!")
+        println("Lunchbreakconsultanttest is finished!")
     } as AbstractUseCase
 
-    override fun mockingbird() {
+    override fun mockingbird1() {
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(10)
         mock_speakAndHearSelectiveInput("15:00")
@@ -27,6 +27,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
 
         println("a4s")
         mock_onEthanVoiceOutputFinished(1)
+        println("mockingbiund1finished")
 
 
     }

@@ -70,18 +70,28 @@ abstract class UseCaseTest {
     }
 
     @Test
-    fun createTest() {
+    fun createTest1() {
 
         var t = Thread {
-            mockingbird()
+            mockingbird1()
         }.start()
         abstractUseCase.executeUseCase()
-
 
         println("Test")
     }
 
-    abstract fun mockingbird()
+    @Test
+    fun createTest2() {
+
+        var t = Thread {
+            mockingbird2()
+        }.start()
+        abstractUseCase.executeUseCase()
+
+        println("Test")
+    }
+
+    abstract fun mockingbird1()
 
     abstract fun mockingbird2()
 
