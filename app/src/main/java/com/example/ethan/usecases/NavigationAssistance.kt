@@ -19,7 +19,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     private var nextExecutionTime: LocalTime? = null
 
     override fun executeUseCase() {
-        nextExecutionTime = null
         val transportationMode = SharedPrefs.getTransportation()
 
         val nextEvent = getNextEvent()
@@ -27,10 +26,31 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
             runBlocking { speak("Congrats! You have no more events for today.") }
             onFinishedCallback()
             println("no new event")
+            setDoneToday()
             return
         }
-        else{
+        else {
             handleNextEvents(nextEvent, transportationMode)
+
+            // Evaluate nextExecutionTime
+            val eventsFreeBusy_json = calendarConnector.get()
+            val events = eventsFreeBusy_json.getJSONObject("events")
+            for (i in 1 .. events.length()) {
+                var compareEvent = events.getJSONObject(i.toString())
+                if (nextEvent.getString("startHour") == compareEvent.getString("startHour") &&
+                    nextEvent.getString("startMinute") == compareEvent.getString("startMinute")) {
+                    if (i == events.length()) {
+                        setDoneToday()
+                    }
+                    else {
+                        val nextNextEvent = events.getJSONObject((i+1).toString())
+                        val executionTime = getReminderTime(nextNextEvent)
+                        setExecutionTime(executionTime)
+                    }
+                }
+            }
+
+            return
         }
     }
 
@@ -106,9 +126,9 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                 }
             }
         }
-        if (goInXMinutes > 15) {
-            runBlocking { speak("I will remind you 15 minutes before the upcoming event.") }
-        }
+        //if (goInXMinutes > 15) {
+        //    runBlocking { speak("I will remind you 15 minutes before the upcoming event.") }
+        //}
         onFinishedCallback()
     }
 
@@ -121,6 +141,10 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         val timeToGo = getTimeToGo(event, timeWithPreferred)
 
         return LocalTime.now().plusMinutes(timeToGo.toLong())
+    }
+
+    fun getReminderTime(event: JSONObject) : LocalTime {
+        return getNextTimeToGo(event).minusMinutes(15)
     }
 
     fun footWalkingAlternative(nextEvent: JSONObject, estimatedTimes: Map<String, Int>, goInXMinutes: Int): Int {
@@ -284,17 +308,20 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     override fun getExecutionTime(): LocalTime {
         val nextEvent = getNextEvent()
-        return if (nextEvent == null){
-            setDoneToday(true)
-            LocalTime.parse("00:01")
-        }else {
-            if(nextExecutionTime == null){
-                nextExecutionTime = getNextTimeToGo(nextEvent).minusMinutes(14)
-                SharedPrefs.setString(getResTimeID(), nextExecutionTime.toString())
-                setDoneToday(false)
+        if (nextEvent == null) {
+            setDoneToday()
+            if(nextExecutionTime == null) {
+                nextExecutionTime = LocalTime.of(23, 59) // Doesn't matter, won't execute when setDone == true
             }
-            nextExecutionTime!!
+        } else if(nextExecutionTime == null) {
+            setExecutionTime(getReminderTime(nextEvent))
         }
+        return nextExecutionTime!!
     }
 
+    fun setExecutionTime(time: LocalTime) {
+        nextExecutionTime = time
+        SharedPrefs.setString(getResTimeID(), time.toString())
+        setDoneToday(false)
+    }
 }
