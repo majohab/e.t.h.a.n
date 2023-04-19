@@ -105,21 +105,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
         ))
         onFinishedCallback()
     }
-
-    fun askForSteamId(): String?
-    {
-        runBlocking { askForUserVoiceInput("What is your steam user name?") }
-        var steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
-        while (steamid.isNullOrBlank())
-        {
-            runBlocking { askForUserVoiceInput("I did not get that.") }
-            steamid = steamFriendsConnector.getSteamIdByUsername(lastUserVoiceInput)
-        }
-        runBlocking { "Ok i set your steam user name to $lastUserVoiceInput, which has the following steam id: $steamid." }
-        SharedPrefs.setString("steam_id", steamid.toString())
-        return steamid
-    }
-
+    
     fun askForFavGenre()
     {
         val genres = rawgApiConnector.getGenres()
