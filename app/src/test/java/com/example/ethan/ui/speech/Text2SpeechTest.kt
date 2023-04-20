@@ -27,14 +27,12 @@ class Text2SpeechTest{
         //Test if methods can be called
         assertEquals(1,1)
     }
-
     @Test
     fun removeCallbackTest(){
         text2speech.onFinished_initialized = true
         text2speech.removeCallback()
         assertEquals(false, text2speech.onFinished_initialized)
     }
-
     @Test
     fun setCallbackTest(){
         text2speech.onFinished_initialized = false

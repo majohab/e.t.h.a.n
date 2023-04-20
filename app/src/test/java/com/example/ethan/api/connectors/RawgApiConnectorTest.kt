@@ -21,7 +21,6 @@ class RawgApiConnectorTest{
 
     @Test
     fun testgetTopGamesByCategory(){
-
         rawgApiConnector.getTopGamesByCategory(1)
     }
 
@@ -40,7 +39,4 @@ class RawgApiConnectorTest{
             "2023",4.3f,"abv"
         )
     }
-
-
-
 }

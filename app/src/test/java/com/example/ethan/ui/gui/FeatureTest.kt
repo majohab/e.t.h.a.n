@@ -7,7 +7,6 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class FeatureTest {
-
     @Test
     fun dataClassFeatureTest() {
         Feature(
@@ -20,6 +19,4 @@ class FeatureTest {
         )
         assertEquals(1,1)
     }
-
-
 }

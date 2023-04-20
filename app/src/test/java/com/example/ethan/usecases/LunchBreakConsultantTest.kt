@@ -11,6 +11,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
     } as AbstractUseCase
 
     override fun mockingbird1() {
+        //footwalking home pizza 1
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)
@@ -34,6 +35,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
     }
 
     override fun mockingbird2() {
+        //footwalking restaurant indian 1
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)
@@ -56,6 +58,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
     }
 
     override fun mockingbird3() {
+        // footwakling 15:00 home pasta 3 1
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)
@@ -82,6 +85,7 @@ class LunchBreakConsultantTest : UseCaseTest() {
     }
 
     override fun mockingbird4() {
+        //footwalking 15:00 restaurant bbq indian 1
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)

@@ -12,9 +12,8 @@ class RecipeConnectorTest{
     fun setUp(){
         recipeConnector = RecipeConnector()
     }
-
     @Test
-    fun search(){
+    fun searchTest(){
         val recipe_json = recipeConnector.search("pasta")
         val recipe_one = recipe_json!!.getJSONArray("results").getJSONObject(0)
         val recipe_one_id = recipe_one.getInt("id")

@@ -13,16 +13,13 @@ class FortuneConnectorTest{
     }
 
     @Test
-    fun getUrl(){
+    fun getUrlTest(){
         assertEquals("http://yerkee.com/api/fortune",fortuneConnector.url)
     }
 
     @Test
-    fun parseData(){
+    fun parseDataTest(){
         val eventsFreeBusy_json = fortuneConnector.get()
-
-
-
     }
 
 }

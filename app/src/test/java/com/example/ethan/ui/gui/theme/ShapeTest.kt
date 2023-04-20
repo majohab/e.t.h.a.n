@@ -13,7 +13,6 @@ import com.example.ethan.ui.gui.theme.Shapes as MyOwnShapes
 class ShapeTest {
 
     private lateinit var shape: Shapes
-
     @Before
     fun setUp() {
         shape = Shapes(
@@ -27,5 +26,4 @@ class ShapeTest {
     fun OwnShapeTest() {
         assertEquals(shape, MyOwnShapes)
     }
-
 }

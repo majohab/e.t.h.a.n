@@ -46,29 +46,22 @@ class CalendarConnectorTest{
     }
 
     @Test
-    fun testString(){
+    fun testURL(){
         assertEquals("http://www.h2991977.stratoserver.net/TINF20B.ics",calendarConnector.url)
     }
 
     @Test
-    fun parseData(){
+    fun parseDataTest(){
         val eventsFreeBusy_json = calendarConnectorParse.get()
     }
 
 
     @Test
-    fun getFirstPreferenceTest(){
+    fun getIdealExecutionTimeTest(){
         calendarConnector.getIdealExecutionTime(2, 5, 10)
         calendarConnector.getIdealExecutionTime(12, 30, 60)
         calendarConnector.getIdealExecutionTime(12, 30, 240)
         calendarConnector.getIdealExecutionTime(11, 30, 60)
         calendarConnector.getIdealExecutionTime(11, 30, 800)
-    }
-
-
-    @Test
-    fun getFirstBreaksTest(){
-
-        
     }
 }

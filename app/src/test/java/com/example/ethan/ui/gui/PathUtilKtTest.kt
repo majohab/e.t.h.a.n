@@ -17,7 +17,6 @@ class PathTest {
 
     @Mock
     private lateinit var path: Path
-
     @Test
     fun `test standardQuadFromTo`() {
         // Arrange

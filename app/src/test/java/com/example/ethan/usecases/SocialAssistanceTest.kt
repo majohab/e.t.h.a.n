@@ -13,6 +13,7 @@ class SocialAssistanceTest : UseCaseTest() {
     } as AbstractUseCase
 
     override fun mockingbird1() {
+        // yes yes yes action
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(60)
         mock_speakAndHearSelectiveInput("yes")
@@ -27,21 +28,15 @@ class SocialAssistanceTest : UseCaseTest() {
         mock_speakAndHearSelectiveInput("Action")
 
         mock_waitForAPIs(3000)
-
-
         println("a4s")
         mock_onEthanVoiceOutputFinished(60)
         mock_onEthanVoiceOutputFinished(60)
 
         println("mock finished")
-
-
-
-
     }
 
     override fun mockingbird2() {
-
+        // yes yes yes action
         mock_waitForAPIs(10000)
         mock_onEthanVoiceOutputFinished(40)
         mock_speakAndHearSelectiveInput("yes")
@@ -57,16 +52,15 @@ class SocialAssistanceTest : UseCaseTest() {
 
         mock_waitForAPIs(3000)
 
-
         println("a4s")
         mock_onEthanVoiceOutputFinished(60)
         mock_onEthanVoiceOutputFinished(60)
 
         println("mock finished")
-
     }
 
     override fun mockingbird3() {
+        // yes yes yes action
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(60)
         mock_speakAndHearSelectiveInput("yes")
@@ -81,7 +75,6 @@ class SocialAssistanceTest : UseCaseTest() {
         mock_speakAndHearSelectiveInput("Action")
 
         mock_waitForAPIs(3000)
-
 
         println("a4s")
         mock_onEthanVoiceOutputFinished(60)
@@ -91,6 +84,7 @@ class SocialAssistanceTest : UseCaseTest() {
     }
 
     override fun mockingbird4() {
+        // yes yes yes action
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(60)
         mock_speakAndHearSelectiveInput("yes")
@@ -105,7 +99,6 @@ class SocialAssistanceTest : UseCaseTest() {
         mock_speakAndHearSelectiveInput("Action")
 
         mock_waitForAPIs(3000)
-
 
         println("a4s")
         mock_onEthanVoiceOutputFinished(60)

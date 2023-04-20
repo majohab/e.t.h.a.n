@@ -12,9 +12,8 @@ class NavigationAssistanceTest : UseCaseTest() {
         println("Navigation assistance finished")
     } as AbstractUseCase
 
-
-
     override fun mockingbird1() {
+        //footwalking yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)
@@ -23,6 +22,7 @@ class NavigationAssistanceTest : UseCaseTest() {
     }
 
     override fun mockingbird2() {
+        //  footwalking yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)
@@ -31,6 +31,7 @@ class NavigationAssistanceTest : UseCaseTest() {
     }
 
     override fun mockingbird3() {
+        // footwalking yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)
@@ -39,6 +40,7 @@ class NavigationAssistanceTest : UseCaseTest() {
     }
 
     override fun mockingbird4() {
+        // footwalking yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(1000)
         mock_onEthanVoiceOutputFinished(100)

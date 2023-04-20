@@ -4,7 +4,6 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class TransportationKtTest{
-
     @Test
     fun getAllTranportationsKeysTest(){
         val response = getAllTransportationKeys()

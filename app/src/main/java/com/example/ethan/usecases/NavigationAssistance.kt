@@ -24,6 +24,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
         val nextEvent = getNextEvent()
         if (nextEvent == null) {
+            println("no new events")
             runBlocking { speak("Congrats! You have no more events for today.") }
             onFinishedCallback()
             println("no new event")

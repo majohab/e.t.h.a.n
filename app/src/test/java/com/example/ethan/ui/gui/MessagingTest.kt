@@ -26,9 +26,7 @@ class MessagingTest {
     @Test
     fun testObjectMessagingAddMessage(){
         messagingObject.addMessage(Message(Sender.USER,"Test"))
-
         assertEquals("Test", messagingObject.messages.last().text)
     }
-
 
 }

@@ -29,7 +29,8 @@ class TypeTest {
 
     @Test
     fun typographyTest() {
-        assertEquals(Typography,Typography(
+        assertEquals(Typography,
+            Typography(
             body1 = TextStyle(
                 color = AquaBlue,
                 fontFamily = gothicA1,

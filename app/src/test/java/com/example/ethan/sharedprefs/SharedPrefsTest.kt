@@ -6,7 +6,6 @@ import org.junit.Test
 
 class SharedPrefsTest{
     private lateinit var sharedPrefs: SharedPrefs
-
     @Before
     fun setUp(){
         sharedPrefs = SharedPrefs
@@ -49,5 +48,4 @@ class SharedPrefsTest{
         val response = sharedPrefs.getFloat("")
         assertNotEquals(null, response)
     }
-
 }

@@ -13,7 +13,7 @@ class OpenStreetMapApiTest {
     }
 
     @Test
-    fun findNearest(){
+    fun findNearestRestaurantTest(){
         val restaurants = openStreetMapApi.findNearestRestaurants(37.7749, -122.4194, 500 , "italian")
         val a = listOf<OsmRestaurant>(
             OsmRestaurant("Rich Table",
@@ -23,11 +23,5 @@ class OpenStreetMapApiTest {
             OsmRestaurant("The Italian Homemade Company",37.7743924,-122.4209413,"https://italianhomemade.com/")
         )
         assertEquals(a,restaurants)
-
-    }
-
-    @Test
-    fun restOfClass(){
-
     }
 }

@@ -65,8 +65,4 @@ class Speech2TextTest {
         speech2text.removeErrorCallback()
         assertEquals(false,speech2text.onError_backend_initialized)
     }
-
-    @Test
-    fun recordInput() {
-    }
 }

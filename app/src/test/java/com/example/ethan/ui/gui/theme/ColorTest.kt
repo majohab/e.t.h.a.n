@@ -8,7 +8,6 @@ import org.junit.Test
 
 
 class ColorTest {
-
     @Test
     fun OwnColorTest() {
         assertEquals(TextWhite, Color(0xffeeeeee))

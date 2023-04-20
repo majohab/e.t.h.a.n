@@ -16,8 +16,7 @@ class OpenWeatherApiConnectorTest{
     fun findNearest(){
         val restaurants = openWeatherApiConnector.getCurrentWeather(45.840177, -24.163801
         )
-        val a = null
-        assertNotEquals(a,restaurants)
-
+        val expected = null
+        assertNotEquals(expected,restaurants)
     }
 }

@@ -12,9 +12,8 @@ class StocksConnectorTest{
     fun setUp(){
         stocksConnector = StocksConnector()
     }
-
     @Test
-    fun getStocks(){
+    fun getStocksTest(){
         val stockslist_tickers = listOf("AAPL", "MSFT", "GOOG")
         val stockslist_names = listOf("Apple", "Microsoft", "Alphabet")
         var stocknews_string = ""
@@ -27,6 +26,5 @@ class StocksConnectorTest{
             stocknews_string += "Last price of " + stockslist_names[i] + " was $price$. "
         }
         assertNotEquals(null, stocknews_string)
-
     }
 }
