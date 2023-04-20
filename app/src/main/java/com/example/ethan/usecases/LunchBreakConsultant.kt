@@ -87,6 +87,14 @@ class LunchBreakConsultant(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                     recipeQuestion = "I sadly couldn't find any recipes that include $selectedFoodToken. Please try something else."
             }
 
+            // Did not receive a correct response, e.g. because we already called the API 150 times a day
+            if (recipeOptionsJson.has("code") && recipeOptionsJson.getInt("code") == 402) {
+                runBlocking { speak("I'm sorry, I can't seem to have any recipes for you today. Please check again tomorrow.") }
+                onFinishedCallback()
+                return
+            }
+
+
             val recipesOptions = recipeOptionsJson.getJSONArray("results")
             val recipeOptionsCount = minOf(5, recipesOptions.length())
             var recipesOptionsNamesString = ""

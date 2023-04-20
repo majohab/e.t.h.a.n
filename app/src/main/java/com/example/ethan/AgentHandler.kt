@@ -1,6 +1,5 @@
 package com.example.ethan
 
-import android.os.Build
 import androidx.compose.runtime.mutableStateMapOf
 import com.example.ethan.sharedprefs.SharedPrefs
 import com.example.ethan.ui.speech.Speech2Text
@@ -9,15 +8,16 @@ import com.example.ethan.usecases.*
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.concurrent.thread
+import kotlin.reflect.KClass
 
 object AgentHandler : Thread() {
 
     var useCaseRunning: Boolean = false
-    var remainingTimeStrings = mutableStateMapOf<UseCase, String>(
-        UseCase.GoodMorningDialogue to "-1",
-        UseCase.NavigationAssistance to "-1",
-        UseCase.LunchBreakConsultant to "-1",
-        UseCase.SocialAssistance to "-1"
+    var remainingTimeStrings = mutableStateMapOf<KClass<out AbstractUseCase>, String>( // the object the GUI observes
+        GoodMorningDialogue::class to "Done",
+        NavigationAssistance::class to "Done",
+        LunchBreakConsultant::class to "Done",
+        SocialAssistance::class to "Done"
     )
 
     var goodMorningDialogue = GoodMorningDialogue { useCaseFinished() }
@@ -33,15 +33,15 @@ object AgentHandler : Thread() {
 
         var justStarted = true
 
+        // evaluate remaining times and start use case if needed
         while (true) {
-            for (entry in remainingTimeStrings) {
-                val useCase = entry.key
+            for (useCase in remainingTimeStrings.keys) {
                 val remainingTime = getRemainingMinutes(useCase)
-                remainingTimeStrings[entry.key] = remainingMinutesToString(useCase, remainingTime)
-
+                remainingTimeStrings[useCase] = remainingMinutesToString(useCase, remainingTime)
                 if (!justStarted) {
-                    if (remainingTime < 0 && !useCaseToClass(useCase).getDoneToday() && !useCaseRunning)
+                    if (remainingTime <= 0 && !classToObject(useCase).getDoneToday() && !useCaseRunning) {
                         startUseCase(useCase)
+                    }
                 }
             }
             justStarted = false
@@ -56,12 +56,14 @@ object AgentHandler : Thread() {
         useCaseRunning = false
     }
 
-    fun startUseCase(useCase: UseCase)
+    fun startUseCase(useCase: KClass<out AbstractUseCase>)
     {
+        println("aaaa")
         if(useCaseRunning) return
         useCaseRunning = true
 
-        val useCaseClass = useCaseToClass(useCase)
+        val useCaseClass = classToObject(useCase)
+        useCaseClass.setDoneToday()
 
         Speech2Text.setCallback { input ->
             useCaseClass.onUserVoiceInputReceived(input)
@@ -72,25 +74,18 @@ object AgentHandler : Thread() {
         Text2Speech.setCallback { useCaseClass.onEthanVoiceOutputFinished() }
 
         thread { useCaseClass.executeUseCase() }
-
-        useCaseClass.setDoneToday()
     }
 
-    private fun getRemainingMinutes (useCase: UseCase) : Int {
-        val nextExecTime : LocalTime = useCaseToClass(useCase).getExecutionTime()
-
-        val now = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalTime.now()
-        } else {
-            TODO("VERSION.SDK_INT < O")
-        }
-
-        return ChronoUnit.MINUTES.between(now, nextExecTime).toInt()
+    private fun getRemainingMinutes (useCase: KClass<out AbstractUseCase>) : Int {
+        val nextExecTime : LocalTime = classToObject(useCase).getExecutionTime()
+        return ChronoUnit.MINUTES.between(LocalTime.now(), nextExecTime).toInt()
     }
 
-    private fun remainingMinutesToString (useCase: UseCase, minutes: Int) : String {
-        return if (minutes <= 0)
-            if (useCaseToClass(useCase).getDoneToday()) "Done" else "Ready"
+    private fun remainingMinutesToString (useCase: KClass<out AbstractUseCase>, minutes: Int) : String {
+        return if (classToObject(useCase).getDoneToday())
+            "Done"
+        else if (minutes <= 0)
+            "Ready"
         else if (minutes < 60)
             "$minutes min"
         else {
@@ -99,20 +94,12 @@ object AgentHandler : Thread() {
         }
     }
 
-    fun useCaseToClass (useCase: UseCase) : AbstractUseCase {
+    private fun classToObject (useCase: KClass<out AbstractUseCase>) : AbstractUseCase {
         return when (useCase) {
-            UseCase.GoodMorningDialogue -> goodMorningDialogue
-            UseCase.NavigationAssistance -> navigationAssistance
-            UseCase.LunchBreakConsultant -> lunchBreakConsultant
+            GoodMorningDialogue::class -> goodMorningDialogue
+            NavigationAssistance::class -> navigationAssistance
+            LunchBreakConsultant::class -> lunchBreakConsultant
             else -> socialAssistance
         }
     }
-}
-
-enum class UseCase
-{
-    GoodMorningDialogue,
-    NavigationAssistance,
-    LunchBreakConsultant,
-    SocialAssistance
 }
