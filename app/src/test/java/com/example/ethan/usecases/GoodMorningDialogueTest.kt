@@ -11,6 +11,7 @@ class GoodMorningDialogueTest : UseCaseTest(){
     } as AbstractUseCase
 
     override fun mockingbird1() {
+        // footwalking, car yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(100)
@@ -25,8 +26,8 @@ class GoodMorningDialogueTest : UseCaseTest(){
         mock_onEthanVoiceOutputFinished(100)
     }
 
-
     override fun mockingbird2() {
+        // footwalking bike yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(100)
@@ -39,11 +40,11 @@ class GoodMorningDialogueTest : UseCaseTest(){
         mock_waitForAPIs(3000)
         println("a4s")
         mock_onEthanVoiceOutputFinished(100)
-
     }
 
 
     override fun mockingbird3() {
+        // footwalking foot yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(100)
@@ -58,8 +59,8 @@ class GoodMorningDialogueTest : UseCaseTest(){
         mock_onEthanVoiceOutputFinished(100)
     }
 
-
     override fun mockingbird4() {
+        // footwalking wheelchair yes
         Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
         mock_onEthanVoiceOutputFinished(100)

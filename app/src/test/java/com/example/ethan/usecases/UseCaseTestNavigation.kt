@@ -6,8 +6,6 @@ import android.content.SharedPreferences
 import android.os.Build
 import com.example.ethan.AgentHandler
 import com.example.ethan.sharedprefs.SharedPrefs
-import com.example.ethan.ui.gui.GUI.getPreferences
-import com.example.ethan.ui.gui.GUI.getSharedPreferences
 import org.json.JSONObject
 import org.junit.Before
 import org.junit.Test
@@ -75,7 +73,7 @@ class UseCaseTestNavigation {
     }
 
     @Test
-    fun createTest1() {
+    fun navHandleNextEventsTest1() {
 
         var t = Thread {
             mockingbird1()
@@ -90,10 +88,7 @@ class UseCaseTestNavigation {
     }
 
     @Test
-    fun createTest2() {
-
-
-
+    fun navHandleNExtEventsTest2() {
         var t = Thread {
             mockingbird2()
         }.start()
@@ -107,7 +102,7 @@ class UseCaseTestNavigation {
     }
 
     @Test
-    fun createTest3() {
+    fun navHandleNextEventsTest3() {
         var t = Thread {
             mockingbird3()
         }.start()
@@ -121,7 +116,7 @@ class UseCaseTestNavigation {
     }
 
     @Test
-    fun createTest4() {
+    fun navBestTooLateAlternativeTest1() {
         var t = Thread {
             mockingbird4()
         }.start()
@@ -134,13 +129,12 @@ class UseCaseTestNavigation {
             "bike" to 1
         )
 
-
         val respone = navigationAssistance.bestTooLateAlternative(1,2,"bike",event, "cycling-regular", estimated_times)
         println("Test")
     }
 
     @Test
-    fun createTest41() {
+    fun navBestTooLateAlternativeTest2() {
         var t = Thread {
             mockingbird41()
         }.start()
@@ -153,13 +147,12 @@ class UseCaseTestNavigation {
             "bike" to 1
         )
 
-
         val respone = navigationAssistance.bestTooLateAlternative(1,2,"bike",event, "cycling-regular", estimated_times)
         println("Test")
     }
 
     @Test
-    fun createTest5() {
+    fun estimatedTimesTest1() {
         var t = Thread {
             navigationAssistance.getExecutionTime()
         }.start()
@@ -169,14 +162,13 @@ class UseCaseTestNavigation {
         event.put("startHour", "22")
         event.put("startMinute", "59")
         val estimated_times = mutableMapOf<String, Int>()
-        //val respone = navigationAssistance.functionforTesting1(
-        //    1,2,"bike",event, "cycling-regular", estimated_times)
+
         println("Test")
     }
 
 
     @Test
-    fun createTest6() {
+    fun estimatedTimesTest() {
         val event = JSONObject()
         event.put("location", "Lerchenstrasse 1 Stuttgart")
         event.put("startHour", "3")
@@ -186,10 +178,7 @@ class UseCaseTestNavigation {
             navigationAssistance.getNextTimeToGo(event)
         }.start()
 
-
         val estimated_times = mutableMapOf<String, Int>()
-        //val respone = navigationAssistance.functionforTesting1(
-        //    1,2,"bike",event, "cycling-regular", estimated_times)
         println("Test")
     }
 
@@ -272,7 +261,6 @@ class UseCaseTestNavigation {
     }
 
 
-
     fun mockingbird1(){
         mock_waitForAPIs(2000)
         mock_onEthanVoiceOutputFinished(10)
@@ -344,10 +332,6 @@ class UseCaseTestNavigation {
         println("mocking bird done")
 
     }
-
-
-
-
 
     fun mock_waitForAPIs(duration: Long) {
         Thread.sleep(duration)

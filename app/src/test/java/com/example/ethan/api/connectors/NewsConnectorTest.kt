@@ -14,12 +14,12 @@ class NewsConnectorTest{
     }
 
     @Test
-    fun testString(){
+    fun testStringTest(){
         assertEquals("https://newsapi.org/v2/top-headlines?country=us&apiKey=" + BuildConfig.API_KEY_NEWS ,newsConnector.url)
     }
 
     @Test
-    fun parseData(){
+    fun parseDataTest(){
         val eventsFreeBusy_json = newsConnector.get()
 
 

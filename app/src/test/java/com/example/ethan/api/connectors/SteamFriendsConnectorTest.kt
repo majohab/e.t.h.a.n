@@ -14,11 +14,8 @@ class SteamFriendsConnectorTest{
     }
 
     @Test
-    fun get(){
+    fun getTest(){
         val response = steamFriendsConnector.get("76561198198615839")
-
-
-
         println(response)
         assertNotEquals(null,response)
     }

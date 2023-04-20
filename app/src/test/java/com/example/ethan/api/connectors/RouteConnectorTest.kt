@@ -18,10 +18,4 @@ class RouteConnectorTest{
     fun testString(){
         assertEquals("url",routeConnector.url)
     }
-
-    @Test
-    fun parseData(){
-
-
-    }
 }

@@ -52,8 +52,5 @@ class SharedPrefsTest {
         SharedPrefs.initSharedPrefs(activity)
 
         assertEquals(false, SharedPrefs.sharedPrefs?.getBoolean("initialized", false))
-
     }
-
-
 }

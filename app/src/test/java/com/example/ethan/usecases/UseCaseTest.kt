@@ -27,14 +27,10 @@ abstract class UseCaseTest {
     @Mock
     lateinit var sharedPrefs: SharedPreferences
 
-
     @Before
     fun setUp(){
-
         // now you can call the execute method to start the use case
         MockitoAnnotations.openMocks(this)
-
-
         val mockEditor = Mockito.mock(SharedPreferences.Editor::class.java)
         Mockito.`when`(activity.getPreferences(Context.MODE_PRIVATE)).thenReturn(sharedPrefs)
 
@@ -74,8 +70,9 @@ abstract class UseCaseTest {
 
     @Test
     fun createTest1() {
-
+        //first test
         var t = Thread {
+            //human input
             mockingbird1()
         }.start()
         abstractUseCase.executeUseCase()
@@ -85,8 +82,9 @@ abstract class UseCaseTest {
 
     @Test
     fun createTest2() {
-
+        //second test
         var t = Thread {
+            // human input
             mockingbird2()
         }.start()
         abstractUseCase.executeUseCase()
@@ -96,8 +94,9 @@ abstract class UseCaseTest {
 
     @Test
     fun createTest3() {
-
+        //third test
         var t = Thread {
+            // human input
             mockingbird3()
         }.start()
         abstractUseCase.executeUseCase()
@@ -107,8 +106,9 @@ abstract class UseCaseTest {
 
     @Test
     fun createTest4() {
-
+        //fourth test
         var t = Thread {
+            // human input
             mockingbird4()
         }.start()
         abstractUseCase.executeUseCase()
@@ -116,6 +116,7 @@ abstract class UseCaseTest {
         println("Test")
     }
 
+    //abstract mockingbirds for human input
     abstract fun mockingbird1()
 
     abstract fun mockingbird2()
@@ -124,17 +125,19 @@ abstract class UseCaseTest {
 
     abstract fun mockingbird4()
 
-
+    //wait for apis
     fun mock_waitForAPIs(duration: Long) {
         Thread.sleep(duration)
     }
 
+    // make the human say something
     fun mock_speakAndHearSelectiveInput(userInput: String) {
         mock_onEthanVoiceOutputFinished(1)
         abstractUseCase.onUserVoiceInputReceived(userInput)
         mock_onEthanVoiceOutputFinished(2)
     }
 
+    // make ethan finish speaking
     fun mock_onEthanVoiceOutputFinished(times: Int) {
         for (i in 0 until times) {
             abstractUseCase.onEthanVoiceOutputFinished()
