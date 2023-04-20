@@ -1,7 +1,5 @@
 package com.example.ethan.api.connectors
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import net.fortuna.ical4j.data.CalendarBuilder
 import net.fortuna.ical4j.model.DateTime
 import net.fortuna.ical4j.model.component.VFreeBusy
@@ -9,7 +7,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.time.Instant
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -35,28 +32,27 @@ class CalendarConnector : AbstractConnector(){
         val request = VFreeBusy(start, end)
         val response = VFreeBusy(request, calendar.components)
 
+        // Retunrs empty string when no event found
         val startTimes = response.getProperties("FREEBUSY").toString().removePrefix("FREEBUSY:").removeSuffix("\n").split(",")
 
-        var result = JSONObject()
+        val result = JSONObject()
+        val events = JSONObject()
         result.put("nextEventID", -1)
-        var events = JSONObject()
         var nextEventSet = false
-        println(events)
-        println(startTimes)
+
         if (startTimes.isNotEmpty() && startTimes[0] != "") {
             startTimes.forEachIndexed { index, element ->
                 val formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'").withZone(ZoneOffset.UTC)
-                var times = element.removeSuffix("\r").split("/")
-                val event = JSONObject()
+                val times = element.removeSuffix("\r").split("/")
                 val eventStart = Instant.from(formatter.parse(times[0])).atZone(ZoneOffset.ofHours(2))
                 val eventEnd = Instant.from(formatter.parse(times[1])).atZone(ZoneOffset.ofHours(2))
-                if(eventStart > Instant.now()
-                        //.plusSeconds(60 * 60 * 8)
-                        .atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
+                
+                if(eventStart > Instant.now().atZone(ZoneOffset.ofHours(2)) && !nextEventSet){
                     nextEventSet = true
                     result.put("nextEventID", index+1)
                 }
 
+                val event = JSONObject()
                 event.put("startHour", eventStart.hour)
                 event.put("startMinute", eventStart.minute)
                 event.put("endHour", eventEnd.hour)
@@ -65,6 +61,7 @@ class CalendarConnector : AbstractConnector(){
                 events.put("${index+1}", event)
             }
         }
+
         result.put("events", events)
         result.put("total",startTimes.size)
         return result
@@ -86,22 +83,21 @@ class CalendarConnector : AbstractConnector(){
             val breaks = getBreaks(events)
             val bestBreak = getBestBreak(breaks, preferredHour, preferredMinute)
 
-
             if((bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")) < (preferredHour*60 + preferredMinute) &&
                 (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) > (preferredHour*60 + preferredMinute) + preferredDuration){
 
-                suggBreakStart = suggBreakStart
-                suggBreakEnd = suggBreakEnd
+                // Preferred break is completely in possible break slot
 
             }else if((bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) < (preferredHour*60 + preferredMinute) + preferredDuration) {
 
                 // Break ends before preferred break ends
                 if(bestBreak.getInt("duration") >= preferredDuration){
-                    // Duration is long enough
+                    // Duration of slot is long enough
                     val minutes = (bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")) - preferredDuration
                     suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
                     suggBreakEnd = suggBreakStart.plusMinutes(preferredDuration.toLong())
                 }else {
+                    // Duration is shorter than wished. Only use available break slot
                     val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
                     val minutesEnd = bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")
                     suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
@@ -112,11 +108,12 @@ class CalendarConnector : AbstractConnector(){
 
                 // Break starts after preferred break starts
                 if(bestBreak.getInt("duration") >= preferredDuration){
-                    // Duration is long enough
+                    // Duration of slot is long enough
                     val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
                     suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
                     suggBreakEnd = suggBreakStart.plusMinutes(preferredDuration.toLong())
                 }else {
+                    // Duration is shorter than wished. Only use available break slot
                     val minutes = bestBreak.getInt("startHour")*60 + bestBreak.getInt("startMinute")
                     val minutesEnd = bestBreak.getInt("endHour")*60 + bestBreak.getInt("endMinute")
                     suggBreakStart = LocalTime.parse( String.format("%02d", minutes/60) + ":" + String.format("%02d", minutes%60))
@@ -178,7 +175,7 @@ class CalendarConnector : AbstractConnector(){
         for (x in 0 until breaks.length()){
             val breakSlot = breaks.getJSONObject(x)
 
-            // Distances till start of break slot and end of break slot (determine if ideal time is at start or end of break)
+            // Distances till start of break slot and end of break slot (determine if ideal time is at start or end of break slot)
             val distanceStart =
                 abs((preferredHour * 60 + preferredMinute) - (breakSlot.getInt("startHour") * 60 + breakSlot.getInt("startMinute")))
             val distanceEnd =

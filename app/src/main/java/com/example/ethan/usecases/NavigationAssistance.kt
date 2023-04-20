@@ -55,21 +55,19 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
     }
 
     fun handleNextEvents(nextEvent: JSONObject, transportationMode: String){
-        println("new event")
         val estimatedTimes = route.getDurations(nextEvent.getString("location"))
-        println("got estimated time" + estimatedTimes)
         val timeWithPreferred = estimatedTimes[transportationMode]!!
         var routeDuration = timeWithPreferred
-        println("got route")
         var goInXMinutes = getTimeToGo(nextEvent, timeWithPreferred)
-        println("goInX" + goInXMinutes)
+
         if (goInXMinutes < 0) {
-            println("in if go in Minutes")
+            // Need to leave in the past
             val overflow = -1 * goInXMinutes
             val bestMethod = getBestTransportMethode(estimatedTimes, transportationMode)
             val bestMethodTime = estimatedTimes[bestMethod]!!
-            println("in if")
+
             if ((timeWithPreferred - bestMethodTime) < overflow) {
+                // Still too late to catch next event
                 runBlocking {
                     var suffix = ""
                     if (isRainOnRoute(nextEvent) && bestMethod == "foot-walking") {
@@ -88,19 +86,16 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
             }
         } else {
-            println("in else in if go in Minutes")
             runBlocking { speak("Hello. This is your PDA ETHAN. I want to inform you that you need to leave in $goInXMinutes minutes to catch your next event.") }
-            println("after talk in else")
+
             if (transportationMode != "foot-walking") {
-                println("next if")
                 routeDuration = estimatedTimes["foot-walking"]!!
-                println("route duration " + routeDuration)
                 if (routeDuration < 10) {
+                    // Ask user if he wants to walk the short distance
                     var suffix = ""
                     if (isRainOnRoute(nextEvent)) {
                         suffix = "Be aware that it could rain on your way. "
                     }
-                    println("checked rain")
                     speakAndHearSelectiveInput(
                         question = "Walking to your next event would only take $routeDuration minutes. Do you want to walk instead of your current transportation method? $suffix",
                         options = listOf(
@@ -120,13 +115,14 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                         ))
                 }
             } else {
-                println("nextElse")
                 if (routeDuration > 60) {
+                    // User wants to walk, but that takes more than 60 minutes. Ask him for a change
                     goInXMinutes = footWalkingAlternative(nextEvent, estimatedTimes, goInXMinutes)
                 }
             }
         }
         //if (goInXMinutes > 15) {
+        //    // New going time > 15 minutes? -> Remind him again
         //    runBlocking { speak("I will remind you 15 minutes before the upcoming event.") }
         //}
         onFinishedCallback()
@@ -205,7 +201,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
 
     fun bestTooLateAlternative(overflow: Int, goInXMinutes: Int, bestMethod: String, nextEvent: JSONObject, transportationMode: String, estimatedTimes: Map<String, Int>): Int {
         var goInXMinutesFunction = goInXMinutes
-        println("i am in")
         speakAndHearSelectiveInput(
             question = "Hello. This is your PDA ETHAN. I want to inform you that you " +
                     "needed to leave $overflow minutes ago to catch your next event. " +
@@ -223,7 +218,6 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                         }
                         SharedPrefs.setString("transportation", bestMethod)
                         runBlocking { speak("Okay. Your updated time to leave is in $goInXMinutes minutes. $suffix ") }
-                        println("end of positiv")
                     }
                 ),
                 UserInputOption(
@@ -234,12 +228,10 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
                             suffix = "Be aware that it could rain on your way. "
                         }
                         runBlocking { speak("I understand. I won't change anything. Please leave as soon as possible to minimize your delay. $suffix ") }
-                        println("end of negativ")
                     },
                 ),
             )
         )
-        println("finished")
         return goInXMinutesFunction
     }
 
@@ -276,6 +268,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         return bestMethod
     }
 
+    // Overloaded Function
     private fun getWeather(target : String): String {
         val targetLocations = openStreet.getDynamic("https://nominatim.openstreetmap.org/search/" + target + "?format=json&addressdetails=1&limit=1&polygon_svg=1")
         val weatherJSON = weatherApiConnector.getCurrentWeather(
@@ -286,6 +279,7 @@ class NavigationAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onF
         return weather.getString("main")
     }
 
+    // Overloaded Function
     private fun getWeather(location: JSONObject): String {
         val weatherJSON = weatherApiConnector.getCurrentWeather(
             location.getString("lat").toDouble(),

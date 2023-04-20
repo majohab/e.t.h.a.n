@@ -19,9 +19,12 @@ object LocalLocation {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
     }
 
+    // Permission request PopUp cannot be started from here, so user needs to grant manually
     @SuppressLint("MissingPermission")
     fun getCurrentLocation(): JSONObject{
+        // Default coordinates of Lerchenstraße 1, if no location could be found
         val result = JSONObject("{\"lat\":\"48.782869\",\"lon\":\"9.167049\"}")
+
         if (fusedLocationClient == null){ return result}
         fusedLocationClient!!.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
             override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
@@ -29,6 +32,7 @@ object LocalLocation {
             override fun isCancellationRequested() = false
         })
             .addOnSuccessListener { location: Location? ->
+                // When location could be retrieved
                 if (location != null){
                     result.put("lat", location.latitude.toString())
                     result.put("lon", location.longitude.toString())
@@ -38,6 +42,7 @@ object LocalLocation {
             .addOnFailureListener {ex: Exception ->
                 println(ex)
             }
+
         return result
     }
 }

@@ -2,10 +2,7 @@ package com.example.ethan.api.interfaces
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
-import org.json.JSONObject
 import java.io.IOException
-
 
 class RestInterface {
     var client = OkHttpClient()

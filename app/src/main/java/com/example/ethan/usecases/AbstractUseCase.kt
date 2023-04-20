@@ -10,7 +10,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
-    // Volatile disables caching for those variables CPU-internally -> faster execution
+    // Volatile disables CPU-internally caching for those variables -> faster execution on update
     @Volatile
     private var awaitEthanVoiceOutput: Boolean = false
     @Volatile
@@ -22,8 +22,8 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
     abstract var shortForm: String
 
-    var positiveTokens = listOf("yes", "yeah", "yep", "yup", "sure")
-    var negativeTokens = listOf("no", "nah", "no way", "never", "save nicht")
+    var positiveTokens = listOf("yes", "yeah", "yep", "yup", "sure", "ja", "jo", "okay", "ok", "yo")
+    var negativeTokens = listOf("no", "nah", "no way", "never", "save nicht", "nein", "ne")
 
     abstract fun getExecutionTime() : LocalTime
 
@@ -63,6 +63,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
 
     fun onUserVoiceInputReceived(input: String)
     {
+        // Called to release internal waiting loops
         // Displaying of USER is handled in GUI
         lastUserVoiceInput = input
         awaitUserVoiceInput = false
@@ -71,11 +72,12 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     fun onUserVoiceInputError(error: Int) {
         userInputWasWrong = true
         awaitUserVoiceInput = false
-        //speak("Something went wrong. Please try again.")
     }
 
-    fun onEthanVoiceOutputFinished(){
-        //println("Ethan done")
+    fun onEthanVoiceOutputFinished()
+    {
+        // Called to release internal waiting loops
+        println("Ethan done")
         awaitEthanVoiceOutput = false
     }
 
@@ -87,14 +89,13 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
             text = text
         ))
 
+        // Wait till ETHAN has spoken
         while (awaitEthanVoiceOutput) {
             delay(100)
-            //println("still waiting for output to finish")
         }
     }
 
     fun speakAndHearSelectiveInput(question: String, options: List<UserInputOption>) {
-
         runBlocking { askForUserVoiceInput(question) }
         var success: Boolean = false
         while (!success) {
@@ -104,6 +105,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
                     if(option.response != null){
                         runBlocking { speak(option.response!!) }
                     }
+                    // Callback to specific UseCase to handle success
                     option.onSuccess?.invoke()
                     break
                 }
@@ -150,4 +152,5 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 }
 
+// Input options for questions that are asked
 class UserInputOption(var tokens: List<String>, var response: String? = null, var onSuccess: (() -> Unit)? = null)
