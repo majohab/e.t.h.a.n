@@ -19,7 +19,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
     private val route = RouteConnector()
 
     override fun executeUseCase() {
-        println("GoodMorningDialogue Thread has been started!")
 
         // Request Fortune API
         val fortune_json = fortuneConnector.get()
@@ -52,7 +51,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
 
         // Request News API
         val news_json = newsConnector.get()
-        println(news_json)
         val news_articles = news_json.getJSONArray("articles")
         var news_string = ""
         for (i in 0..1) {
@@ -70,7 +68,6 @@ class GoodMorningDialogue(onFinishedCallback: () -> Unit) : AbstractUseCase(onFi
         for (i in stockslist_tickers.indices)
         {
             val stocknews_json = stocksConnector.get(stockslist_tickers[i])
-            println(stocknews_json)
             if (!stocknews_json.has("Global Quote"))
                 continue
             val stocknews_quote = stocknews_json.getJSONObject("Global Quote")

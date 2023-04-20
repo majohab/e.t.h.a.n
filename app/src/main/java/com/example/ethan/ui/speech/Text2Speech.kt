@@ -44,14 +44,11 @@ object Text2Speech {
         text: String,
         context: Context
     ) {
-        println("speakText")
         textToSpeech = TextToSpeech(
             context
         ) {
-            println("speakText 2")
             if (it == TextToSpeech.SUCCESS)
             {
-                println("speakText 3")
                 textToSpeech?.let()
                 {   t2s ->
                     t2s.language = Locale.US

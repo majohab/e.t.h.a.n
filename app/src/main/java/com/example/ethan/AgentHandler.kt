@@ -58,7 +58,6 @@ object AgentHandler : Thread() {
 
     fun startUseCase(useCase: KClass<out AbstractUseCase>)
     {
-        println("aaaa")
         if(useCaseRunning) return
         useCaseRunning = true
 
