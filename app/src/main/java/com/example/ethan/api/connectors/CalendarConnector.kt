@@ -154,11 +154,19 @@ class CalendarConnector : AbstractConnector(){
         }
 
         val lastBreakSlot = JSONObject()
-        lastBreakSlot.put("startHour", lastEvent!!.getInt("endHour"))
-        lastBreakSlot.put("startMinute", lastEvent!!.getInt("endMinute"))
-        lastBreakSlot.put("endHour", 23)
-        lastBreakSlot.put("endMinute", 59)
-        lastBreakSlot.put("duration", (23*60+59) - (lastEvent!!.getInt("endHour")*60+lastEvent!!.getInt("endMinute")))
+        if (lastEvent == null){
+            lastBreakSlot.put("startHour", 0)
+            lastBreakSlot.put("startMinute", 0)
+            lastBreakSlot.put("endHour", 23)
+            lastBreakSlot.put("endMinute", 59)
+            lastBreakSlot.put("duration", 24*60)
+        }else{
+            lastBreakSlot.put("startHour", lastEvent!!.getInt("endHour"))
+            lastBreakSlot.put("startMinute", lastEvent!!.getInt("endMinute"))
+            lastBreakSlot.put("endHour", 23)
+            lastBreakSlot.put("endMinute", 59)
+            lastBreakSlot.put("duration", (23*60+59) - (lastEvent!!.getInt("endHour")*60+lastEvent!!.getInt("endMinute")))
+        }
         breaks.put(lastBreakSlot)
 
         return breaks
