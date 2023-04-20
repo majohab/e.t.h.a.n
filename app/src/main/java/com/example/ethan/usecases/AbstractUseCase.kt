@@ -75,7 +75,7 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
     }
 
     fun onEthanVoiceOutputFinished(){
-        println("Ethan done")
+        //println("Ethan done")
         awaitEthanVoiceOutput = false
     }
 

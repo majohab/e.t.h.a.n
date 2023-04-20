@@ -1,5 +1,7 @@
 package com.example.ethan.usecases
 
+import org.mockito.Mockito
+
 
 class GoodMorningDialogueTest : UseCaseTest(){
 
@@ -9,8 +11,9 @@ class GoodMorningDialogueTest : UseCaseTest(){
     } as AbstractUseCase
 
     override fun mockingbird1() {
+        Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
-        mock_onEthanVoiceOutputFinished(10)
+        mock_onEthanVoiceOutputFinished(100)
         mock_speakAndHearSelectiveInput("car")
         println("a1")
         mock_waitForAPIs(3000)
@@ -19,13 +22,14 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(100)
     }
 
 
     override fun mockingbird2() {
+        Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
-        mock_onEthanVoiceOutputFinished(10)
+        mock_onEthanVoiceOutputFinished(100)
         mock_speakAndHearSelectiveInput("bike")
         println("a1")
         mock_waitForAPIs(3000)
@@ -34,14 +38,15 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(100)
 
     }
 
 
     override fun mockingbird3() {
+        Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
-        mock_onEthanVoiceOutputFinished(10)
+        mock_onEthanVoiceOutputFinished(100)
         mock_speakAndHearSelectiveInput("foot")
         println("a1")
         mock_waitForAPIs(3000)
@@ -50,23 +55,24 @@ class GoodMorningDialogueTest : UseCaseTest(){
         println("a3")
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(1)
+        mock_onEthanVoiceOutputFinished(100)
     }
 
 
     override fun mockingbird4() {
+        Mockito.`when`(sharedPrefs.getString("transportation","foot-walking")).thenReturn("foot-walking")
         mock_waitForAPIs(7000)
-        mock_onEthanVoiceOutputFinished(60)
+        mock_onEthanVoiceOutputFinished(100)
         mock_speakAndHearSelectiveInput("wheelchair")
         println("a1")
-        mock_onEthanVoiceOutputFinished(19)
+        mock_onEthanVoiceOutputFinished(100)
         mock_waitForAPIs(3000)
         println("a2")
         mock_speakAndHearSelectiveInput("yes")
         println("a3")
-        mock_onEthanVoiceOutputFinished(19)
+        mock_onEthanVoiceOutputFinished(100)
         mock_waitForAPIs(3000)
         println("a4s")
-        mock_onEthanVoiceOutputFinished(19)
+        mock_onEthanVoiceOutputFinished(100)
     }
 }
