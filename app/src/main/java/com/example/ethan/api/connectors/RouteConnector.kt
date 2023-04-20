@@ -57,7 +57,6 @@ class RouteConnector() : AbstractConnector() {
         movementTypes.forEach {
 
             val url = "https://api.openrouteservice.org/v2/directions/" + it + "?api_key=" +  BuildConfig.API_KEY_OPENROUTE + locations
-            println(url)
             val response = getDynamic(url)
 
             val duration = (extractDuration(response)/60).toInt()

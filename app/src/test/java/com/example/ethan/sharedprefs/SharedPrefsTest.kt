@@ -21,7 +21,7 @@ class SharedPrefsTest{
 
     @Test
     fun testGet(){
-        val response = sharedPrefs.get("transportation")
+        val response = sharedPrefs.getInt("transportation")
         assertNotEquals(null, response)
 
     }

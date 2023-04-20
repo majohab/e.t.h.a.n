@@ -1,7 +1,6 @@
 package com.example.ethan.usecases
 
 import android.os.Build
-import androidx.compose.ui.text.toLowerCase
 import com.example.ethan.api.connectors.CalendarConnector
 import com.example.ethan.api.connectors.RawgApiConnector
 import com.example.ethan.api.connectors.SteamFriendsConnector
@@ -70,7 +69,7 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                 response = "Great then lets see...",
                 onSuccess = {
 
-                    if(SharedPrefs.get("fav_games_genre") != -1) { // If there is a genre already, ask to change it
+                    if(SharedPrefs.getInt("fav_games_genre") != -1) { // If there is a genre already, ask to change it
                         speakAndHearSelectiveInput(
                             question = "Do you want to change your favorite genre?",
                             options = listOf(
@@ -89,10 +88,10 @@ class SocialAssistance(onFinishedCallback: () -> Unit) : AbstractUseCase(onFinis
                         )
                     }
 
-                    if(SharedPrefs.get("fav_games_genre") == -1) {
+                    if(SharedPrefs.getInt("fav_games_genre") == -1) {
                         askForFavGenre()
                     }
-                    val games = rawgApiConnector.getTopGamesByCategory(SharedPrefs.get("fav_games_genre"))
+                    val games = rawgApiConnector.getTopGamesByCategory(SharedPrefs.getInt("fav_games_genre"))
                     var gamestring = "Ok i can recommend the following games from your favorite genre. "
                     for (game in games)
                     {

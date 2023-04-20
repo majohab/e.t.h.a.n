@@ -53,7 +53,6 @@ abstract class AbstractUseCase(val onFinishedCallback: () -> Unit) {
         runBlocking { speak(question) }
         while (awaitUserVoiceInput) {
             delay(100)
-            //println("still waiting for input")
         }
         if (userInputWasWrong)
         {
